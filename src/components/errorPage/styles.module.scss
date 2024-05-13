@@ -1,0 +1,18 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-block-start: 4.5rem;
+	width: Min(28.875rem, 100%);
+  text-align: center;
+
+  & p {
+    font-size: 1.5rem;
+  }
+}
+
+.notFound {
+  font-size: 6rem;
+  color: #11643C;
+}

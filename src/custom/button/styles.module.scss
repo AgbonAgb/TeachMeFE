@@ -1,0 +1,27 @@
+$white: #fff;
+$success: #11643c;
+
+.button {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 0.5rem;
+	text-align: center;
+	border-radius: 5px;
+	padding-inline: 2.19rem;
+	padding-block: 1rem;
+	color: $white;
+	background-color: $success;
+	font-size: 1rem;
+	font-weight: 400;
+	outline: none;
+	border: none;
+}
+
+.spinner {
+	margin: 0;
+	padding: 0;
+	width: 20px;
+	height: 20px;
+	color: white;
+}
