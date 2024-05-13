@@ -1,5 +1,5 @@
 $white: #fff;
-$success: #11643c;
+$success: #094646;
 
 .button {
 	display: flex;
@@ -7,15 +7,16 @@ $success: #11643c;
 	align-items: center;
 	gap: 0.5rem;
 	text-align: center;
-	border-radius: 5px;
+	border-radius: 2.4rem;
 	padding-inline: 2.19rem;
-	padding-block: 1rem;
+	padding-block: 1.6rem;
 	color: $white;
 	background-color: $success;
-	font-size: 1rem;
-	font-weight: 400;
+	font-size: 1.6rem;
+	font-weight: bold;
 	outline: none;
 	border: none;
+	width: 100%;
 }
 
 .spinner {

@@ -1,17 +1,17 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import AuthLayout from "./components/auth/authLayout/main";
-import SignIn from "./components/auth/sign-in";
 import ErrorPage from "./components/errorPage/errorPage";
+import SignUp from "./components/auth/sign-up";
 function App() {
   return (
-    <Router>
+ 
         <Routes>
       <Route element={<AuthLayout />}>
         <Route element={<ErrorPage />} path="*" />
-        <Route element={<SignIn />} path="/" />
+        <Route element={<SignUp />} path="/" />
       </Route>
     </Routes>
-    </Router>
+    
   
   );
 }

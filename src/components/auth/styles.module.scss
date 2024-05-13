@@ -1,0 +1,25 @@
+
+.activeRadio{
+
+    font-weight: bold;
+}
+.header{
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 4rem;
+}
+.welcome{
+    color: #242021;
+    font-weight: bold;
+    font-size: 2.8rem;
+    line-height: 3.3rem;
+}
+.header  > p{
+    color: #6F6A6B;
+    font-size: 1.8rem;
+    line-height: 2.1rem;
+}
+.form{
+    margin-block-start: 2rem;
+}

@@ -1,0 +1,72 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 0.5rem;
+  margin-block-end: 15px;
+}
+
+.input {
+  border: 0.5px solid #CECED2;
+  padding-inline-start: 0.8rem;
+  padding-block: 1.45rem;
+  background-color: #fff;
+  width: 100%;
+  border-radius: 1.2rem;
+
+  &:disabled{
+    background-color:#e8eaed;
+  }
+}
+
+
+.input:focus,
+.input:active,
+input:focus-visible {
+  background-color: white;
+  border-color: #6f6a6b;
+}
+
+.input:focus {
+  outline: none;
+  background-color: white;
+}
+
+input::placeholder {
+  color: #9f9f9f;
+}
+input:valid {
+  background-color: #fff;
+}
+
+.label {
+  color: #242021;
+  font-size: 1.6rem;
+  width: 100%;
+  margin-bottom: 0px;
+  text-align: start !important;
+  font-weight: 700;
+}
+
+.error {
+  font-size: 1.4rem;
+  color: red;
+  font-weight: bold;
+}
+
+.password {
+  position: relative;
+}
+
+.icon {
+  width: 15px;
+  height: 15px;
+}
+
+.iconButton {
+  position: absolute;
+  top: 40%;
+  right: 2rem;
+  background-color: transparent;
+  border: none;
+}
