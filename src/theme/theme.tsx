@@ -13,6 +13,16 @@ export const Theme: FC<PropsWithChildren> = ({ children }) => {
             fontSizeLG: 16,
             colorBorder: "#000000",
           },
+          Table: {
+            borderColor: '#BCD3D3',
+            headerBg: '#EDF5F5',
+            headerBorderRadius: 12,
+            cellPaddingInline: 20,
+            cellPaddingBlock: 10,
+            footerBg: '#11643C',
+            footerColor: "#011602",
+            fontFamily: 'Poppins', 
+          },
         },
       }}
     >

@@ -16,18 +16,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 const Input = (props: InputProps & FieldHookConfig<string> & any) => {
-  const {
-    name,
-    icon,
-    placeholder,
-    label,
-    type,
-    displayInput,
-    className,
-    labelClassName,
-    disabled,
-    ...rest
-  } = props;
+  const { name, icon, placeholder, label, type, displayInput, className, labelClassName, disabled, ...rest } = props;
   const [field, meta] = useField(props);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -41,7 +30,7 @@ const Input = (props: InputProps & FieldHookConfig<string> & any) => {
     <div className={styles.container}>
       <label className={classNames(styles.label, labelClassName)}>{label}</label>
 
-      {displayInput === inputTypes[0] && <input {...field} className={classNames(styles.input, className)} placeholder={placeholder} type={type}   disabled={disabled}/>}
+      {displayInput === inputTypes[0] && <input {...field} className={classNames(styles.input, className)} placeholder={placeholder} type={type} disabled={disabled} />}
 
       {displayInput === inputTypes[1] && (
         <div className={styles.password}>
@@ -56,7 +45,7 @@ const Input = (props: InputProps & FieldHookConfig<string> & any) => {
           />
 
           <button className={styles.iconButton} onClick={handleShowPassword} type="button">
-            {showPassword ? 'Show' : 'Hide'}
+            {showPassword ? "Hide" : "Show"}
           </button>
         </div>
       )}

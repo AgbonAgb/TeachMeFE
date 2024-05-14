@@ -1,0 +1,43 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-bottom: 0.5rem;
+
+}
+
+select {
+  padding-inline: 1.6rem;
+  padding-block: 18px;
+  border: 1px solid #CECED2;
+  background-color: white;
+  font-size: 1.6rem;
+  color: #242021;
+  min-width: 17.4rem;
+  border-radius: 1.2rem;
+}
+
+select:hover,
+select:focus {
+  border-color: #068A51;
+  outline: none;
+}
+select::placeholder{
+  color: #242021!important;
+  font-size: 1.6rem;
+}
+
+
+.label {
+  color: #242021;
+  width: 100%;
+  text-align: start !important;
+font-size: 1.6rem;
+font-weight: 700;
+
+}
+.error {
+  font-size: 1.4rem;
+  color: red;
+  font-weight: bold;
+}
