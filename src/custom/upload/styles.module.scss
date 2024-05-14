@@ -1,0 +1,43 @@
+.container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  
+    & label {
+      color: #696A6F;
+      line-height: 1.1875rem; /* 118.75% */
+    }
+  }
+  
+  .upload {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.25rem;
+    margin-block-start: 0.31rem;
+    background-color: #EFF0EF;
+    border: 1px dashed #D5D8D5;
+    padding-block: 1.25rem;
+    border-radius: 5px;
+    cursor: pointer;
+  
+    & input {
+      width: 100%;
+      height: 100%;
+    }
+  }
+  
+  .fileTitle {
+    color: #11643C;
+      font-weight: 500;
+      font-size: 0.875rem;
+      line-height: 1.125rem;
+  }
+  
+  .fileFormat {
+    color: #9D9EA3;
+      font-weight: 300;
+      font-size: 0.75rem;
+  }

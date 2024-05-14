@@ -1,0 +1,10 @@
+.checkAndLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: green;
+  border-color: green;
+}
+.check {
+  cursor: pointer;
+}
