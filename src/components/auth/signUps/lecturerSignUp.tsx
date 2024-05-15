@@ -1,9 +1,9 @@
 import { Field, FormikProvider, FormikValues, useFormik } from "formik";
 import * as Yup from "yup";
-import Input from "../../../../custom/input/input";
-import Button from "../../../../custom/button/button";
+import Input from "../../../custom/input/input";
+import Button from "../../../custom/button/button";
 import { useNavigate } from "react-router-dom";
-import apiCall from "../../../../utils/apiCall";
+import apiCall from "../../utils/apiCall";
 import { useMutation } from "@tanstack/react-query";
 
 interface Payload {

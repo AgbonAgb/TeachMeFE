@@ -6,9 +6,9 @@ import styles from "./styles.module.scss";
 import { Link, useNavigate } from "react-router-dom";
 import Checkbox from "../../../custom/checkbox/checkbox";
 import { useAtom } from "jotai";
-import { userAtom } from "../../../utils/store";
+import { userAtom } from "../../utils/store";
 import { useMutation } from "@tanstack/react-query";
-import apiCall from "../../../utils/apiCall";
+import apiCall from "../../utils/apiCall";
 
 interface Payload {
   Email: string;
