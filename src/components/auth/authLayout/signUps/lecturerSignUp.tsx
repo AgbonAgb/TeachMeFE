@@ -32,10 +32,10 @@ const LecturerSignUp = () => {
   ) => {
     const lecturerSignUp: Payload = {
       FirstName: data?.FirstName?.trim(),
-      LastName: data?.FirstName?.trim(),
-      Email: data?.FirstName?.trim(),
-      PhoneNumber: data?.FirstName?.trim(),
-      Password: data?.FirstName?.trim(),
+      LastName: data?.LastName?.trim(),
+      Email: data?.Email?.trim(),
+      PhoneNumber: data?.PhoneNumber?.trim(),
+      Password: data?.Password?.trim(),
     };
     // if (isChecked) {
     //   localStorage.setItem("username-cipm", formik?.values?.Email);
@@ -64,7 +64,13 @@ const LecturerSignUp = () => {
     Email: Yup.string()
       .required("Email Address is required")
       .email("Invalid email Address"),
-    Password: Yup.string().required("Password is required"),
+    Password: Yup.string()
+    .required("Password is required")
+    .max(20, "Password must have a maximum length of 20 characters")
+    .matches(
+      /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}/,
+      "The password must contain a mix of uppercase letters, lowercase letters, and numbers."
+    ),
     FirstName: Yup.string().required("First Name is required"),
     LastName: Yup.string().required("Last Name is required"),
     PhoneNumber: Yup.string().required("Phone Number is required"),

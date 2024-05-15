@@ -19,20 +19,9 @@ interface Payload {
   Email: string;
   Password: string;
 }
-interface LoginData {
-  AdminUserHasChangePassword: boolean;
-  FirstName: string;
-  Id: string;
-  Message: string;
-  RoleIds: string[];
-  StatusCode: number;
-  Token: string;
-  UserName: string;
-  expiryDate: string;
-  RoleNames: string[];
-}
 
-const SignIn = () => {
+
+const LecturerProfile = () => {
   const navigate = useNavigate();
   const [user, setUser] = useAtom(userAtom);
   const [passportPhoto, setPassportPhoto] = useState<File | null>(null);
@@ -56,14 +45,14 @@ const SignIn = () => {
     }
   };
 
-  const login = async (data: Payload) => {
+  const LecturerProfile = async (data: Payload) => {
     return (await apiCall().post("/Authentication/Authenticate", data))
-      ?.data as LoginData;
+      ?.data;
   };
 
   const loginMutation = useMutation({
-    mutationFn: login,
-    mutationKey: ["post-user"],
+    mutationFn: LecturerProfile,
+    mutationKey: ["Lecturer-Profile"],
   });
 
   const loginHandler = async (data: FormikValues, resetForm: () => void) => {
@@ -119,8 +108,9 @@ const SignIn = () => {
 
   const formik = useFormik<FormikValues>({
     initialValues: {
-      Email: "",
-      Password: "",
+      LinkName: "",
+    NickName: "",
+    HouseAddress:'',
       passportPhoto: "",
       idCard: "",
     },
@@ -171,10 +161,10 @@ const SignIn = () => {
                   onChange={handlePassportPhotoChange}
                   fileName={passportPhoto?.name}
                 />
-                {formik.touched.file && formik.errors.file ? (
+                {formik.touched.passportPhoto && formik.errors.passportPhoto ? (
                   <div
                     className={styles.error}
-                  >{`*${formik.errors.file.toString()}`}</div>
+                  >{`*${formik.errors.passportPhoto.toString()}`}</div>
                 ) : null}
               </>
             ) : (
@@ -201,10 +191,10 @@ const SignIn = () => {
                   onChange={handleIdCardChange}
                   fileName={idCard?.name}
                 />
-                {formik.touched.file && formik.errors.file ? (
+                {formik.touched.idCard && formik.errors.idCard ? (
                   <div
                     className={styles.error}
-                  >{`*${formik.errors.file.toString()}`}</div>
+                  >{`*${formik.errors.idCard.toString()}`}</div>
                 ) : null}
               </>
             ) : (
@@ -243,4 +233,4 @@ const SignIn = () => {
   );
 };
 
-export default SignIn;
+export default LecturerProfile;
