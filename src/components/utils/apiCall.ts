@@ -65,7 +65,7 @@ export const apiCall = () => {
       }
 
       if (error?.response?.status === 401 || error?.response?.status === 401) {
-        localStorage.removeItem("member-admin-user");
+        localStorage.removeItem("-teach-me-app-");
         window.location.replace("/");
       }
 

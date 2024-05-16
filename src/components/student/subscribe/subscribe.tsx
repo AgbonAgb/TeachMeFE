@@ -1,17 +1,29 @@
 import React, { useState } from "react";
-import Button from "../../custom/button/button";
+import CustomButton from "../../../custom/button/button";
 import styles from "./styles.module.scss";
-import SearchInput from "../../custom/searchInput/searchInput";
-import { ReactComponent as Search } from "../../assets/border-search.svg";
-import { ReactComponent as Filter } from "../../assets/filter.svg";
-import { ReactComponent as Ellipsis } from "../../assets/ellipsis.svg";
-import { ReactComponent as Cancel } from "../../assets/cancel.svg";
-import { Modal, Table, Tooltip } from "antd";
-import { data } from "../utils/table-data";
+import { ReactComponent as Search } from "../../../assets/border-search.svg";
+import { ReactComponent as Filter } from "../../../assets/filter.svg";
+import { ReactComponent as Ellipsis } from "../../../assets/ellipsis.svg";
+import { ReactComponent as Cancel } from "../../../assets/cancel.svg";
+import { Button, Dropdown, MenuProps, Modal, Table, Tooltip } from "antd";
+import { data } from "../../utils/table-data";
 import { Field, FormikProvider, FormikValues, useFormik } from "formik";
-import CustomSelect from "../../custom/select/select";
+import SearchInput from "../../../custom/searchInput/searchInput";
+import CustomSelect from "../../../custom/select/select";
+
 
 const date = new Date();
+const items: MenuProps['items'] = [
+  {
+    key: '1',
+    label: (
+      <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
+       Material Type
+      </a>
+    ),
+  },
+ 
+];
 
 const Subscribe = () => {
   const [showSearch, setShowSearch] = useState(false);
@@ -77,7 +89,7 @@ const Subscribe = () => {
       <div className={styles.header}>
         <h1>Lecturers</h1>
         <div>
-          <Button text="Subscribe" />
+          <CustomButton text="Subscribe" />
         </div>
       </div>
 
@@ -87,7 +99,10 @@ const Subscribe = () => {
           <div>
             {!showSearch && <Search onClick={() => setShowSearch((showSearch) => !showSearch)} />}
             {showSearch && <SearchInput />}
-            <Filter />
+          
+            <Dropdown menu={{ items }} placement="bottom" arrow={{ pointAtCenter: true }}>
+          <Filter />
+      </Dropdown>
           </div>
         </div>
 
@@ -100,7 +115,7 @@ const Subscribe = () => {
             <div className={styles.form}>
                <FormikProvider value={formik}>
               <Field as={CustomSelect} label="Lecturer Name" name="lecturerName" placeholder="Select Lecturer" className={styles.input} />
-              <Button text="Subscribe" className={styles.button}/>
+              <CustomButton text="Subscribe" className={styles.button}/>
             </FormikProvider>
             </div>
            

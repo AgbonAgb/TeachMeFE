@@ -1,4 +1,4 @@
-import { Field, FormikProvider, FormikValues, useFormik } from "formik";
+import { ErrorMessage, Field, FormikProvider, FormikValues, useFormik } from "formik";
 import * as Yup from "yup";
 import Input from "../../../custom/input/input";
 import Button from "../../../custom/button/button";
@@ -8,7 +8,7 @@ import Checkbox from "../../../custom/checkbox/checkbox";
 import { useAtom } from "jotai";
 import { userAtom } from "../../utils/store";
 import { useMutation } from "@tanstack/react-query";
-import apiCall from "../../utils/apiCall";
+import apiCall from "../../utils/apiCallFormData";
 import Layout from "../../layout/layout";
 import Upload from "../../../custom/upload/upload";
 import { useState } from "react";
@@ -16,11 +16,14 @@ import { ReactComponent as FileUploaded } from "../../../assets/uploadedFile.svg
 import { ReactComponent as Close } from "../../../assets/close (1).svg";
 
 interface Payload {
+  LecturerProfileId?:string;
+  LecturerId?:string;
   LinkName: string;
-  NickName: string;
-  HouseAddress: string;
-  passportPhoto: File | null;
-  idCard: File | null;
+  NickName?: string;
+  Address: string;
+  PixFile: File | null;
+  IdCardFile: File | null;
+  TermsCondition:boolean;
 }
 
 const LecturerProfile = () => {
@@ -35,7 +38,7 @@ const LecturerProfile = () => {
     const file = e.target.files;
     if (file) {
       setPassportPhoto(file[0]);
-      formik.setFieldValue("file", file[0]);
+      formik.setFieldValue("passportPhoto", file[0]);
     }
   };
 
@@ -43,12 +46,19 @@ const LecturerProfile = () => {
     const file = e.target.files;
     if (file) {
       setIdCard(file[0]);
-      formik.setFieldValue("file", file[0]);
+      formik.setFieldValue("idCard", file[0]);
     }
   };
+  const cancelPhoto=() =>{
+    setPassportPhoto(null);
+  }
+  const cancelIdCard=() =>{
+    setIdCard(null);
+  }
+
 
   const LecturerProfile = async (data: Payload) => {
-    return (await apiCall().post("/Authentication/Authenticate", data))?.data;
+    return (await apiCall().post("/Lecturer/UpdateProfile", data))?.data;
   };
 
   const UpdateProfileMutation = useMutation({
@@ -57,36 +67,26 @@ const LecturerProfile = () => {
   });
 
   const UpdateProfileHandler = async (data: FormikValues, resetForm: () => void) => {
-    const loginUser: Payload = {
+    const profile: Payload = {
+      LecturerId:user?.UserId,
       LinkName: data?.LinkName?.trim(),
-      NickName: data?.NickName?.trim(),
-      HouseAddress: data?.HouseAddress?.trim(),
-      passportPhoto:passportPhoto,
-      idCard:idCard ,
+      // NickName: data?.NickName?.trim(),
+      Address: data?.HouseAddress?.trim(),
+      PixFile:passportPhoto,
+      IdCardFile:idCard ,
+      TermsCondition:data?.isChecked,
 
     };
  
 
     try {
-      await UpdateProfileMutation.mutateAsync(loginUser, {
+      await UpdateProfileMutation.mutateAsync(profile, {
         onSuccess: (data) => {
           // showNotification({
           //   message: "User Log in successful",
           //   type: "success",
           // });
 
-          setUser({
-            AdminUserHasChangePassword: data?.AdminUserHasChangePassword,
-            FirstName: data?.FirstName,
-            Id: data?.Id,
-            Message: data?.Message,
-            RoleIds: data?.RoleIds,
-            StatusCode: data?.StatusCode,
-            Token: data?.Token,
-            UserName: data?.UserName,
-            expiryDate: data?.expiryDate,
-            RoleNames: data?.RoleNames,
-          });
         },
       });
     } catch (error: any) {
@@ -101,26 +101,30 @@ const LecturerProfile = () => {
   console.log(passportPhoto?.size, "passss");
 
   const validationRules = Yup.object().shape({
-    Email: Yup.string()
-      .required("Email Address is required")
-      .email("Invalid email Address"),
-    Password: Yup.string().required("Password is required"),
-    file: Yup.mixed().required("Required"),
+    LinkName: Yup.string().required("Link Name is required"),
+    HouseAddress: Yup.string().required("Address is required"),
+    passportPhoto: Yup.mixed().required("Passport Photo is Required"),
+    idCard: Yup.mixed().required("Id Card is Required"),
+    isChecked: Yup.boolean()
+    .oneOf([true], 'You must accept the terms and conditions'),
+
   });
 
   const formik = useFormik<FormikValues>({
     initialValues: {
       LinkName: "",
-      NickName: "",
+      // NickName: "",
       HouseAddress: "",
       passportPhoto: "",
       idCard: "",
+      isChecked:false
     },
     onSubmit: (data, { resetForm }) => {
       UpdateProfileHandler(data, resetForm);
     },
     validationSchema: validationRules,
   });
+  console.log(formik.errors.isChecked)
   return (
     <main>
 
@@ -135,13 +139,13 @@ const LecturerProfile = () => {
             displayInput="text"
             label="Link Name"
           />
-          <Field
+          {/* <Field
             as={Input}
             name="Nickname"
             placeholder=" Enter Nickname"
             displayInput="text"
             label="Nickname"
-          />
+          /> */}
           <Field
             as={Input}
             name="HouseAddress"
@@ -158,14 +162,18 @@ const LecturerProfile = () => {
                 //  .jpeg, .png,.pdf,
                 // .JPEG,.PDF,.PNG,.doc,.docx,.DOC,.DOCX"
                 // accept="img,pdf"
-                allowedFormats={["max:10mb (png, jpg, docx, pdf)"]}
+                allowedFormats={["pdf", "img"]}
+
+                // allowedFormats={[".docx)"]}
+                // allowedFormats={["max:10mb (docx, pdf)"]}
+
                 onChange={handlePassportPhotoChange}
                 fileName={passportPhoto?.name}
               />
               {formik.touched.passportPhoto && formik.errors.passportPhoto ? (
                 <div
-                  className={styles.error}
-                >{`*${formik.errors.passportPhoto.toString()}`}</div>
+                className='error'
+                >{`${formik.errors.passportPhoto.toString()}`}</div>
               ) : null}
             </>
           ) : (
@@ -175,7 +183,7 @@ const LecturerProfile = () => {
               {passportPhoto && (
                 <span>{(passportPhoto?.size / 1024).toFixed(2)}MB</span>
               )}
-              <Close className={styles.pointer} />
+              <Close className={styles.pointer} onClick={cancelPhoto}/>
             </div>
           )}
 
@@ -188,14 +196,14 @@ const LecturerProfile = () => {
                 //  .jpeg, .png,.pdf,
                 // .JPEG,.PDF,.PNG,.doc,.docx,.DOC,.DOCX"
                 // accept="img,pdf"
-                allowedFormats={["max:10mb (png, jpg, docx, pdf)"]}
+                allowedFormats={["max:10mb (docx, pdf)"]}
                 onChange={handleIdCardChange}
                 fileName={idCard?.name}
               />
               {formik.touched.idCard && formik.errors.idCard ? (
                 <div
-                  className={styles.error}
-                >{`*${formik.errors.idCard.toString()}`}</div>
+                className='error'
+                >{`${formik.errors.idCard.toString()}`}</div>
               ) : null}
             </>
           ) : (
@@ -203,7 +211,7 @@ const LecturerProfile = () => {
               <FileUploaded />
               <span>{idCard?.name}</span>
               {idCard && <span>{(idCard?.size / 1024).toFixed(2)}MB</span>}
-              <Close className={styles.pointer} />
+              <Close className={styles.pointer}  onClick={cancelIdCard}/>
             </div>
           )}
 
@@ -221,11 +229,14 @@ const LecturerProfile = () => {
                 I agree to the above{" "}
                 <span style={{ color: "red" }}>Terms and Conditions</span>
               </label>
+
             </span>
+            <ErrorMessage  className='error' name="isChecked" component="div" />
+
           </div>
 
           <section className={styles.btnSection}>
-            <Button className={styles.btn} text={"Update"} />
+            <Button className={styles.btn} text={UpdateProfileMutation?.isPending ? 'Uploading...' : "Update"} />
           </section>
         </form>
     </FormikProvider>

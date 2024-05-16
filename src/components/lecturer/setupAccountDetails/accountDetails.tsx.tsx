@@ -51,18 +51,7 @@ const AccountDetails = () => {
           //   type: "success",
           // });
 
-          setUser({
-            AdminUserHasChangePassword: data?.AdminUserHasChangePassword,
-            FirstName: data?.FirstName,
-            Id: data?.Id,
-            Message: data?.Message,
-            RoleIds: data?.RoleIds,
-            StatusCode: data?.StatusCode,
-            Token: data?.Token,
-            UserName: data?.UserName,
-            expiryDate: data?.expiryDate,
-            RoleNames: data?.RoleNames,
-          });
+        
         },
       });
     } catch (error: any) {

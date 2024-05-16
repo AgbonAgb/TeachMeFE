@@ -7,11 +7,12 @@ import styles from "./styles.module.scss";
 import { useNavigate } from "react-router-dom";
 import { useAtom } from "jotai";
 import { userAtom } from "../../../utils/store";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueries } from "@tanstack/react-query";
 import apiCall from "../../../utils/apiCall";
 import Layout from "../../../layout/layout";
 import { useState } from "react";
-import { ReactComponent as Search } from "../../../../assets/border-search.svg";
+import { ReactComponent as Back } from "../../../../assets/keyboard_backspace.svg";
+import { AxiosError } from "axios";
 
 interface Payload {
   BankName: string;
@@ -23,6 +24,79 @@ interface Payload {
 const ContentUpload = () => {
   const navigate = useNavigate();
   const [user, setUser] = useAtom(userAtom);
+
+  const getMaterialType = async () => {
+    const url = "/Lecturer/MaterialType";
+
+    return await apiCall().get(url);
+  };
+
+  const getCategory = async () => {
+    const url = "/Category";
+
+    return await apiCall().get(url);
+  };
+  const [getMaterialTypeQuery,getCategoryQuery ] = useQueries({
+    queries: [
+      {
+        queryKey: ["get-all-material-type"],
+        queryFn: getMaterialType,
+        retry: 0,
+        refetchOnWindowFocus: false,
+      },
+      {
+        queryKey: ["get-all-category"],
+        queryFn: getCategory,
+        retry: 0,
+        refetchOnWindowFocus: false,
+      },
+    ],
+  });
+
+
+  const getMaterialError = getMaterialTypeQuery?.error as AxiosError;
+  const getMaterialErrorMessage = getMaterialError?.message;
+
+  const getCategoryError = getCategoryQuery?.error as AxiosError;
+  const getCategoryErrorMessage = getCategoryError?.message;
+
+  const getMaterialData = getMaterialTypeQuery?.data?.data?.Data;
+  const getCategoryData = getCategoryQuery?.data?.data?.Data;
+
+  const materialOptions =
+  getMaterialData && getMaterialData?.length > 0 ? (
+      getMaterialData?.map((item: any, index: number) => (
+        <option value={item?.Id} key={index + 1}>
+          {item?.Name}
+        </option>
+      ))
+    ) : (
+      <option disabled>
+        {getMaterialTypeQuery?.isLoading
+          ? "loading...."
+          : getMaterialTypeQuery?.isError
+          ? getMaterialErrorMessage
+          : ""}
+      </option>
+    );
+
+    const categoryOptions =
+    getCategoryData && getCategoryData?.length > 0 ? (
+      getCategoryData?.map((item: any, index: number) => (
+        <option value={item?.CategoryId} key={index + 1}>
+          {item?.ContentCategoryName}
+        </option>
+      ))
+    ) : (
+      <option disabled>
+        {getCategoryQuery?.isLoading
+          ? "loading...."
+          : getCategoryQuery?.isError
+          ? getCategoryErrorMessage
+          : ""}
+      </option>
+    );
+    console.log(getMaterialTypeQuery?.data, 'dta')
 
   const AccountDetailsApi = async (data: Payload) => {
     return (await apiCall().post("/Authentication/Authenticate", data))?.data;
@@ -52,18 +126,7 @@ const ContentUpload = () => {
           //   type: "success",
           // });
 
-          setUser({
-            AdminUserHasChangePassword: data?.AdminUserHasChangePassword,
-            FirstName: data?.FirstName,
-            Id: data?.Id,
-            Message: data?.Message,
-            RoleIds: data?.RoleIds,
-            StatusCode: data?.StatusCode,
-            Token: data?.Token,
-            UserName: data?.UserName,
-            expiryDate: data?.expiryDate,
-            RoleNames: data?.RoleNames,
-          });
+
         },
       });
     } catch (error: any) {
@@ -124,7 +187,7 @@ const ContentUpload = () => {
 
     <main className={styles.main}>
       <FormikProvider value={formik}>
-        <Search/>
+        <Back onClick={()=>{navigate('/content-management')}}/>
         <Layout heading="Content Upload" />
 
         <form className={styles.form} onSubmit={formik.handleSubmit}>
@@ -157,7 +220,7 @@ const ContentUpload = () => {
             displayInput="text"
             label="Category"
           >
-            {statusData}
+            {categoryOptions}
           </Field>
           <Field
             as={Input}
@@ -173,7 +236,7 @@ const ContentUpload = () => {
             displayInput="text"
             label="Material Type"
           >
-            {statusData}
+            {materialOptions}
           </Field>
           <Field
             as={Input}

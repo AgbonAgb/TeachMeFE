@@ -11,27 +11,30 @@ import { useMutation } from "@tanstack/react-query";
 import apiCall from "../../utils/apiCall";
 import { Modal } from "antd";
 import SuccessModal from "../signUps/modalContent/successModal";
+import { useEffect } from "react";
 
 interface Payload {
   Email: string;
   Password: string;
 }
 interface LoginData {
-  AdminUserHasChangePassword: boolean;
-  FirstName: string;
-  Id: string;
+  UserId:string;
+  UserType:string;
   Message: string;
-  RoleIds: string[];
   StatusCode: number;
   Token: string;
-  UserName: string;
-  expiryDate: string;
-  RoleNames: string[];
+
 }
 
 const SignIn = () => {
   const navigate = useNavigate();
   const [user, setUser] = useAtom(userAtom);
+
+  useEffect(()=>{
+    if(user && user?.Token && user?.UserType === 'Lecturer' ){
+      navigate('/profile-update')
+    }
+  },[])
 
   const login = async (data: Payload) => {
     return (await apiCall().post("/Authentication/Authenticate", data))
@@ -62,17 +65,14 @@ const SignIn = () => {
           // });
 
           setUser({
-            AdminUserHasChangePassword: data?.AdminUserHasChangePassword,
-            FirstName: data?.FirstName,
-            Id: data?.Id,
+            UserType: data?.UserType,
             Message: data?.Message,
-            RoleIds: data?.RoleIds,
+            UserId: data?.UserId,
             StatusCode: data?.StatusCode,
             Token: data?.Token,
-            UserName: data?.UserName,
-            expiryDate: data?.expiryDate,
-            RoleNames: data?.RoleNames,
+           
           });
+          {data?.UserType === 'Lecturer' ? navigate('/profile-update') : navigate('/overview')}
         },
       });
     } catch (error: any) {
