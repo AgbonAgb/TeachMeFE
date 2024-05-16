@@ -8,22 +8,45 @@ import { useNavigate } from "react-router-dom";
 import { useAtom } from "jotai";
 import { userAtom } from "../../../utils/store";
 import { useMutation, useQueries } from "@tanstack/react-query";
-import apiCall from "../../../utils/apiCall";
+import apiCall from "../../../utils/apiCallFormData";
 import Layout from "../../../layout/layout";
 import { useState } from "react";
 import { ReactComponent as Back } from "../../../../assets/keyboard_backspace.svg";
 import { AxiosError } from "axios";
+import { ReactComponent as FileUploaded } from "../../../../assets/uploadedFile.svg";
+import { ReactComponent as Close } from "../../../../assets/close (1).svg";
+import Upload from "../../../../custom/upload/upload";
 
 interface Payload {
-  BankName: string;
-  AccountNumber: string;
-  AccountName: string;
-  AccountType: string;
+  ContentId?: string;
+  Title: string;
+  Description: string;
+  LecturerId?: string;
+  Amount: string;
+  CategoryId: string;
+  MaterialTypeId: string;
+  ExpirationDays: string;
+  PublishedDate: string;
+  ContentFile: any;
+  LinkName: string;
+  ContentUrl?: string;
 }
 
 const ContentUpload = () => {
   const navigate = useNavigate();
   const [user, setUser] = useAtom(userAtom);
+  const [materials, setMaterials] = useState<File | null>(null);
+
+  const handleMaterialsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files;
+    if (file) {
+      setMaterials(file[0]);
+      formik.setFieldValue("materials", file[0]);
+    }
+  };
+  const cancelIdMaterial = () => {
+    setMaterials(null);
+  };
 
   const getMaterialType = async () => {
     const url = "/Lecturer/MaterialType";
@@ -36,7 +59,7 @@ const ContentUpload = () => {
 
     return await apiCall().get(url);
   };
-  const [getMaterialTypeQuery,getCategoryQuery ] = useQueries({
+  const [getMaterialTypeQuery, getCategoryQuery] = useQueries({
     queries: [
       {
         queryKey: ["get-all-material-type"],
@@ -53,7 +76,6 @@ const ContentUpload = () => {
     ],
   });
 
-
   const getMaterialError = getMaterialTypeQuery?.error as AxiosError;
   const getMaterialErrorMessage = getMaterialError?.message;
 
@@ -64,7 +86,7 @@ const ContentUpload = () => {
   const getCategoryData = getCategoryQuery?.data?.data?.Data;
 
   const materialOptions =
-  getMaterialData && getMaterialData?.length > 0 ? (
+    getMaterialData && getMaterialData?.length > 0 ? (
       getMaterialData?.map((item: any, index: number) => (
         <option value={item?.Id} key={index + 1}>
           {item?.Name}
@@ -80,7 +102,7 @@ const ContentUpload = () => {
       </option>
     );
 
-    const categoryOptions =
+  const categoryOptions =
     getCategoryData && getCategoryData?.length > 0 ? (
       getCategoryData?.map((item: any, index: number) => (
         <option value={item?.CategoryId} key={index + 1}>
@@ -96,37 +118,43 @@ const ContentUpload = () => {
           : ""}
       </option>
     );
-    console.log(getMaterialTypeQuery?.data, 'dta')
+  console.log(getMaterialTypeQuery?.data, "dta");
 
-  const AccountDetailsApi = async (data: Payload) => {
-    return (await apiCall().post("/Authentication/Authenticate", data))?.data;
+  const UploadContentApi = async (data: Payload) => {
+    return (await apiCall().post("/Lecturer/UploadContent", data))?.data;
   };
 
-  const AccountDetailsMutation = useMutation({
-    mutationFn: AccountDetailsApi,
+  const UploadContentMutation = useMutation({
+    mutationFn: UploadContentApi,
     mutationKey: ["upload-content"],
   });
 
-  const AccountDetailsHandler = async (
+  const UploadContentHandler = async (
     data: FormikValues,
     resetForm: () => void
   ) => {
     const loginUser: Payload = {
-      BankName: data?.BankName?.trim(),
-      AccountNumber: data?.AccountNumber?.trim(),
-      AccountName: data?.AccountName?.trim(),
-      AccountType: data?.AccountType?.trim(),
+      Title: data?.Title?.trim(),
+      Description: data?.Description?.trim(),
+      LecturerId: user?.UserId,
+      Amount: data?.Amount?.trim(),
+      CategoryId: data?.CategoryId?.trim(),
+      MaterialTypeId: data?.MaterialTypeId?.trim(),
+      ExpirationDays: data?.ExpirationDays?.trim(),
+      PublishedDate: data?.PublishDate?.trim(),
+
+      ContentFile: materials,
+      LinkName: data?.LinkName?.trim(),
+      // ContentUrl: data?.Description?.trim(),
     };
 
     try {
-      await AccountDetailsMutation.mutateAsync(loginUser, {
+      await UploadContentMutation.mutateAsync(loginUser, {
         onSuccess: (data) => {
           // showNotification({
           //   message: "User Log in successful",
           //   type: "success",
           // });
-
-
         },
       });
     } catch (error: any) {
@@ -138,30 +166,6 @@ const ContentUpload = () => {
     }
   };
 
-  const StatusOptions = [
-    {
-      name: "Approved",
-      value: true,
-    },
-    {
-      name: "Rejected",
-      value: false,
-    },
-    {
-      name: "Pending",
-      value: " ",
-    },
-  ];
-
-  const statusData: any =
-    StatusOptions &&
-    StatusOptions?.length > 0 &&
-    StatusOptions?.map((item: any, index: number) => (
-      <option value={item?.value} key={index}>
-        {item?.name}
-      </option>
-    ));
-
   const validationRules = Yup.object().shape({
     Email: Yup.string()
       .required("Email Address is required")
@@ -172,56 +176,68 @@ const ContentUpload = () => {
 
   const formik = useFormik<FormikValues>({
     initialValues: {
-      BankName: "",
-      AccountNumber: "",
-      AccountName: "",
-      AccountType: "",
+      Title: "",
+      Description: "",
+      LecturerId: "",
+      Amount: "",
+      CategoryId: "",
+      MaterialTypeId: "",
+      ExpirationDays: "",
+      PublishedDate: "",
+      materials: "",
+      LinkName: "",
+      // ContentUrl: '',
     },
     onSubmit: (data, { resetForm }) => {
-      AccountDetailsHandler(data, resetForm);
+      UploadContentHandler(data, resetForm);
     },
-    validationSchema: validationRules,
+    // validationSchema: validationRules,
   });
 
   return (
-
     <main className={styles.main}>
       <FormikProvider value={formik}>
-        <Back onClick={()=>{navigate('/content-management')}}/>
+        <Back
+          onClick={() => {
+            navigate("/content-management");
+          }}
+        />
         <Layout heading="Content Upload" />
 
         <form className={styles.form} onSubmit={formik.handleSubmit}>
           <Field
             as={Input}
-            name="ContentName"
+            name="Title"
             placeholder="Enter Content Name"
             displayInput="text"
             label="Content Name"
           />
-          
-          {/* <Field
-            as={Input}
-            name="AccountNumber"
-            placeholder="Enter 10 digit Account Number"
-            displayInput="text"
-            label="Bank Account Number"
-          />
-          <Field
-            as={Input}
-            name="AccountName"
-            placeholder="Enter Account Name"
-            displayInput="text"
-            label="Account Name"
-          /> */}
+
           <Field
             as={CustomSelect}
-            name="Category"
+            name="CategoryId"
             placeholder="Select Category"
             displayInput="text"
             label="Category"
           >
             {categoryOptions}
           </Field>
+
+          <Field
+            as={Input}
+            name="Amount"
+            placeholder="Enter Amount"
+            displayInput="text"
+            label="Amount"
+          />
+          <Field
+            as={Input}
+            name="LinkName"
+            placeholder="Enter LinkName"
+            displayInput="text"
+            label="LinkName"
+          />
+
           <Field
             as={Input}
             name="Description"
@@ -231,7 +247,7 @@ const ContentUpload = () => {
           />
           <Field
             as={CustomSelect}
-            name="MaterialType"
+            name="MaterialTypeId"
             placeholder="Select Material Type"
             displayInput="text"
             label="Material Type"
@@ -240,18 +256,45 @@ const ContentUpload = () => {
           </Field>
           <Field
             as={Input}
-            name="ExpirationLength"
+            name="ExpirationDays"
             placeholder="Enter Expiration Length"
             displayInput="text"
             label="Expiration Length"
           />
-           <Field
+          <Field
             as={Input}
-            name="ExpirationLength"
+            name="PublishedDate"
             placeholder="Select Date"
             displayInput="date"
             label="Publish Date"
           />
+          {materials?.name === null || materials?.name === undefined ? (
+            <>
+              <Upload
+                // label="Valid ID Card"
+                description={<p>Valid ID Card</p>}
+                accept="pdf"
+                //  .jpeg, .png,.pdf,
+                // .JPEG,.PDF,.PNG,.doc,.docx,.DOC,.DOCX"
+                // accept="img,pdf"
+                allowedFormats={["max:10mb (docx, pdf)"]}
+                onChange={handleMaterialsChange}
+                fileName={materials?.name}
+              />
+              {formik.touched.materials && formik.errors.materials ? (
+                <div className="error">{`${formik.errors.materials.toString()}`}</div>
+              ) : null}
+            </>
+          ) : (
+            <div className={styles.uploaded}>
+              <FileUploaded />
+              <span>{materials?.name}</span>
+              {materials && (
+                <span>{(materials?.size / 1024).toFixed(2)}MB</span>
+              )}
+              <Close className={styles.pointer} onClick={cancelIdMaterial} />
+            </div>
+          )}
 
           <section className={styles.btnSection}>
             <Button className={styles.btn} text={"Save"} />
