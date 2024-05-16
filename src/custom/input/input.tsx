@@ -50,7 +50,7 @@ const Input = (props: InputProps & FieldHookConfig<string> & any) => {
         </div>
       )}
 
-      {displayInput === inputTypes[2] && <textarea className={styles.input} {...field} placeholder={placeholder} rows={3} style={{ display: "block", width: "100%" }} />}
+      {displayInput === inputTypes[2] && <textarea className={styles.input} {...field} placeholder={placeholder} rows={4} style={{ display: "block", width: "100%" }} />}
 
       {meta.touched && meta.error && <div className={styles.error}>{meta.error}</div>}
     </div>

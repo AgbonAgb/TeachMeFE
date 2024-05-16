@@ -35,20 +35,20 @@ const Sidebar = () => {
           </span>
           Search Materials
         </NavLink>
-        <NavLink className={({ isActive }) => (isActive ? styles.activeLink : "")} to={"/loan-history"}>
+        <NavLink className={({ isActive }) => (isActive ? styles.activeLink : "")} to={"/my-paid-materials"}>
           <span>
             {" "}
             <Book />
           </span>
           My Paid Materials
         </NavLink>
-        <NavLink className={({ isActive }) => (isActive ? styles.activeLink : "")} to={"/loan-history"}>
+        <NavLink className={({ isActive }) => (isActive ? styles.activeLink : "")} to={"/messages"}>
           <span>
             <Chat />
           </span>
           Message Lecturers
         </NavLink>
-        <NavLink className={({ isActive }) => (isActive ? styles.activeLink : "")} to={"/loan-history"}>
+        <NavLink className={({ isActive }) => (isActive ? styles.activeLink : "")} to={"/change-password"}>
           <span>
             {" "}
             <Key />
