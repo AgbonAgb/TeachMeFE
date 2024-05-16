@@ -18,7 +18,7 @@ const SignUp: React.FC = () => {
     <>
       <div className={styles.header}>
         <h1 className={styles.welcome}>Welcome</h1>
-        <p>Create your account</p>
+     { value === "lecturer" ? <p>Log in to your account</p> :  <p>Create your account</p>}
       </div>
 
       <Radio.Group onChange={onChange} value={value} style={{ flexWrap: "nowrap", display: "flex" }}>
@@ -35,7 +35,7 @@ const SignUp: React.FC = () => {
       </div>
 
       <p className={styles.para}>
-        Already have an account? <Link to={"/"} className={styles.link}>Sign In</Link>
+        Already have an account? <Link to={"/sign-in"} className={styles.link}>Sign In</Link>
       </p>
     </>
   );

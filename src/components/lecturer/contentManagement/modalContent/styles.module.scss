@@ -1,0 +1,35 @@
+.form {
+    // margin-block-start: 2rem;
+    // width: 50%;
+    @media (max-width: 540px) {
+      width: 100%;
+    }
+  }
+  
+  .group {
+    padding-block-start: 2rem;
+    line-height: 3rem;
+  }
+  
+  .btnSection {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+  .terms {
+    cursor: pointer;
+    font-weight: 700;
+  }
+  .uploaded {
+    font-size: 1.6rem;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    font-weight: 400;
+    gap: 2rem;
+    margin-block: 1rem;
+  }
+  .pointer {
+    cursor: pointer;
+  }
+  

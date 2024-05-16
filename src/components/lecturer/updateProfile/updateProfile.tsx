@@ -65,10 +65,7 @@ const LecturerProfile = () => {
       idCard:idCard ,
 
     };
-    // if (isChecked) {
-    //   localStorage.setItem("username-cipm", formik?.values?.Email);
-    //   localStorage.setItem("password-cipm", formik?.values?.Password);
-    // }
+ 
 
     try {
       await UpdateProfileMutation.mutateAsync(loginUser, {
@@ -125,8 +122,9 @@ const LecturerProfile = () => {
     validationSchema: validationRules,
   });
   return (
+    <main>
+
     <FormikProvider value={formik}>
-      <main>
         <Layout heading="Update Profile" />
 
         <form className={styles.form} onSubmit={formik.handleSubmit}>
@@ -230,8 +228,9 @@ const LecturerProfile = () => {
             <Button className={styles.btn} text={"Update"} />
           </section>
         </form>
-      </main>
     </FormikProvider>
+    </main>
+
   );
 };
 

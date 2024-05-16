@@ -11,6 +11,7 @@ interface SelectProps extends React.InputHTMLAttributes<HTMLSelectElement> {
   isLoading?: boolean;
   isError?: boolean;
   error?: string;
+  
 }
 
 const CustomSelect: React.FC<SelectProps & FieldHookConfig<string> & any> = (props) => {

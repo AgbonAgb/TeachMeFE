@@ -9,6 +9,8 @@ import { useAtom } from "jotai";
 import { userAtom } from "../../utils/store";
 import { useMutation } from "@tanstack/react-query";
 import apiCall from "../../utils/apiCall";
+import { Modal } from "antd";
+import SuccessModal from "../signUps/modalContent/successModal";
 
 interface Payload {
   Email: string;
@@ -100,8 +102,8 @@ const SignIn = () => {
     validationSchema: validationRules,
   });
   return (
-    <FormikProvider value={formik}>
-      <main className={styles.main}>
+    <main className={styles.main}>
+      <FormikProvider value={formik}>
         <section className={styles.section}>
           <div className={styles.card}>
             <div className={styles.header}>
@@ -136,17 +138,30 @@ const SignIn = () => {
                 </Link>
               </div>
 
-              <Button  text={"Login"} />
+              <Button disabled={loginMutation?.isPending} text={loginMutation?.isPending ? "Loading..." : "Login"} />
 
-              <p >
+              <p>
                 Don’t have an account?{" "}
-                <span onClick={()=>{navigate('/')}} className={styles.signUp}>Sign Up</span>{" "}
+                <span
+                  onClick={() => {
+                    navigate("/");
+                  }}
+                  className={styles.signUp}
+                >
+                  Sign Up
+                </span>{" "}
               </p>
             </form>
           </div>
+
+          
+
         </section>
-      </main>
-    </FormikProvider>
+
+        
+      </FormikProvider>
+      
+    </main>
   );
 };
 

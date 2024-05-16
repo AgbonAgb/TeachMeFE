@@ -5,6 +5,10 @@ import Button from "../../../custom/button/button";
 import { useNavigate } from "react-router-dom";
 import apiCall from "../../utils/apiCall";
 import { useMutation } from "@tanstack/react-query";
+import { Modal } from "antd";
+import { ReactComponent as Cancel } from "../../../assets/cancel.svg";
+import { useState } from "react";
+import SuccessModal from "./modalContent/successModal";
 
 interface Payload {
   FirstName: string;
@@ -15,6 +19,10 @@ interface Payload {
 }
 const LecturerSignUp = () => {
   const navigate = useNavigate();
+  const [showModal, setShowModal] = useState(true);
+  const handleShowModal = ()=>{
+    setShowModal(true)
+  }
 
   const lecturerSignUpApi = async (data: Payload) => {
     return (await apiCall().post("/Authentication/RegisterLecturer", data))
@@ -49,6 +57,7 @@ const LecturerSignUp = () => {
           //   message: "User Log in successful",
           //   type: "success",
           // });
+          handleShowModal()
         },
       });
     } catch (error: any) {
@@ -57,6 +66,7 @@ const LecturerSignUp = () => {
       //     error?.response?.data?.Message || error?.message || " Login Failed",
       //   type: "error",
       // });
+      
     }
   };
 
@@ -71,6 +81,10 @@ const LecturerSignUp = () => {
       /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}/,
       "The password must contain a mix of uppercase letters, lowercase letters, and numbers."
     ),
+    ConfirmPassword: Yup.string()
+    .required("Confirm password is required")
+    .oneOf([Yup.ref("Password")], "Passwords must match")
+    .required("Confirm password is required"),
     FirstName: Yup.string().required("First Name is required"),
     LastName: Yup.string().required("Last Name is required"),
     PhoneNumber: Yup.string().required("Phone Number is required"),
@@ -83,6 +97,7 @@ const LecturerSignUp = () => {
       Email: "",
       PhoneNumber: "",
       Password: "",
+      ConfirmPassword: "",
     },
     onSubmit: (data, { resetForm }) => {
       lecturerSignUpHandler(data, resetForm);
@@ -91,7 +106,8 @@ const LecturerSignUp = () => {
   });
 
   return (
-    <FormikProvider value={formik}>
+    <main>
+      <FormikProvider value={formik}>
       <form onSubmit={formik.handleSubmit}>
         <Field
           as={Input}
@@ -128,14 +144,41 @@ const LecturerSignUp = () => {
           displayInput="password"
           label="Password"
         />
-        <Button text={"Create Account"} />
+         <Field
+          as={Input}
+          name="ConfirmPassword"
+          placeholder=" Confirm your Password"
+          displayInput="password"
+          label="Confirm Password"
+        />
+        <Button disabled={lecturerSignUpMutation?.isPending} text={lecturerSignUpMutation?.isPending ? "Creating..." : "Create Account"} />
       </form>
 
-      <p>
+      {/* <p>
       Already have an account? 
         <span onClick={()=>{navigate('/sign-in')}} style={{ fontWeight: "700" }}>Sign Up</span>{" "}
-      </p>
+      </p> */}
+
+<Modal
+    open={showModal}
+    footer=""
+    onCancel={() => setShowModal(false)}
+    centered
+    closeIcon={<Cancel />}
+    className="modal"
+    // width={'25%'}
+
+
+  >
+    <SuccessModal/>
+  
+  
+  </Modal>
     </FormikProvider>
+
+
+    </main>
+    
   );
 };
 
