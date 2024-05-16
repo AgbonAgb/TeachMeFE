@@ -1,8 +1,8 @@
 import styles from "./styles.module.scss";
 // import avatar from "../../assets/user.png";
 import { ReactComponent as Bell } from "../../assets/bell.svg";
-import { ReactComponent as Menu } from "../assets/menu.svg";
-import { ReactComponent as Avatar } from "../assets/user.svg";
+import { ReactComponent as Menu } from "../../assets/menu.svg";
+import { ReactComponent as Avatar } from "../../assets/user.svg";
 // import { ReactComponent as ArrowDown } from "../../assets/arrow.svg";
 import { ReactComponent as Logout } from "../../assets/logout.svg";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
