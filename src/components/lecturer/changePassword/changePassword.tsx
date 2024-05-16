@@ -11,6 +11,9 @@ import { useMutation } from "@tanstack/react-query";
 import apiCall from "../../utils/apiCall";
 import Layout from "../../layout/layout";
 import { useState } from "react";
+import { Modal } from "antd";
+import { ReactComponent as Cancel } from "../../../assets/cancel.svg";
+import SuccessModal from "./modalContent/successModal";
 
 interface Payload {
   OldPassword: string;
@@ -20,7 +23,10 @@ interface Payload {
 const ChangePassword = () => {
   const navigate = useNavigate();
   const [user, setUser] = useAtom(userAtom);
-
+  const [showModal, setShowModal] = useState(true);
+  const handleShowModal = ()=>{
+    setShowModal(true)
+  }
   const AccountDetailsApi = async (data: Payload) => {
     return (await apiCall().post("/Authentication/Authenticate", data))?.data;
   };
@@ -46,6 +52,8 @@ const ChangePassword = () => {
           //   message: "User Log in successful",
           //   type: "success",
           // });
+          handleShowModal()
+
         },
       });
     } catch (error: any) {
@@ -126,6 +134,22 @@ const ChangePassword = () => {
           </section>
         </form>
       </FormikProvider>
+
+      <Modal
+    open={showModal}
+    footer=""
+    onCancel={() => setShowModal(false)}
+    centered
+    closeIcon={<Cancel />}
+    className="modal"
+    // width={'25%'}
+
+
+  >
+    <SuccessModal/>
+  
+  
+  </Modal>
     </main>
   );
 };
