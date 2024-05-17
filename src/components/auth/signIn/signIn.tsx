@@ -14,23 +14,32 @@ import { useEffect } from "react";
 import { errorMessage } from "../../utils/errorMessage";
 import { LoginCall } from "../../../requests";
 
+interface Payload {
+  Email: string;
+  Password: string;
+}
+interface LoginData {
+  UserId: string;
+  UserType: string;
+  Message: string;
+  StatusCode: number;
+  Token: string;
+}
+
 const SignIn = () => {
   const { notification } = App.useApp();
   const navigate = useNavigate();
   const [user, setUser] = useAtom(userAtom);
 
   useEffect(() => {
-    if (user && user?.Token && user?.UserType === "Lecturer") {
+    if (user && user?.Token && user?.UserType?.toLowerCase() === "lecturer") {
       navigate("/lecturer-profile");
-    } else if (user && user?.Token && user?.UserType === "Student") {
+    } else if (user && user?.Token && user?.UserType?.toLowerCase() === "student") {
       navigate("/overview");
     }
-  }, []);
+  }, [user]);
 
-  // const login = async (data: LoginPayload) => {
-  //   return (await apiCall().post("/Authentication/Authenticate", data))
-  //     ?.data as LoginData;
-  // };
+
 
   const loginMutation = useMutation({
     mutationFn: LoginCall,
@@ -50,24 +59,30 @@ const SignIn = () => {
     try {
       await loginMutation.mutateAsync(loginUser, {
         onSuccess: (data) => {
-          notification.success({
-            message: "Success",
-            description: data.Message,
-          });
-
-          setUser({
-            UserType: data?.UserType,
-            Message: data?.Message,
-            UserId: data?.UserId,
-            StatusCode: data?.StatusCode,
-            Token: data?.Token,
-          });
-          {
-            data?.UserType === "Lecturer"
-              ? navigate("/lecturer-profile"):
-              data?.UserType === "Student" ?
-              navigate("/overview") :  navigate("/");
+          if (data?.StatusCode > 399) {
+            notification.error({
+              message: "Error",
+              description: data?.Message,
+            });
+            return;
           }
+           else {
+            setUser({
+              UserType: data?.UserType,
+              Message: data?.Message,
+              UserId: data?.UserId,
+              StatusCode: data?.StatusCode,
+              Token: data?.Token,
+            });
+            // {
+            //   data?.UserType?.toLowerCase() === "lecturer" ? navigate("/profile-update") : navigate("/overview");
+            // }
+            notification.success({
+              message: "Success",
+              description: data?.Message,
+            });
+          }
+         
         },
       });
     } catch (error: any) {
@@ -79,9 +94,7 @@ const SignIn = () => {
   };
 
   const validationRules = Yup.object().shape({
-    Email: Yup.string()
-      .required("Email Address is required")
-      .email("Invalid email Address"),
+    Email: Yup.string().required("Email Address is required").email("Invalid email Address"),
     Password: Yup.string().required("Password is required"),
   });
 
@@ -105,20 +118,8 @@ const SignIn = () => {
               <p>Create your account</p>
             </div>
             <form className={styles.form} onSubmit={formik.handleSubmit}>
-              <Field
-                as={Input}
-                name="Email"
-                placeholder="Enter Email Address"
-                displayInput="text"
-                label="Email Address"
-              />
-              <Field
-                as={Input}
-                name="Password"
-                placeholder=" Enter Password"
-                displayInput="password"
-                label="Password"
-              />
+              <Field as={Input} name="Email" placeholder="Enter Email Address" displayInput="text" label="Email Address" />
+              <Field as={Input} name="Password" placeholder=" Enter Password" displayInput="password" label="Password" />
 
               <div className={styles.group}>
                 <span style={{ display: "flex" }}>
