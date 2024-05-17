@@ -6,7 +6,7 @@ import Button from "../../../custom/button/button";
 import styles from "./styles.module.scss";
 import { useNavigate } from "react-router-dom";
 import { useAtom } from "jotai";
-import { userAtom } from "../../utils/store";
+import { userAtom } from "../../../store/store";
 import { useMutation } from "@tanstack/react-query";
 import apiCall from "../../utils/apiCall";
 import Layout from "../../layout/layout";
