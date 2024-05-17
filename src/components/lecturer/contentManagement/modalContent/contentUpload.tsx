@@ -7,7 +7,7 @@ import styles from "./styles.module.scss";
 import { useNavigate } from "react-router-dom";
 import { useAtom } from "jotai";
 import { userAtom } from "../../../utils/store";
-import { useMutation, useQueries } from "@tanstack/react-query";
+import { useMutation, useQueries, useQueryClient } from "@tanstack/react-query";
 import apiCall from "../../../utils/apiCallFormData";
 import Layout from "../../../layout/layout";
 import { useState } from "react";
@@ -26,7 +26,7 @@ interface Payload {
   CategoryId: string;
   MaterialTypeId: string;
   ExpirationDays: string;
-  PublishedDate: string;
+  PublishedDate?: string;
   ContentFile: any;
   LinkName: string;
   ContentUrl?: string;
@@ -39,6 +39,7 @@ const ContentUpload = ({data}:Props) => {
   const navigate = useNavigate();
   const [user, setUser] = useAtom(userAtom);
   const [materials, setMaterials] = useState<File | null>(null);
+  const queryClient = useQueryClient();
 
   console.log(data, 'modal data')
   const handleMaterialsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -138,17 +139,18 @@ const ContentUpload = ({data}:Props) => {
     resetForm: () => void
   ) => {
     const loginUser: Payload = {
-      Title: data?.Title?.trim(),
-      Description: data?.Description?.trim(),
+      Title: data?.Title,
+      Description: data?.Description,
       LecturerId: user?.UserId,
-      Amount: data?.Amount?.trim(),
-      CategoryId: data?.CategoryId?.trim(),
-      MaterialTypeId: data?.MaterialTypeId?.trim(),
-      ExpirationDays: data?.ExpirationDays?.trim(),
-      PublishedDate: data?.PublishDate?.trim(),
-
-      ContentFile: materials,
-      LinkName: data?.LinkName?.trim(),
+      Amount: data?.Amount,
+      CategoryId: data?.CategoryId,
+      MaterialTypeId: data?.MaterialTypeId,
+      ExpirationDays: data?.ExpirationDays,
+      ContentId:data?.ContentId,
+      // PublishedDate: data?.PublishDate?.trim(),
+      ContentUrl: data?.ContentUrl,
+      ContentFile: materials ,
+      LinkName: data?.LinkName,
       // ContentUrl: data?.Description?.trim(),
     };
 
@@ -159,6 +161,8 @@ const ContentUpload = ({data}:Props) => {
           //   message: "User Log in successful",
           //   type: "success",
           // });
+          queryClient.refetchQueries({ queryKey: ["get-all-contents"] });
+
         },
       });
     } catch (error: any) {
@@ -171,15 +175,21 @@ const ContentUpload = ({data}:Props) => {
   };
 
   const validationRules = Yup.object().shape({
-    Email: Yup.string()
-      .required("Email Address is required")
-      .email("Invalid email Address"),
-    Password: Yup.string().required("Password is required"),
-    file: Yup.mixed().required("Required"),
+   
+    Title: Yup.string().required("Title is required"),
+    Description: Yup.string().required("Description is Required"),
+    Amount: Yup.string().required("Amount is Required"),
+    CategoryId: Yup.string().required("Category is Required"),
+    MaterialTypeId: Yup.string().required("Material Type is Required"),
+    ExpirationDays: Yup.string().required("ExpirationDays is Required"),
+    materials: Yup.string().required("materials is Required"),
+    LinkName: Yup.string().required("LinkName is Required"),
+
   });
 
   const formik = useFormik<FormikValues>({
     initialValues: {
+      ContentId:data?.ContentId || '',
       Title: data?.Title  || "",
       Description: data?.Description || "",
       LecturerId:  data?.LecturerId ||"",
@@ -190,7 +200,6 @@ const ContentUpload = ({data}:Props) => {
       // PublishedDate:data?. "",
       materials: "",
       LinkName: data?.LinkName || "",
-      ContentUrl: data?.ContentUrl || '',
     },
     onSubmit: (data, { resetForm }) => {
       UploadContentHandler(data, resetForm);
@@ -265,18 +274,18 @@ const ContentUpload = ({data}:Props) => {
             displayInput="text"
             label="Expiration Length"
           />
-          <Field
+          {/* <Field
             as={Input}
             name="PublishedDate"
             placeholder="Select Date"
             displayInput="date"
             label="Publish Date"
-          />
+          /> */}
           {materials?.name === null || materials?.name === undefined ? (
             <>
               <Upload
                 // label="Valid ID Card"
-                description={<p>Valid ID Card</p>}
+                description={<p>Upload Content</p>}
                 accept="pdf"
                 //  .jpeg, .png,.pdf,
                 // .JPEG,.PDF,.PNG,.doc,.docx,.DOC,.DOCX"
@@ -301,7 +310,7 @@ const ContentUpload = ({data}:Props) => {
           )}
 
           <section className={styles.btnSection}>
-            <Button className={styles.btn} text={"Save"} />
+            <Button disabled={UploadContentMutation?.isPending} className={styles.btn} text={UploadContentMutation?.isPending ?  'Saving' : "Save"} />
           </section>
         </form>
       </FormikProvider>

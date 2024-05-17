@@ -7,13 +7,14 @@ import { useNavigate } from "react-router-dom";
 import Checkbox from "../../../custom/checkbox/checkbox";
 import { useAtom } from "jotai";
 import { userAtom } from "../../utils/store";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import apiCall from "../../utils/apiCallFormData";
 import Layout from "../../layout/layout";
 import Upload from "../../../custom/upload/upload";
 import { useState } from "react";
 import { ReactComponent as FileUploaded } from "../../../assets/uploadedFile.svg";
 import { ReactComponent as Close } from "../../../assets/close (1).svg";
+import { AxiosError } from "axios";
 
 interface Payload {
   LecturerProfileId?:string;
@@ -56,6 +57,29 @@ const LecturerProfile = () => {
     setIdCard(null);
   }
 
+
+  const getLecturer = async () => {
+    const url = `/Lecturer/GetLecturer?Id=${user?.UserId}`;
+
+    return await apiCall().get(url);
+  };
+
+  const {
+    data,
+    isLoading,
+    error,
+    isError,
+  } = useQuery({
+    queryKey: ["get-lecturer"],
+    queryFn: getLecturer,
+    refetchOnWindowFocus: false,
+    retry: 0,
+    enabled: true,
+  });
+
+  const LecturerData = data?.data?.Data;
+  const LecturerDataError = error as AxiosError;
+  const LecturerDataErrorMessage = LecturerDataError?.message;
 
   const LecturerProfile = async (data: Payload) => {
     return (await apiCall().post("/Lecturer/UpdateProfile", data))?.data;
