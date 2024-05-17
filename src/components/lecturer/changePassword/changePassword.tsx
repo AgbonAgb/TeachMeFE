@@ -8,7 +8,6 @@ import { useNavigate } from "react-router-dom";
 import { useAtom } from "jotai";
 import { userAtom } from "../../../store/store";
 import { useMutation } from "@tanstack/react-query";
-import apiCall from "../../utils/apiCall";
 import Layout from "../../layout/layout";
 import { useState } from "react";
 import { Modal } from "antd";
@@ -27,43 +26,43 @@ const ChangePassword = () => {
   const handleShowModal = ()=>{
     setShowModal(true)
   }
-  const AccountDetailsApi = async (data: Payload) => {
-    return (await apiCall().post("/Authentication/Authenticate", data))?.data;
-  };
+  // const AccountDetailsApi = async (data: Payload) => {
+  //   return (await apiCall().post("/Authentication/Authenticate", data))?.data;
+  // };
 
-  const AccountDetailsMutation = useMutation({
-    mutationFn: AccountDetailsApi,
-    mutationKey: ["account-details"],
-  });
+  // const AccountDetailsMutation = useMutation({
+  //   mutationFn: AccountDetailsApi,
+  //   mutationKey: ["account-details"],
+  // });
 
-  const AccountDetailsHandler = async (
-    data: FormikValues,
-    resetForm: () => void
-  ) => {
-    const loginUser: Payload = {
-      OldPassword: data?.OldPassword?.trim(),
-      NewPassword: data?.NewPassword?.trim(),
-    };
+  // const AccountDetailsHandler = async (
+  //   data: FormikValues,
+  //   resetForm: () => void
+  // ) => {
+  //   const loginUser: Payload = {
+  //     OldPassword: data?.OldPassword?.trim(),
+  //     NewPassword: data?.NewPassword?.trim(),
+  //   };
 
-    try {
-      await AccountDetailsMutation.mutateAsync(loginUser, {
-        onSuccess: (data) => {
-          // showNotification({
-          //   message: "User Log in successful",
-          //   type: "success",
-          // });
-          handleShowModal()
+  //   try {
+  //     await AccountDetailsMutation.mutateAsync(loginUser, {
+  //       onSuccess: (data) => {
+  //         // showNotification({
+  //         //   message: "User Log in successful",
+  //         //   type: "success",
+  //         // });
+  //         handleShowModal()
 
-        },
-      });
-    } catch (error: any) {
-      // showNotification({
-      //   message:
-      //     error?.response?.data?.Message || error?.message || " Login Failed",
-      //   type: "error",
-      // });
-    }
-  };
+  //       },
+  //     });
+  //   } catch (error: any) {
+  //     // showNotification({
+  //     //   message:
+  //     //     error?.response?.data?.Message || error?.message || " Login Failed",
+  //     //   type: "error",
+  //     // });
+  //   }
+  // };
 
   const validationRules = Yup.object().shape({
     NewPassword: Yup.string()
@@ -94,7 +93,7 @@ const ChangePassword = () => {
       AccountType: "",
     },
     onSubmit: (data, { resetForm }) => {
-      AccountDetailsHandler(data, resetForm);
+      // AccountDetailsHandler(data, resetForm);
     },
     validationSchema: validationRules,
   });

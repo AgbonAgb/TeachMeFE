@@ -14,28 +14,20 @@ import Checkbox from "../../../custom/checkbox/checkbox";
 import { useAtom } from "jotai";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { userAtom } from "../../../store/store";
-import apiCall from "../../utils/apiCallFormData";
 import Layout from "../../layout/layout";
 import Upload from "../../../custom/upload/upload";
 import { useEffect, useState } from "react";
 import { ReactComponent as FileUploaded } from "../../../assets/uploadedFile.svg";
 import { ReactComponent as Close } from "../../../assets/close (1).svg";
 import { AxiosError } from "axios";
+import { App } from "antd";
+import { errorMessage } from "../../utils/errorMessage";
+import { GetLecturerProfile, LecturerProfileUpdateCall } from "../../../requests";
+import { LecturerProfilePayload } from "../../../requests/types";
 
-interface Payload {
-  LecturerProfileId?: string;
-  LecturerId?: string;
-  LinkName: string;
-  NickName?: string;
-  Address: string;
-  PixFile: File | null;
-  IdCardFile: File | null;
-  TermsCondition: boolean;
-  IdCardUrl?: File | null;
-  PixUrl?: File | null;
-}
 
 const LecturerProfile = () => {
+  const { notification } = App.useApp();
   const navigate = useNavigate();
   const [user, setUser] = useAtom(userAtom);
   const [passportPhoto, setPassportPhoto] = useState<File | null>(null);
@@ -65,40 +57,32 @@ const LecturerProfile = () => {
     setIdCard(null);
   };
 
-  const getLecturer = async () => {
-    const url = `/Lecturer/GetLecturer?Id=${user?.UserId}`;
-
-    return await apiCall().get(url);
-  };
+  
 
   const { data, isLoading, error, isError } = useQuery({
     queryKey: ["get-lecturer"],
-    queryFn: getLecturer,
+    queryFn: GetLecturerProfile,
     refetchOnWindowFocus: false,
     retry: 0,
     enabled: true,
   });
 
-  const LecturerData: Payload = data?.data;
+  const LecturerData: LecturerProfilePayload = data?.data;
   const LecturerDataError = error as AxiosError;
   const LecturerDataErrorMessage = LecturerDataError?.message;
 
   console.log(LecturerData, "prppr");
 
-  const LecturerProfile = async (data: Payload) => {
-    return (await apiCall().post("/Lecturer/UpdateProfile", data))?.data;
-  };
-
   const UpdateProfileMutation = useMutation({
-    mutationFn: LecturerProfile,
-    mutationKey: ["Lecturer-Profile"],
+    mutationFn: LecturerProfileUpdateCall,
+    mutationKey: ["Lecturer-Profile-Update"],
   });
 
   const UpdateProfileHandler = async (
     data: FormikValues,
     resetForm: () => void
   ) => {
-    const profile: Payload = {
+    const profile: LecturerProfilePayload = {
       LecturerId: user?.UserId,
       LinkName: data?.LinkName?.trim(),
       // NickName: data?.NickName?.trim(),
@@ -113,18 +97,17 @@ const LecturerProfile = () => {
     try {
       await UpdateProfileMutation.mutateAsync(profile, {
         onSuccess: () => {
-          // showNotification({
-          //   message: "User Log in successful",
-          //   type: "success",
-          // });
+          notification.success({
+            message: "Success",
+            description: data.Message,
+          });
         },
       });
     } catch (error: any) {
-      // showNotification({
-      //   message:
-      //     error?.response?.data?.Message || error?.message || " Login Failed",
-      //   type: "error",
-      // });
+      notification.error({
+        message: "Error",
+        description: errorMessage(error) || "An error occurred",
+      });
     }
   };
 

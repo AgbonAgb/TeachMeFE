@@ -7,6 +7,7 @@ import { useMutation } from "@tanstack/react-query";
 import { RegisterStudentCall } from "../../../requests";
 import { App } from "antd";
 import { errorMessage } from "../../utils/errorMessage";
+import { RegisterStudentPayload } from "../../../requests/types";
 
 const StudentSignUp = () => {
   const { notification } = App.useApp();
