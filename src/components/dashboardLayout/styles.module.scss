@@ -25,12 +25,13 @@
 }
 
 .mainContent {
-  width: 100%;
+  max-width:100%;
   display: flex;
   flex-direction: column;
   // padding-inline-start: 25.3rem;
   margin: 4rem;
   background-color: #F2F2F2;
+  overflow-x: hidden!important;
 
   @media (max-width: 912px) {
     padding-inline-start: 0;
