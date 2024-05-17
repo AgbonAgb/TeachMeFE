@@ -49,7 +49,7 @@ function App() {
       <Route element={<LecturerProfile />} path="/profile-update" />
       <Route element={<LecturerAccountDetails />} path="/setup-bank" />
       <Route element={<LecturerContentManagement />} path="/content-management" />
-      <Route element={<LecturerUploadContent />} path="/upload-content" />
+      <Route element={<LecturerUploadContent/>} path="/upload-content" />
       <Route element={<LecturerSubscriptions />} path="/my-subscription" />
       <Route element={<LecturerMessage />} path="/messages" />
       <Route element={<LecturerChangePassword />} path="/change-password" />

@@ -20,7 +20,7 @@ const Input = (props: InputProps & FieldHookConfig<string> & any) => {
   const [field, meta] = useField(props);
   const [showPassword, setShowPassword] = useState(false);
 
-  const inputTypes = ["text", "password", "textArea"];
+  const inputTypes = ["text", "password", "textArea", "date"];
 
   const handleShowPassword = () => {
     setShowPassword((prevState) => !prevState);
@@ -50,10 +50,13 @@ const Input = (props: InputProps & FieldHookConfig<string> & any) => {
         </div>
       )}
 
-      {displayInput === inputTypes[2] && <textarea className={styles.input} {...field} placeholder={placeholder} rows={4} style={{ display: "block", width: "100%" }} />}
+      {displayInput === inputTypes[2] && <textarea className={styles.input} {...field} placeholder={placeholder} rows={4} style={{ display: "block", width: "100%" }} disabled={disabled} />}
+
+      {displayInput === inputTypes[3] && <input {...field} className={classNames(styles.input, className)} placeholder={placeholder} type="date" disabled={disabled} {...rest} />}
 
       {meta.touched && meta.error && <div className={styles.error}>{meta.error}</div>}
     </div>
   );
 };
+
 export default Input;

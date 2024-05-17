@@ -12,105 +12,130 @@ import { Field, FormikProvider, FormikValues, useFormik } from "formik";
 import CustomSelect from "../../../custom/select/select";
 import Layout from "../../layout/layout";
 import ContentUpload from "./modalContent/contentUpload";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import apiCall from "../../utils/apiCall";
+import { useQueries } from "@tanstack/react-query";
+import { AxiosError } from "axios";
+import { formatDate } from "../../utils/dateUtils";
+import CustomDropdown from "../../../custom/dropdown/dropdown";
 
 const date = new Date();
 
 const Subscribe = () => {
   const [showSearch, setShowSearch] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [data, setData] = useState({} as any);
+
   const navigate = useNavigate()
 
-  const openUploadModal = (record: any) => {
+  const openViewModal = (record: any) => {
     setShowModal(true);
+    setData(record);
+
   };
+
+  const getContents = async () => {
+    const url = "/Lecturer/GetAllContent";
+
+    return await apiCall().get(url);
+  };
+  const [getContentQuery] = useQueries({
+    queries: [
+      {
+        queryKey: ["get-all-contents-"],
+        queryFn: getContents,
+        retry: 0,
+        refetchOnWindowFocus: false,
+      },
+   
+      
+    ],
+  });
+
+  const getContentError = getContentQuery?.error as AxiosError;
+  const getContentErrorMessage = getContentError?.message;
+  const getContentData = getContentQuery?.data?.data;
+
+console.log(getContentData, 'getContentQuery')
   const column = [
     {
       title: "S/N",
-      dataIndex: "S/N",
-      key: "S/N",
-      render: (text: number) => (
-        <span>
-          {text === date?.getFullYear() ? (
-            <p>
-              {" "}
-              &#x20A6;{text} <span className={styles.current}>Current</span>
-            </p>
-          ) : (
-            <p>&#x20A6;{text}</p>
-          )}
-        </span>
-      ),
-    },
-    {
-      title: "Content ID",
       dataIndex: "ContentId",
       key: "ContentId",
-      render: (text: string) => <span>&#x20A6;{text}</span>,
+      
+      
     },
+   
     {
       title: "Title",
       dataIndex: "Title",
       key: "Title",
-      render: (text: string) => (
-        <span className={styles.balance}>&#x20A6;{text}</span>
-      ),
+    
     },
     {
       title: "Category",
-      dataIndex: "Category",
-      key: "Category",
-      render: (text: string) => (
-        <span className={styles.balance}>&#x20A6;{text}</span>
-      ),
+      dataIndex: "CategoryId",
+      key: "CategoryId",
+      
     },
     {
       title: "Description",
       dataIndex: "Description",
       key: "Description",
+     
+    },
+    {
+      title: "Amount",
+      dataIndex: "Amount",
+      key: "Amount",
       render: (text: string) => (
         <span className={styles.balance}>&#x20A6;{text}</span>
       ),
+     
     },
     {
       title: "Material Type",
-      dataIndex: "MaterialType",
-      key: "MaterialType",
-      render: (text: string) => (
-        <span className={styles.balance}>&#x20A6;{text}</span>
-      ),
+      dataIndex: "MaterialTypeId",
+      key: "MaterialTypeId",
+      // 
     },
     {
       title: "Expiry Days",
-      dataIndex: "ExpiryDays",
-      key: "ExpiryDays",
-      render: (text: string) => (
-        <span className={styles.balance}>&#x20A6;{text}</span>
-      ),
+      dataIndex: "ExpirationDays",
+      key: "ExpirationDays",
+      
     },
     {
       title: "Publish Date",
-      dataIndex: "PublishDate",
-      key: "PublishDate",
+      dataIndex: "PublishedDate",
+      key: "PublishedDate",
       render: (text: string) => (
-        <span className={styles.balance}>&#x20A6;{text}</span>
+        <span >{formatDate(text)}</span>
       ),
+    
     },
     {
       title: "Actions",
       dataIndex: "actions",
       render: (_: any, record: any) => (
         <span style={{ display: "flex", gap: "1rem" }}>
-          <Tooltip placement="bottom" title={"View"} color="#335642">
-            <Ellipsis
-              // onClick={() => openViewModal(record)}
-              style={{ cursor: "pointer" }}
-            />
-          </Tooltip>
+          <CustomDropdown
+            placement="bottom"
+            dropdownButton={<Ellipsis style={{ cursor: "pointer" }} />}
+            dropdownContent={
+              <>
+                <Link to={""}  onClick={() => openViewModal(record)}>Edit</Link>
+                <Link to={"#"} onClick={() => openViewModal(record)}>
+                  Delete
+                </Link>
+              </>
+            }
+          />
         </span>
       ),
     },
   ];
+  console.log(data, 'data')
   const formik = useFormik<FormikValues>({
     initialValues: {},
     onSubmit: (value: any) => {},
@@ -141,7 +166,7 @@ const Subscribe = () => {
 
         <Table
           columns={column}
-          dataSource={data}
+          dataSource={getContentData}
           pagination={false}
           className={styles.row}
           rowKey={"DueYear"}
@@ -172,7 +197,7 @@ const Subscribe = () => {
               </FormikProvider>
             </div>
           </div> */}
-          <ContentUpload/>
+          <ContentUpload data={data}/>
         </Modal>
       </div>
     </section>

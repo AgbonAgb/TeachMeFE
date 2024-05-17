@@ -31,12 +31,16 @@ interface Payload {
   LinkName: string;
   ContentUrl?: string;
 }
+interface Props{
+  data?:Payload
+}
 
-const ContentUpload = () => {
+const ContentUpload = ({data}:Props) => {
   const navigate = useNavigate();
   const [user, setUser] = useAtom(userAtom);
   const [materials, setMaterials] = useState<File | null>(null);
 
+  console.log(data, 'modal data')
   const handleMaterialsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files;
     if (file) {
@@ -176,17 +180,17 @@ const ContentUpload = () => {
 
   const formik = useFormik<FormikValues>({
     initialValues: {
-      Title: "",
-      Description: "",
-      LecturerId: "",
-      Amount: "",
-      CategoryId: "",
-      MaterialTypeId: "",
-      ExpirationDays: "",
-      PublishedDate: "",
+      Title: data?.Title  || "",
+      Description: data?.Description || "",
+      LecturerId:  data?.LecturerId ||"",
+      Amount: data?.Amount || "",
+      CategoryId:data?.CategoryId || "",
+      MaterialTypeId: data?.MaterialTypeId || "",
+      ExpirationDays: data?.ExpirationDays || "",
+      // PublishedDate:data?. "",
       materials: "",
-      LinkName: "",
-      // ContentUrl: '',
+      LinkName: data?.LinkName || "",
+      ContentUrl: data?.ContentUrl || '',
     },
     onSubmit: (data, { resetForm }) => {
       UploadContentHandler(data, resetForm);
@@ -242,7 +246,7 @@ const ContentUpload = () => {
             as={Input}
             name="Description"
             placeholder="Enter Description"
-            displayInput="text"
+            displayInput="textArea"
             label="Description"
           />
           <Field
