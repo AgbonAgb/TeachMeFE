@@ -12,8 +12,6 @@ import LecturerSubscriptions from "./components/lecturer/mySubscriptions/subscri
 import LecturerMessage from "./components/lecturer/messages/message";
 import LecturerChangePassword from "./components/lecturer/changePassword/changePassword";
 import LecturerPayment from "./components/lecturer/payment/payment";
-
-
 import DashboardLayout from "./components/dashboardLayout/dashboardLayout";
 import Overview from "./components/student/overview/overview";
 import Subscribe from "./components/student/subscribe/subscribe";
@@ -42,25 +40,20 @@ function App() {
         <Route element={<SendMessage />} path="/send-message" />
         <Route element={<MessagesResponse />} path="/message/view" />
         <Route element={<ChangePassword />} path="/change-password" />
-      
       </Route>
 
       <Route element={<LecturerDashboardLayout />}>
-      <Route element={<LecturerProfile />} path="/profile-update" />
-      <Route element={<LecturerAccountDetails />} path="/setup-bank" />
-      <Route element={<LecturerContentManagement />} path="/content-management" />
-      <Route element={<LecturerUploadContent/>} path="/upload-content" />
-      <Route element={<LecturerSubscriptions />} path="/my-subscription" />
-      <Route element={<LecturerMessage />} path="/messages" />
-      <Route element={<LecturerChangePassword />} path="/change-password" />
-      <Route element={<LecturerPayment />} path="/my-payment" />
+        <Route element={<LecturerProfile />} path="/profile-update" />
+        <Route element={<LecturerAccountDetails />} path="/setup-bank" />
+        <Route element={<LecturerContentManagement />} path="/content-management" />
+        <Route element={<LecturerUploadContent />} path="/upload-content" />
+        <Route element={<LecturerSubscriptions />} path="/my-subscription" />
+        <Route element={<LecturerMessage />} path="/messages" />
+        <Route element={<LecturerChangePassword />} path="/change-password" />
+        <Route element={<LecturerPayment />} path="/my-payment" />
 
-       
         <Route element={<LecturerProfile />} path="lecturer-profile" />
-
       </Route>
-
-    
     </Routes>
   );
 }

@@ -6,7 +6,7 @@ import styles from "./styles.module.scss";
 import { Link, useNavigate } from "react-router-dom";
 import Checkbox from "../../../custom/checkbox/checkbox";
 import { useAtom } from "jotai";
-import { userAtom } from "../../utils/store";
+import { userAtom } from "../../../store/store";
 import { useMutation } from "@tanstack/react-query";
 import apiCall from "../../utils/apiCall";
 import { Modal } from "antd";
@@ -142,14 +142,12 @@ const SignIn = () => {
 
               <p>
                 Don’t have an account?{" "}
-                <span
-                  onClick={() => {
-                    navigate("/");
-                  }}
+                <Link to={'/'}
+                
                   className={styles.signUp}
                 >
                   Sign Up
-                </span>{" "}
+                </Link>{" "}
               </p>
             </form>
           </div>

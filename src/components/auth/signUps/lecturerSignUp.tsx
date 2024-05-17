@@ -19,7 +19,7 @@ interface Payload {
 }
 const LecturerSignUp = () => {
   const navigate = useNavigate();
-  const [showModal, setShowModal] = useState(true);
+  const [showModal, setShowModal] = useState(false);
   const handleShowModal = ()=>{
     setShowModal(true)
   }

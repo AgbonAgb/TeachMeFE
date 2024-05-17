@@ -8,7 +8,7 @@ export interface UserData {
     Token?: string;
 }
 
-export const userAtom = atomWithStorage<UserData | undefined>("-teach-me-app-", JSON.parse(localStorage.getItem("-teach-me-app-")!) ?? undefined);
+export const userAtom = atomWithStorage<UserData | undefined>("teach-me-app", JSON.parse(localStorage.getItem("teach-me-app")!) ?? undefined);
 
 
 
