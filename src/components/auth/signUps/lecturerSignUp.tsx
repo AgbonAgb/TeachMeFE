@@ -16,6 +16,7 @@ interface Payload {
   Email: string;
   PhoneNumber: string;
   Password: string;
+  UserName:string
 }
 const LecturerSignUp = () => {
   const navigate = useNavigate();
@@ -44,6 +45,7 @@ const LecturerSignUp = () => {
       Email: data?.Email?.trim(),
       PhoneNumber: data?.PhoneNumber?.trim(),
       Password: data?.Password?.trim(),
+      UserName:data?.UserName,
     };
     // if (isChecked) {
     //   localStorage.setItem("username-cipm", formik?.values?.Email);
@@ -98,6 +100,7 @@ const LecturerSignUp = () => {
       PhoneNumber: "",
       Password: "",
       ConfirmPassword: "",
+      UserName:'',
     },
     onSubmit: (data, { resetForm }) => {
       lecturerSignUpHandler(data, resetForm);
@@ -122,6 +125,13 @@ const LecturerSignUp = () => {
           placeholder="Enter Last Name"
           displayInput="text"
           label="Last Name"
+        />
+         <Field
+          as={Input}
+          name="User Name"
+          placeholder="Enter UserName"
+          displayInput="text"
+          label="UserName"
         />
         <Field
           as={Input}
