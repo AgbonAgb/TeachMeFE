@@ -1,4 +1,10 @@
-import { ErrorMessage, Field, FormikProvider, FormikValues, useFormik } from "formik";
+import {
+  ErrorMessage,
+  Field,
+  FormikProvider,
+  FormikValues,
+  useFormik,
+} from "formik";
 import * as Yup from "yup";
 import Input from "../../../custom/input/input";
 import Button from "../../../custom/button/button";
@@ -8,26 +14,19 @@ import Checkbox from "../../../custom/checkbox/checkbox";
 import { useAtom } from "jotai";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { userAtom } from "../../../store/store";
-import apiCall from "../../utils/apiCallFormData";
 import Layout from "../../layout/layout";
 import Upload from "../../../custom/upload/upload";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ReactComponent as FileUploaded } from "../../../assets/uploadedFile.svg";
 import { ReactComponent as Close } from "../../../assets/close (1).svg";
 import { AxiosError } from "axios";
+import { App } from "antd";
+import { errorMessage } from "../../utils/errorMessage";
+import { GetLecturerProfile, LecturerProfileUpdateCall } from "../../../requests";
 
-interface Payload {
-  LecturerProfileId?:string;
-  LecturerId?:string;
-  LinkName: string;
-  NickName?: string;
-  Address: string;
-  PixFile: File | null;
-  IdCardFile: File | null;
-  TermsCondition:boolean;
-}
 
 const LecturerProfile = () => {
+  const { notification } = App.useApp();
   const navigate = useNavigate();
   const [user, setUser] = useAtom(userAtom);
   const [passportPhoto, setPassportPhoto] = useState<File | null>(null);
@@ -50,75 +49,64 @@ const LecturerProfile = () => {
       formik.setFieldValue("idCard", file[0]);
     }
   };
-  const cancelPhoto=() =>{
+  const cancelPhoto = () => {
     setPassportPhoto(null);
-  }
-  const cancelIdCard=() =>{
+  };
+  const cancelIdCard = () => {
     setIdCard(null);
-  }
-
-
-  const getLecturer = async () => {
-    const url = `/Lecturer/GetLecturer?Id=${user?.UserId}`;
-
-    return await apiCall().get(url);
   };
 
-  const {
-    data,
-    isLoading,
-    error,
-    isError,
-  } = useQuery({
+  
+
+  const { data, isLoading, error, isError } = useQuery({
     queryKey: ["get-lecturer"],
-    queryFn: getLecturer,
+    queryFn: GetLecturerProfile,
     refetchOnWindowFocus: false,
     retry: 0,
     enabled: true,
   });
 
-  const LecturerData = data?.data?.Data;
+  const LecturerData: LecturerProfilePayload = data?.data;
   const LecturerDataError = error as AxiosError;
   const LecturerDataErrorMessage = LecturerDataError?.message;
 
-  const LecturerProfile = async (data: Payload) => {
-    return (await apiCall().post("/Lecturer/UpdateProfile", data))?.data;
-  };
+  console.log(LecturerData, "prppr");
 
   const UpdateProfileMutation = useMutation({
-    mutationFn: LecturerProfile,
-    mutationKey: ["Lecturer-Profile"],
+    mutationFn: LecturerProfileUpdateCall,
+    mutationKey: ["Lecturer-Profile-Update"],
   });
 
-  const UpdateProfileHandler = async (data: FormikValues, resetForm: () => void) => {
-    const profile: Payload = {
-      LecturerId:user?.UserId,
+  const UpdateProfileHandler = async (
+    data: FormikValues,
+    resetForm: () => void
+  ) => {
+    const profile: LecturerProfilePayload = {
+      LecturerId: user?.UserId,
       LinkName: data?.LinkName?.trim(),
       // NickName: data?.NickName?.trim(),
       Address: data?.HouseAddress?.trim(),
-      PixFile:passportPhoto,
-      IdCardFile:idCard ,
-      TermsCondition:data?.isChecked,
-
+      PixFile: passportPhoto,
+      IdCardFile: idCard,
+      TermsCondition: data?.isChecked,
+      // PixUrl:LecturerData?.PixUrl,
+      // IdCardUrl:LecturerData?.IdCardUrl,
     };
- 
 
     try {
       await UpdateProfileMutation.mutateAsync(profile, {
-        onSuccess: (data) => {
-          // showNotification({
-          //   message: "User Log in successful",
-          //   type: "success",
-          // });
-
+        onSuccess: () => {
+          notification.success({
+            message: "Success",
+            description: data.Message,
+          });
         },
       });
     } catch (error: any) {
-      // showNotification({
-      //   message:
-      //     error?.response?.data?.Message || error?.message || " Login Failed",
-      //   type: "error",
-      // });
+      notification.error({
+        message: "Error",
+        description: errorMessage(error) || "An error occurred",
+      });
     }
   };
 
@@ -129,10 +117,15 @@ const LecturerProfile = () => {
     HouseAddress: Yup.string().required("Address is required"),
     passportPhoto: Yup.mixed().required("Passport Photo is Required"),
     idCard: Yup.mixed().required("Id Card is Required"),
-    isChecked: Yup.boolean()
-    .oneOf([true], 'You must accept the terms and conditions'),
-
+    isChecked: Yup.boolean().oneOf(
+      [true],
+      "You must accept the terms and conditions"
+    ),
   });
+  useEffect(() => {
+    formik?.setFieldValue("LinkName", LecturerData?.LinkName);
+    formik?.setFieldValue("HouseAddress", LecturerData?.Address);
+  }, [data]);
 
   const formik = useFormik<FormikValues>({
     initialValues: {
@@ -141,18 +134,17 @@ const LecturerProfile = () => {
       HouseAddress: "",
       passportPhoto: "",
       idCard: "",
-      isChecked:false
+      isChecked: false,
     },
     onSubmit: (data, { resetForm }) => {
       UpdateProfileHandler(data, resetForm);
     },
     validationSchema: validationRules,
   });
-  console.log(formik.errors.isChecked)
+  console.log(LecturerData?.LinkName, "LecturerData?.LinkName");
   return (
     <main>
-
-    <FormikProvider value={formik}>
+      <FormikProvider value={formik}>
         <Layout heading="Update Profile" />
 
         <form className={styles.form} onSubmit={formik.handleSubmit}>
@@ -182,12 +174,8 @@ const LecturerProfile = () => {
               <Upload
                 // label="Upload Passport Picture"
                 description={<p>Upload Passport Picture</p>}
-                accept="pdf"
-                //  .jpeg, .png,.pdf,
-                // .JPEG,.PDF,.PNG,.doc,.docx,.DOC,.DOCX"
-                // accept="img,pdf"
-                allowedFormats={["pdf", "img"]}
-
+                accept="img"
+                allowedFormats={["(jpg, img, png)"]}
                 // allowedFormats={[".docx)"]}
                 // allowedFormats={["max:10mb (docx, pdf)"]}
 
@@ -195,9 +183,7 @@ const LecturerProfile = () => {
                 fileName={passportPhoto?.name}
               />
               {formik.touched.passportPhoto && formik.errors.passportPhoto ? (
-                <div
-                className='error'
-                >{`${formik.errors.passportPhoto.toString()}`}</div>
+                <div className="error">{`${formik.errors.passportPhoto.toString()}`}</div>
               ) : null}
             </>
           ) : (
@@ -207,7 +193,7 @@ const LecturerProfile = () => {
               {passportPhoto && (
                 <span>{(passportPhoto?.size / 1024).toFixed(2)}MB</span>
               )}
-              <Close className={styles.pointer} onClick={cancelPhoto}/>
+              <Close className={styles.pointer} onClick={cancelPhoto} />
             </div>
           )}
 
@@ -217,17 +203,12 @@ const LecturerProfile = () => {
                 // label="Valid ID Card"
                 description={<p>Valid ID Card</p>}
                 accept="pdf"
-                //  .jpeg, .png,.pdf,
-                // .JPEG,.PDF,.PNG,.doc,.docx,.DOC,.DOCX"
-                // accept="img,pdf"
-                allowedFormats={["max:10mb (docx, pdf)"]}
+                allowedFormats={["(jpg, img, png)"]}
                 onChange={handleIdCardChange}
                 fileName={idCard?.name}
               />
               {formik.touched.idCard && formik.errors.idCard ? (
-                <div
-                className='error'
-                >{`${formik.errors.idCard.toString()}`}</div>
+                <div className="error">{`${formik.errors.idCard.toString()}`}</div>
               ) : null}
             </>
           ) : (
@@ -235,7 +216,7 @@ const LecturerProfile = () => {
               <FileUploaded />
               <span>{idCard?.name}</span>
               {idCard && <span>{(idCard?.size / 1024).toFixed(2)}MB</span>}
-              <Close className={styles.pointer}  onClick={cancelIdCard}/>
+              <Close className={styles.pointer} onClick={cancelIdCard} />
             </div>
           )}
 
@@ -253,19 +234,21 @@ const LecturerProfile = () => {
                 I agree to the above{" "}
                 <span style={{ color: "red" }}>Terms and Conditions</span>
               </label>
-
             </span>
-            <ErrorMessage  className='error' name="isChecked" component="div" />
-
+            <ErrorMessage className="error" name="isChecked" component="div" />
           </div>
 
           <section className={styles.btnSection}>
-            <Button className={styles.btn} text={UpdateProfileMutation?.isPending ? 'Uploading...' : "Update"} />
+            <Button
+              className={styles.btn}
+              text={
+                UpdateProfileMutation?.isPending ? "Uploading..." : "Update"
+              }
+            />
           </section>
         </form>
-    </FormikProvider>
+      </FormikProvider>
     </main>
-
   );
 };
 

@@ -3,23 +3,28 @@ import * as Yup from "yup";
 import Input from "../../../custom/input/input";
 import Button from "../../../custom/button/button";
 import { useNavigate } from "react-router-dom";
-import apiCall from "../../utils/apiCall";
 import { useMutation } from "@tanstack/react-query";
 import { Modal } from "antd";
 import { ReactComponent as Cancel } from "../../../assets/cancel.svg";
 import { useState } from "react";
 import SuccessModal from "./modalContent/successModal";
 import { LecturerSignUpCall } from "../../../requests";
+import { App } from "antd";
+import { errorMessage } from "../../utils/errorMessage";
 
 
 const LecturerSignUp = () => {
+  const { notification } = App.useApp();
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
   const handleShowModal = ()=>{
     setShowModal(true)
   }
 
- 
+  // const lecturerSignUpApi = async (data: Payload) => {
+  //   return (await apiCall().post("/Authentication/RegisterLecturer", data))
+  //     ?.data;
+  // };
 
   const lecturerSignUpMutation = useMutation({
     mutationFn: LecturerSignUpCall,
@@ -30,12 +35,13 @@ const LecturerSignUp = () => {
     data: FormikValues,
     resetForm: () => void
   ) => {
-    const lecturerSignUp: RegisterLecturerPayload = {
+    const lecturerSignUp: LecturerSignUpPayload = {
       FirstName: data?.FirstName?.trim(),
       LastName: data?.LastName?.trim(),
       Email: data?.Email?.trim(),
       PhoneNumber: data?.PhoneNumber?.trim(),
       Password: data?.Password?.trim(),
+      UserName:data?.UserName,
     };
     // if (isChecked) {
     //   localStorage.setItem("username-cipm", formik?.values?.Email);
@@ -45,22 +51,21 @@ const LecturerSignUp = () => {
     try {
       await lecturerSignUpMutation.mutateAsync(lecturerSignUp, {
         onSuccess: () => {
-          // showNotification({
-          //   message: "User Log in successful",
-          //   type: "success",
-          // });
+          notification.success({
+            message: "Success",
+            description: data.Message,
+          });
           handleShowModal()
         },
       });
     } catch (error: any) {
-      // showNotification({
-      //   message:
-      //     error?.response?.data?.Message || error?.message || " Login Failed",
-      //   type: "error",
-      // });
-      
+      notification.error({
+        message: "Error",
+        description: errorMessage(error) || "An error occurred",
+      });
     }
   };
+  
 
   const validationRules = Yup.object().shape({
     Email: Yup.string()
@@ -90,6 +95,7 @@ const LecturerSignUp = () => {
       PhoneNumber: "",
       Password: "",
       ConfirmPassword: "",
+      UserName:'',
     },
     onSubmit: (data, { resetForm }) => {
       lecturerSignUpHandler(data, resetForm);
@@ -114,6 +120,13 @@ const LecturerSignUp = () => {
           placeholder="Enter Last Name"
           displayInput="text"
           label="Last Name"
+        />
+         <Field
+          as={Input}
+          name="User Name"
+          placeholder="Enter UserName"
+          displayInput="text"
+          label="UserName"
         />
         <Field
           as={Input}

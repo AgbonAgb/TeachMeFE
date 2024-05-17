@@ -8,7 +8,6 @@ import { useNavigate } from "react-router-dom";
 import { useAtom } from "jotai";
 import { userAtom } from "../../../store/store";
 import { useMutation } from "@tanstack/react-query";
-import apiCall from "../../utils/apiCall";
 import Layout from "../../layout/layout";
 import { useState } from "react";
 
@@ -23,45 +22,45 @@ const AccountDetails = () => {
   const navigate = useNavigate();
   const [user, setUser] = useAtom(userAtom);
 
-  const AccountDetailsApi = async (data: Payload) => {
-    return (await apiCall().post("/Authentication/Authenticate", data))?.data;
-  };
+  // const AccountDetailsApi = async (data: Payload) => {
+  //   return (await apiCall().post("/Authentication/Authenticate", data))?.data;
+  // };
 
-  const AccountDetailsMutation = useMutation({
-    mutationFn: AccountDetailsApi,
-    mutationKey: ["account-details"],
-  });
+  // const AccountDetailsMutation = useMutation({
+  //   mutationFn: AccountDetailsApi,
+  //   mutationKey: ["account-details"],
+  // });
 
-  const AccountDetailsHandler = async (
-    data: FormikValues,
-    resetForm: () => void
-  ) => {
-    const loginUser: Payload = {
-      BankName: data?.BankName?.trim(),
-      AccountNumber: data?.AccountNumber?.trim(),
-      AccountName: data?.AccountName?.trim(),
-      AccountType: data?.AccountType?.trim(),
-    };
+  // const AccountDetailsHandler = async (
+  //   data: FormikValues,
+  //   resetForm: () => void
+  // ) => {
+  //   const loginUser: Payload = {
+  //     BankName: data?.BankName?.trim(),
+  //     AccountNumber: data?.AccountNumber?.trim(),
+  //     AccountName: data?.AccountName?.trim(),
+  //     AccountType: data?.AccountType?.trim(),
+  //   };
 
-    try {
-      await AccountDetailsMutation.mutateAsync(loginUser, {
-        onSuccess: (data) => {
-          // showNotification({
-          //   message: "User Log in successful",
-          //   type: "success",
-          // });
+  //   try {
+  //     await AccountDetailsMutation.mutateAsync(loginUser, {
+  //       onSuccess: (data) => {
+  //         // showNotification({
+  //         //   message: "User Log in successful",
+  //         //   type: "success",
+  //         // });
 
         
-        },
-      });
-    } catch (error: any) {
-      // showNotification({
-      //   message:
-      //     error?.response?.data?.Message || error?.message || " Login Failed",
-      //   type: "error",
-      // });
-    }
-  };
+  //       },
+  //     });
+  //   } catch (error: any) {
+  //     // showNotification({
+  //     //   message:
+  //     //     error?.response?.data?.Message || error?.message || " Login Failed",
+  //     //   type: "error",
+  //     // });
+  //   }
+  // };
 
   const StatusOptions = [
     {
@@ -103,7 +102,7 @@ const AccountDetails = () => {
       AccountType: "",
     },
     onSubmit: (data, { resetForm }) => {
-      AccountDetailsHandler(data, resetForm);
+      // AccountDetailsHandler(data, resetForm);
     },
     validationSchema: validationRules,
   });

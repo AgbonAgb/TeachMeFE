@@ -19,9 +19,9 @@
     padding-inline: 2rem;
   }
 }
-.activeRadio {
-  font-weight: bold;
-}
+// .activeRadio {
+//   font-weight: bold;
+// }
 .header {
   text-align: center;
   display: flex;
@@ -42,7 +42,10 @@
 }
 .form {
   margin-block-start: 2rem;
-  width: 20em;
+  width: 30em;
+  @media (max-width: 540px) {
+    width: 20em;
+  }
 }
 
 .group {

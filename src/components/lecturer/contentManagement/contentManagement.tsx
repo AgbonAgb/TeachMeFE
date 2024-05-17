@@ -13,11 +13,11 @@ import CustomSelect from "../../../custom/select/select";
 import Layout from "../../layout/layout";
 import ContentUpload from "./modalContent/contentUpload";
 import { Link, useNavigate } from "react-router-dom";
-import apiCall from "../../utils/apiCall";
 import { useQueries } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { formatDate } from "../../utils/dateUtils";
 import CustomDropdown from "../../../custom/dropdown/dropdown";
+import { GetAllContents } from "../../../requests";
 
 const date = new Date();
 
@@ -34,16 +34,12 @@ const Subscribe = () => {
 
   };
 
-  const getContents = async () => {
-    const url = "/Lecturer/GetAllContent";
-
-    return await apiCall().get(url);
-  };
+ 
   const [getContentQuery] = useQueries({
     queries: [
       {
         queryKey: ["get-all-contents-"],
-        queryFn: getContents,
+        queryFn: GetAllContents,
         retry: 0,
         refetchOnWindowFocus: false,
       },

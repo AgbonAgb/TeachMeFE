@@ -8,7 +8,6 @@ import { useNavigate } from "react-router-dom";
 import { useAtom } from "jotai";
 import { useMutation, useQueries, useQueryClient } from "@tanstack/react-query";
 import { userAtom } from "../../../../store/store";
-import apiCall from "../../../utils/apiCallFormData";
 import Layout from "../../../layout/layout";
 import { useState } from "react";
 import { ReactComponent as Back } from "../../../../assets/keyboard_backspace.svg";
@@ -16,26 +15,17 @@ import { AxiosError } from "axios";
 import { ReactComponent as FileUploaded } from "../../../../assets/uploadedFile.svg";
 import { ReactComponent as Close } from "../../../../assets/close (1).svg";
 import Upload from "../../../../custom/upload/upload";
+import { GetCategoryCall, GetMaterialTypeCall, UploadContentCall } from "../../../../requests";
+import { errorMessage } from "../../../utils/errorMessage";
+import { App } from "antd";
 
-interface Payload {
-  ContentId?: string;
-  Title: string;
-  Description: string;
-  LecturerId?: string;
-  Amount: string;
-  CategoryId: string;
-  MaterialTypeId: string;
-  ExpirationDays: string;
-  PublishedDate?: string;
-  ContentFile: any;
-  LinkName: string;
-  ContentUrl?: string;
-}
+
 interface Props{
-  data?:Payload
+  data?:ContentUploadPayload
 }
 
 const ContentUpload = ({data}:Props) => {
+  const { notification } = App.useApp();
   const navigate = useNavigate();
   const [user, setUser] = useAtom(userAtom);
   const [materials, setMaterials] = useState<File | null>(null);
@@ -53,28 +43,20 @@ const ContentUpload = ({data}:Props) => {
     setMaterials(null);
   };
 
-  const getMaterialType = async () => {
-    const url = "/Lecturer/MaterialType";
+ 
 
-    return await apiCall().get(url);
-  };
-
-  const getCategory = async () => {
-    const url = "/Category";
-
-    return await apiCall().get(url);
-  };
+ 
   const [getMaterialTypeQuery, getCategoryQuery] = useQueries({
     queries: [
       {
         queryKey: ["get-all-material-type"],
-        queryFn: getMaterialType,
+        queryFn: GetMaterialTypeCall,
         retry: 0,
         refetchOnWindowFocus: false,
       },
       {
         queryKey: ["get-all-category"],
-        queryFn: getCategory,
+        queryFn: GetCategoryCall,
         retry: 0,
         refetchOnWindowFocus: false,
       },
@@ -125,12 +107,9 @@ const ContentUpload = ({data}:Props) => {
     );
   console.log(getMaterialTypeQuery?.data, "dta");
 
-  const UploadContentApi = async (data: Payload) => {
-    return (await apiCall().post("/Lecturer/UploadContent", data))?.data;
-  };
 
   const UploadContentMutation = useMutation({
-    mutationFn: UploadContentApi,
+    mutationFn: UploadContentCall,
     mutationKey: ["upload-content"],
   });
 
@@ -138,7 +117,7 @@ const ContentUpload = ({data}:Props) => {
     data: FormikValues,
     resetForm: () => void
   ) => {
-    const loginUser: Payload = {
+    const uploadContent: ContentUploadPayload = {
       Title: data?.Title,
       Description: data?.Description,
       LecturerId: user?.UserId,
@@ -155,22 +134,21 @@ const ContentUpload = ({data}:Props) => {
     };
 
     try {
-      await UploadContentMutation.mutateAsync(loginUser, {
-        onSuccess: (data) => {
-          // showNotification({
-          //   message: "User Log in successful",
-          //   type: "success",
-          // });
+      await UploadContentMutation.mutateAsync(uploadContent, {
+        onSuccess: () => {
+          notification.success({
+            message: "Success",
+            description: data.Message,
+          });
           queryClient.refetchQueries({ queryKey: ["get-all-contents"] });
 
         },
       });
     } catch (error: any) {
-      // showNotification({
-      //   message:
-      //     error?.response?.data?.Message || error?.message || " Login Failed",
-      //   type: "error",
-      // });
+      notification.error({
+        message: "Error",
+        description: errorMessage(error) || "An error occurred",
+      });
     }
   };
 
@@ -204,7 +182,7 @@ const ContentUpload = ({data}:Props) => {
     onSubmit: (data, { resetForm }) => {
       UploadContentHandler(data, resetForm);
     },
-    // validationSchema: validationRules,
+    validationSchema: validationRules,
   });
 
   return (

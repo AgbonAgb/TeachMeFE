@@ -8,46 +8,35 @@ import Checkbox from "../../../custom/checkbox/checkbox";
 import { useAtom } from "jotai";
 import { userAtom } from "../../../store/store";
 import { useMutation } from "@tanstack/react-query";
-import apiCall from "../../utils/apiCall";
-import { Modal } from "antd";
+import { App, Modal } from "antd";
 import SuccessModal from "../signUps/modalContent/successModal";
 import { useEffect } from "react";
-
-interface Payload {
-  Email: string;
-  Password: string;
-}
-interface LoginData {
-  UserId:string;
-  UserType:string;
-  Message: string;
-  StatusCode: number;
-  Token: string;
-
-}
+import { errorMessage } from "../../utils/errorMessage";
+import { LoginCall } from "../../../requests";
 
 const SignIn = () => {
+  const { notification } = App.useApp();
   const navigate = useNavigate();
   const [user, setUser] = useAtom(userAtom);
 
-  useEffect(()=>{
-    if(user && user?.Token && user?.UserType === 'Lecturer' ){
-      navigate('/profile-update')
+  useEffect(() => {
+    if (user && user?.Token && user?.UserType === "Lecturer") {
+      navigate("/profile-update");
     }
-  },[])
+  }, []);
 
-  const login = async (data: Payload) => {
-    return (await apiCall().post("/Authentication/Authenticate", data))
-      ?.data as LoginData;
-  };
+  // const login = async (data: LoginPayload) => {
+  //   return (await apiCall().post("/Authentication/Authenticate", data))
+  //     ?.data as LoginData;
+  // };
 
   const loginMutation = useMutation({
-    mutationFn: login,
+    mutationFn: LoginCall,
     mutationKey: ["post-user"],
   });
 
   const loginHandler = async (data: FormikValues, resetForm: () => void) => {
-    const loginUser: Payload = {
+    const loginUser: LoginPayload = {
       Email: data?.Email?.trim(),
       Password: data?.Password?.trim(),
     };
@@ -59,10 +48,10 @@ const SignIn = () => {
     try {
       await loginMutation.mutateAsync(loginUser, {
         onSuccess: (data) => {
-          // showNotification({
-          //   message: "User Log in successful",
-          //   type: "success",
-          // });
+          notification.success({
+            message: "Success",
+            description: data.Message,
+          });
 
           setUser({
             UserType: data?.UserType,
@@ -70,17 +59,19 @@ const SignIn = () => {
             UserId: data?.UserId,
             StatusCode: data?.StatusCode,
             Token: data?.Token,
-           
           });
-          {data?.UserType === 'Lecturer' ? navigate('/profile-update') : navigate('/overview')}
+          {
+            data?.UserType === "Lecturer"
+              ? navigate("/profile-update")
+              : navigate("/overview");
+          }
         },
       });
     } catch (error: any) {
-      // showNotification({
-      //   message:
-      //     error?.response?.data?.Message || error?.message || " Login Failed",
-      //   type: "error",
-      // });
+      notification.error({
+        message: "Error",
+        description: errorMessage(error) || "An error occurred",
+      });
     }
   };
 
@@ -138,27 +129,21 @@ const SignIn = () => {
                 </Link>
               </div>
 
-              <Button disabled={loginMutation?.isPending} text={loginMutation?.isPending ? "Loading..." : "Login"} />
+              <Button
+                disabled={loginMutation?.isPending}
+                text={loginMutation?.isPending ? "Loading..." : "Login"}
+              />
 
               <p>
                 Don’t have an account?{" "}
-                <Link to={'/'}
-                
-                  className={styles.signUp}
-                >
+                <Link to={"/"} className={styles.signUp}>
                   Sign Up
                 </Link>{" "}
               </p>
             </form>
           </div>
-
-          
-
         </section>
-
-        
       </FormikProvider>
-      
     </main>
   );
 };
