@@ -133,14 +133,17 @@ const ContentUpload = ({data}:Props) => {
 
     const payload = new FormData();
     payload.append("Title",data.Title);
+    payload.append("Description",data.Description);
     payload.append("LecturerId",`${user?.UserId}`);
     payload.append("Amount", data.Amount);
     payload.append("CategoryId", data.CategoryId);
+    payload.append("MaterialTypeId", data.MaterialTypeId);
+    payload.append("ExpirationDays", data.ExpirationDays);
+
+
     if (materials) {
       payload.append("ContentFile", materials);
     }
-    payload.append("MaterialTypeId", data.MaterialTypeId);
-    payload.append("ExpirationDays", data.ExpirationDays);
     payload.append("LinkName", data.LinkName);
 
     try {
