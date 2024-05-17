@@ -15,7 +15,7 @@ export const LoginCall = async (data: LoginPayload) => {
   return (await request.post("/Authentication/Authenticate", data))
     ?.data as LoginData;
 };
-export const UploadContentCall = async (data: ContentUploadPayload) => {
+export const UploadContentCall = async (data: FormData) => {
   return (await request.post("/Lecturer/UploadContent", data))?.data;
 };
 //GetAllCategory
@@ -37,12 +37,14 @@ export const GetAllContents = async () => {
   return await request.get(url);
 };
 //GetLecturerProfile
-export const GetLecturerProfile = async () => {
-  const url = `/Lecturer/GetLecturer?Id=${'user?.UserId'}`;
+export const GetLecturerProfile = async (UserId: string) => {
+  const encodedUserID = encodeURIComponent(UserId);
+
+  const url = `/Lecturer/GetLecturer?Id=${encodedUserID}`;
 
   return await request.get(url);
 };
 //UpdateLecturer
-export const LecturerProfileUpdateCall = async (data: LecturerProfilePayload) => {
+export const LecturerProfileUpdateCall = async (data: FormData) => {
   return (await request.post("/Lecturer/UpdateProfile", data))?.data;
 };

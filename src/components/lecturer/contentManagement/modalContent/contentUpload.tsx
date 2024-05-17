@@ -115,26 +115,36 @@ const ContentUpload = ({data}:Props) => {
 
   const UploadContentHandler = async (
     data: FormikValues,
-    resetForm: () => void
   ) => {
-    const uploadContent: ContentUploadPayload = {
-      Title: data?.Title,
-      Description: data?.Description,
-      LecturerId: user?.UserId,
-      Amount: data?.Amount,
-      CategoryId: data?.CategoryId,
-      MaterialTypeId: data?.MaterialTypeId,
-      ExpirationDays: data?.ExpirationDays,
-      ContentId:data?.ContentId,
-      // PublishedDate: data?.PublishDate?.trim(),
-      ContentUrl: data?.ContentUrl,
-      ContentFile: materials ,
-      LinkName: data?.LinkName,
-      // ContentUrl: data?.Description?.trim(),
-    };
+    // const uploadContent: ContentUploadPayload = {
+    //   Title: data?.Title,
+    //   Description: data?.Description,
+    //   LecturerId: user?.UserId,
+    //   Amount: data?.Amount,
+    //   CategoryId: data?.CategoryId,
+    //   MaterialTypeId: data?.MaterialTypeId,
+    //   ExpirationDays: data?.ExpirationDays,
+    //   ContentId:data?.ContentId,
+    //   // PublishedDate: data?.PublishDate?.trim(),
+    //   ContentUrl: data?.ContentUrl,
+    //   ContentFile: materials ,
+    //   LinkName: data?.LinkName,
+    // };
+
+    const payload = new FormData();
+    payload.append("Title",data.Title);
+    payload.append("LecturerId",`${user?.UserId}`);
+    payload.append("Amount", data.Amount);
+    payload.append("CategoryId", data.CategoryId);
+    if (materials) {
+      payload.append("ContentFile", materials);
+    }
+    payload.append("MaterialTypeId", data.MaterialTypeId);
+    payload.append("ExpirationDays", data.ExpirationDays);
+    payload.append("LinkName", data.LinkName);
 
     try {
-      await UploadContentMutation.mutateAsync(uploadContent, {
+      await UploadContentMutation.mutateAsync(payload, {
         onSuccess: () => {
           notification.success({
             message: "Success",
@@ -180,7 +190,7 @@ const ContentUpload = ({data}:Props) => {
       LinkName: data?.LinkName || "",
     },
     onSubmit: (data, { resetForm }) => {
-      UploadContentHandler(data, resetForm);
+      UploadContentHandler(data);
     },
     validationSchema: validationRules,
   });

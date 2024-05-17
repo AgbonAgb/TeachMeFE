@@ -21,7 +21,9 @@ const SignIn = () => {
 
   useEffect(() => {
     if (user && user?.Token && user?.UserType === "Lecturer") {
-      navigate("/profile-update");
+      navigate("/lecturer-profile");
+    } else if (user && user?.Token && user?.UserType === "Student") {
+      navigate("/overview");
     }
   }, []);
 
@@ -62,8 +64,9 @@ const SignIn = () => {
           });
           {
             data?.UserType === "Lecturer"
-              ? navigate("/profile-update")
-              : navigate("/overview");
+              ? navigate("/lecturer-profile"):
+              data?.UserType === "Student" ?
+              navigate("/overview") :  navigate("/");
           }
         },
       });

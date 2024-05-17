@@ -60,7 +60,7 @@ const LecturerProfile = () => {
 
   const { data, isLoading, error, isError } = useQuery({
     queryKey: ["get-lecturer"],
-    queryFn: GetLecturerProfile,
+    queryFn:() => GetLecturerProfile(user?.UserId!),
     refetchOnWindowFocus: false,
     retry: 0,
     enabled: true,
@@ -79,22 +79,34 @@ const LecturerProfile = () => {
 
   const UpdateProfileHandler = async (
     data: FormikValues,
-    resetForm: () => void
+    
   ) => {
-    const profile: LecturerProfilePayload = {
-      LecturerId: user?.UserId,
-      LinkName: data?.LinkName?.trim(),
-      // NickName: data?.NickName?.trim(),
-      Address: data?.HouseAddress?.trim(),
-      PixFile: passportPhoto,
-      IdCardFile: idCard,
-      TermsCondition: data?.isChecked,
-      // PixUrl:LecturerData?.PixUrl,
-      // IdCardUrl:LecturerData?.IdCardUrl,
-    };
+    const payload = new FormData();
+    payload.append("LecturerId",`${user?.UserId}`);
+    payload.append("LinkName", data.LinkName);
+    payload.append("Address", data.HouseAddress);
+    if (passportPhoto) {
+      payload.append("PixFile", passportPhoto);
+    }
+    if (idCard) {
+      payload.append("IdCardFile", idCard);
+    }
+    payload.append("TermsCondition", data.isChecked);
+
+    // const profile: LecturerProfilePayload = {
+    //   LecturerId: user?.UserId,
+    //   LinkName: data?.LinkName?.trim(),
+    //   // NickName: data?.NickName?.trim(),
+    //   Address: data?.HouseAddress?.trim(),
+    //   PixFile: passportPhoto,
+    //   IdCardFile: idCard,
+    //   TermsCondition: data?.isChecked,
+    //   // PixUrl:LecturerData?.PixUrl,
+    //   // IdCardUrl:LecturerData?.IdCardUrl,
+    // };
 
     try {
-      await UpdateProfileMutation.mutateAsync(profile, {
+      await UpdateProfileMutation.mutateAsync(payload, {
         onSuccess: () => {
           notification.success({
             message: "Success",
@@ -137,9 +149,9 @@ const LecturerProfile = () => {
       isChecked: false,
     },
     onSubmit: (data, { resetForm }) => {
-      UpdateProfileHandler(data, resetForm);
+      UpdateProfileHandler(data);
     },
-    validationSchema: validationRules,
+    // validationSchema: validationRules,
   });
   console.log(LecturerData?.LinkName, "LecturerData?.LinkName");
   return (
