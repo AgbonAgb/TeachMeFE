@@ -23,6 +23,7 @@ import { AxiosError } from "axios";
 import { App } from "antd";
 import { errorMessage } from "../../utils/errorMessage";
 import { GetLecturerProfile, LecturerProfileUpdateCall } from "../../../requests";
+// import { LecturerProfilePayload } from "../../../requests/types";
 
 
 const LecturerProfile = () => {

@@ -1,10 +1,9 @@
 import request from "./request";
-import { LecturersResponse, RegisterStudentPayload } from "./types";
+// import { LecturersResponse, LoginData, LoginPayload,  } from "./types";
 
 //Register Student
 export const RegisterStudentCall = async (data: RegisterStudentPayload) => {
   return (await request.post("/Authentication/RegisterStudent", data))?.data;
-<<<<<<< HEAD
 }
 
 //Register Lecturer 
@@ -50,8 +49,7 @@ export const GetLecturerProfile = async (UserId: string) => {
 export const LecturerProfileUpdateCall = async (data: FormData) => {
   return (await request.post("/Lecturer/UpdateProfile", data))?.data;
 };
-=======
-};
+
 
 //Get Lecturers
 export const GetAllLecturersCall = async () => {
@@ -63,4 +61,3 @@ export const GetAllMaterialsCall = async () => {
   return (await request.get("/Lecturer/GetAllContent"))?.data as LecturersResponse
 };
 
->>>>>>> 29ced88e5dbd95e1c841e255a2465f195e89c447

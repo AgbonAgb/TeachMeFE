@@ -11,7 +11,6 @@ interface ChangePasswordPayload {
   NewPassword: string;
   ConfirmPassword: string;
 }
-<<<<<<< HEAD
 interface LecturerSignUpPayload {
   FirstName: string;
   LastName: string;
@@ -58,15 +57,17 @@ interface LecturerProfilePayload {
   TermsCondition: boolean;
   IdCardUrl?: File | null;
   PixUrl?: File | null;
-=======
+}
 
-export interface Response {
+
+
+ interface Response {
   StatusCode: number
   Message: string
   Data: any
 }
 
-export interface LecturersResponse extends Response {
+ interface LecturersResponse extends Response {
   LecturerProfileId: number
   LinkName: string
   LecturerId: string
@@ -79,5 +80,4 @@ export interface LecturersResponse extends Response {
   LastName: string
   Email: string
   UserType: string
->>>>>>> 29ced88e5dbd95e1c841e255a2465f195e89c447
-}
+ }

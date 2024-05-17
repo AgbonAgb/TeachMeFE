@@ -12,7 +12,7 @@ import SearchInput from "../../../custom/searchInput/searchInput";
 import CustomSelect from "../../../custom/select/select";
 import { useQuery } from "@tanstack/react-query";
 import { GetAllLecturersCall } from "../../../requests";
-import { LecturersResponse } from "../../../requests/types";
+// import { LecturersResponse } from "../../../requests/types";
 import { AxiosError } from "axios";
 import Spinner from "../../../custom/spinner/spinner";
 import CustomDropdown from "../../../custom/dropdown/dropdown";
