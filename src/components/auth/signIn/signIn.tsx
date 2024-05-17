@@ -36,7 +36,7 @@ const SignIn = () => {
     } else if (user && user?.Token && user?.UserType?.toLowerCase() === "student") {
       navigate("/overview");
     }
-  }, []);
+  }, [user]);
 
   const login = async (data: Payload) => {
     return (await apiCall().post("/Authentication/Authenticate", data))?.data as LoginData;
