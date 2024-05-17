@@ -9,14 +9,9 @@ import { Modal } from "antd";
 import { ReactComponent as Cancel } from "../../../assets/cancel.svg";
 import { useState } from "react";
 import SuccessModal from "./modalContent/successModal";
+import { LecturerSignUpCall } from "../../../requests";
 
-interface Payload {
-  FirstName: string;
-  LastName: string;
-  Email: string;
-  PhoneNumber: string;
-  Password: string;
-}
+
 const LecturerSignUp = () => {
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
@@ -24,13 +19,10 @@ const LecturerSignUp = () => {
     setShowModal(true)
   }
 
-  const lecturerSignUpApi = async (data: Payload) => {
-    return (await apiCall().post("/Authentication/RegisterLecturer", data))
-      ?.data;
-  };
+ 
 
   const lecturerSignUpMutation = useMutation({
-    mutationFn: lecturerSignUpApi,
+    mutationFn: LecturerSignUpCall,
     mutationKey: ["create-lecturer"],
   });
 
@@ -38,7 +30,7 @@ const LecturerSignUp = () => {
     data: FormikValues,
     resetForm: () => void
   ) => {
-    const lecturerSignUp: Payload = {
+    const lecturerSignUp: RegisterLecturerPayload = {
       FirstName: data?.FirstName?.trim(),
       LastName: data?.LastName?.trim(),
       Email: data?.Email?.trim(),

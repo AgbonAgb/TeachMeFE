@@ -11,3 +11,10 @@ interface ChangePasswordPayload{
   NewPassword: string;
   ConfirmPassword: string;
 }
+interface RegisterLecturerPayload {
+  FirstName: string;
+  LastName: string;
+  Email: string;
+  PhoneNumber: string;
+  Password: string;
+}
