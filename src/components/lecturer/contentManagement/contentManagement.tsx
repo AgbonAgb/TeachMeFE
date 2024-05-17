@@ -18,6 +18,7 @@ import { AxiosError } from "axios";
 import { formatDate } from "../../utils/dateUtils";
 import CustomDropdown from "../../../custom/dropdown/dropdown";
 import { GetAllContents } from "../../../requests";
+import Spinner from "../../../custom/spinner/spinner";
 
 const date = new Date();
 
@@ -145,6 +146,11 @@ console.log(getContentData, 'getContentQuery')
           <Button text="Upload Content" onClick={()=>{navigate('/upload-content')}} />
         </div>
       </div>
+      {getContentQuery?.isLoading ? (
+        <Spinner />
+      ) : getContentQuery?.isError ? (
+        <h1 className="error">{getContentErrorMessage}</h1>
+      ) : (
 
       <div className={styles.body}>
         <div className={styles.inside}>
@@ -196,6 +202,7 @@ console.log(getContentData, 'getContentQuery')
           <ContentUpload data={data}/>
         </Modal>
       </div>
+      )}
     </section>
   );
 };

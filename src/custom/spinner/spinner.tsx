@@ -12,13 +12,14 @@ interface Props {
 
 const Spinner = ({ className, width, height, color, style }: Props) => {
   return (
-    <Circles
+       <Circles
       wrapperClass={classNames(styles.spinner, className)}
       width={width}
       height={height}
       color={color}
       wrapperStyle={style}
     />
+   
   );
 };
 
