@@ -6,7 +6,7 @@ import styles from "./styles.module.scss";
 import { useNavigate } from "react-router-dom";
 import Checkbox from "../../../custom/checkbox/checkbox";
 import { useAtom } from "jotai";
-import { userAtom } from "../../utils/store";
+import { userAtom } from "../../../store/store";
 import { useMutation } from "@tanstack/react-query";
 import apiCall from "../../utils/apiCallFormData";
 import Layout from "../../layout/layout";

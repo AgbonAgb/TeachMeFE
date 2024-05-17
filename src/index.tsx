@@ -26,7 +26,7 @@ root.render(
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <Theme>
-          <AntdApp notification={{ placement: "top" }}>
+          <AntdApp notification={{ placement: "topRight" }}>
             <App />
           </AntdApp>
         </Theme>
