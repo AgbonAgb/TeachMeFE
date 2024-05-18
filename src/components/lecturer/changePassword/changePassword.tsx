@@ -13,6 +13,7 @@ import { useState } from "react";
 import { Modal } from "antd";
 import { ReactComponent as Cancel } from "../../../assets/cancel.svg";
 import SuccessModal from "./modalContent/successModal";
+import { useAtomValue } from "jotai";
 
 interface Payload {
   OldPassword: string;
@@ -21,7 +22,7 @@ interface Payload {
 
 const ChangePassword = () => {
   const navigate = useNavigate();
-  const [user, setUser] = useAtom(userAtom);
+  const user = useAtomValue(userAtom);
   const [showModal, setShowModal] = useState(true);
   const handleShowModal = ()=>{
     setShowModal(true)

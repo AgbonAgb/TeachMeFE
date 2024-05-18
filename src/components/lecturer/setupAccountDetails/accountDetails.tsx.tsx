@@ -10,6 +10,7 @@ import { userAtom } from "../../../store/store";
 import { useMutation } from "@tanstack/react-query";
 import Layout from "../../layout/layout";
 import { useState } from "react";
+import { useAtomValue } from "jotai";
 
 interface Payload {
   BankName: string;
@@ -20,7 +21,7 @@ interface Payload {
 
 const AccountDetails = () => {
   const navigate = useNavigate();
-  const [user, setUser] = useAtom(userAtom);
+  const user = useAtomValue(userAtom);
 
   // const AccountDetailsApi = async (data: Payload) => {
   //   return (await apiCall().post("/Authentication/Authenticate", data))?.data;

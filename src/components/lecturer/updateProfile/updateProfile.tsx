@@ -24,12 +24,13 @@ import { App } from "antd";
 import { errorMessage } from "../../utils/errorMessage";
 import { GetLecturerProfile, LecturerProfileUpdateCall } from "../../../requests";
 // import { LecturerProfilePayload } from "../../../requests/types";
+import { useAtomValue } from "jotai";
 
 
 const LecturerProfile = () => {
   const { notification } = App.useApp();
   const navigate = useNavigate();
-  const [user, setUser] = useAtom(userAtom);
+  const user = useAtomValue(userAtom);
   const [passportPhoto, setPassportPhoto] = useState<File | null>(null);
   const [idCard, setIdCard] = useState<File | null>(null);
 

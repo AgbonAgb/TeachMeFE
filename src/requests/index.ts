@@ -60,4 +60,9 @@ export const GetAllLecturersCall = async () => {
 export const GetAllMaterialsCall = async () => {
   return (await request.get("/Lecturer/GetAllContent"))?.data as LecturersResponse
 };
-
+//Get Payment By Lecturer ID
+export const GetPaymentByLecturerId = async (UserId:string) => {
+  const encodedUserID = encodeURIComponent(UserId);
+  const url = `/Lecturer/GetMyPayments?LectId=${encodedUserID}`;
+  return await request.get(url);
+};

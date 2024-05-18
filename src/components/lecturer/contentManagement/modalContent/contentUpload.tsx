@@ -18,6 +18,7 @@ import Upload from "../../../../custom/upload/upload";
 import { GetCategoryCall, GetMaterialTypeCall, UploadContentCall } from "../../../../requests";
 import { errorMessage } from "../../../utils/errorMessage";
 import { App } from "antd";
+import { useAtomValue } from "jotai";
 
 
 interface Props{
@@ -27,7 +28,7 @@ interface Props{
 const ContentUpload = ({data}:Props) => {
   const { notification } = App.useApp();
   const navigate = useNavigate();
-  const [user, setUser] = useAtom(userAtom);
+  const user = useAtomValue(userAtom);
   const [materials, setMaterials] = useState<File | null>(null);
   const queryClient = useQueryClient();
 

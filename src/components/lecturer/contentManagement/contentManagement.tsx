@@ -55,15 +55,6 @@ const Subscribe = () => {
   const getContentErrorMessage = getContentError?.message;
   const getContentData = getContentQuery?.data?.data;
 
-  // const filteredData = getContentData && Array.isArray(getContentData) && getContentData.length > 0 
-  // ? getContentData.filter((item: any) =>
-  //     Object.values(item)
-  //       .join(" ")
-  //       .toLowerCase()
-  //       .includes(searchTerm?.toLowerCase())
-  //   )
-  // : [];
-
     const filteredData = getContentData && getContentData?.filter((item: any) =>
     Object?.values(item)
       .join(" ")
