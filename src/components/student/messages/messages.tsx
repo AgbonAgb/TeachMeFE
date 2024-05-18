@@ -18,17 +18,6 @@ import { GetAllLecturersCall, GetMaterialTypesCall } from "../../../requests";
 import Spinner from "../../../custom/spinner/spinner";
 import FilterSelect from "../../../custom/filterSelect/filterSelect";
 
-const date = new Date();
-const items: MenuProps["items"] = [
-  {
-    key: "1",
-    label: (
-      <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
-        Material Type
-      </a>
-    ),
-  },
-];
 
 const Messages = () => {
   const [showSearch, setShowSearch] = useState(false);
@@ -39,6 +28,7 @@ const Messages = () => {
   const [pageSize, setPageSize] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
   const [materialType, setMaterialType] = useState(0);
+  const [lecturer, setLecturer] = useState('');
   const [filteredData, setFilteredData] = useState([]);
 
   const openViewModal = (record: any) => {
@@ -149,6 +139,10 @@ const Messages = () => {
     if (materialType) {
       filteredData = filteredData.filter((item: LecturersResponse) => parseInt(item?.UserType) === materialType);
     }
+    // Filter by lecturer
+    if (lecturer) {
+      filteredData = filteredData.filter((item: LecturersResponse) => item?.LecturerId === lecturer);
+    }
     setFilteredData(filteredData);
   };
 
@@ -159,7 +153,7 @@ const Messages = () => {
   useEffect(() => {
     // Filter data whenever anything changes
     filterData();
-  }, [searchTerm, lecturersData]);
+  }, [searchTerm,lecturer, lecturersData]);
 
   const materialTypesQuery = useQuery({
     queryKey: ["get-material-types"],
@@ -169,15 +163,12 @@ const Messages = () => {
   const materialTypesData = materialTypesQuery?.data?.Data as any;
   const materialTypesError = materialTypesQuery?.error as AxiosError;
 
-
-  
-
-  const MaterialTypeOptions = materialTypesData?.map((item: any) => {
+  const MaterialTypeOptions = materialTypesData?.map((item: MaterialTypePayload) => {
     return materialTypesQuery.isLoading ? (
       <Spin size="small" />
     ) : (
       <option key={item?.Id} value={item?.Id}>
-        {item?.ElectionName}
+        {item?.Name}
       </option>
     );
   });
@@ -185,6 +176,9 @@ const Messages = () => {
   const handleSelectMaterialType = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedElection = parseInt(e.target.value);
     setMaterialType(selectedElection);
+  };
+  const handleSelectLecturer = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setLecturer(e.target.value);
   };
 
   const formik = useFormik<FormikValues>({
@@ -211,20 +205,24 @@ const Messages = () => {
         <div className={styles.inside}>
           <p>Showing 1-11 of 88</p>
           <div>
-            {!showSearch && <Search onClick={() => setShowSearch((showSearch) => !showSearch)} />}
-            {showSearch && <SearchInput />}
-            {showAllFilter && <FilterSelect placeholder="Material Type" options={MaterialTypeOptions} value={materialType} onChange={handleSelectMaterialType}></FilterSelect>}
-{/* 
-            <Dropdown menu={{ items }} placement="bottom" arrow={{ pointAtCenter: true }}> */}
-              <Filter onClick={()=>setShowAllFilter((showAllFilter) => !showAllFilter )}/>
-            {/* </Dropdown> */}
+            {!showSearch && <span><Search onClick={() => setShowSearch((showSearch) => !showSearch)} /></span>}
+            {showSearch && <SearchInput value={searchTerm} onChange={handleSearch} />}
+            {showAllFilter && 
+            <> 
+            <FilterSelect placeholder="Material Type" options={MaterialTypeOptions} value={materialType} onChange={handleSelectMaterialType}></FilterSelect>
+            <FilterSelect placeholder="Lecturer" options={lecturerOptions} value={lecturer} onChange={handleSelectLecturer}></FilterSelect>
+            </>
+           
+            }
+            {!showAllFilter && <Filter onClick={()=>setShowAllFilter((showAllFilter) => !showAllFilter )}/>}
+
          
           </div>
         </div>
 
         <Table
           columns={lecturersColumn}
-          dataSource={lecturersData}
+          dataSource={filteredData}
           rowKey={"LecturerId"}
           scroll={{ x: 400 }}
           className={styles.row}
@@ -232,12 +230,11 @@ const Messages = () => {
         />
 
         <Modal open={showModal} footer="" onCancel={() => setShowModal(false)} centered closeIcon={<Cancel />} className="modal">
-          {/* <PublishModal handleCloseModal={!showModal} /> */}
           <div className={styles.modalContent}>
             <h1>Messages to a Lecturer</h1>
             <div className={styles.form}>
               <FormikProvider value={formik}>
-                <Field as={CustomSelect} label="Lecturer Name" name="lecturerName" placeholder="Select Lecturer" className={styles.input} />
+                <Field as={CustomSelect} label="Lecturer Name" name="lecturerName" placeholder="Select Lecturer" className={styles.input} >{lecturerOptions}</Field>
                 <CustomButton text="Messages" className={styles.button} />
               </FormikProvider>
             </div>

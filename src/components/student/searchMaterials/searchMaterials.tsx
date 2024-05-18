@@ -1,7 +1,7 @@
 import { Field, FormikProvider, FormikValues, useFormik } from "formik";
 import styles from "./styles.module.scss";
 import SearchInput from "../../../custom/searchInput/searchInput";
-import { App, Dropdown, MenuProps, Modal, Table, Tooltip } from "antd";
+import { App, Dropdown, MenuProps, Modal, Spin, Table, Tooltip } from "antd";
 import { ReactComponent as Search } from "../../../assets/border-search.svg";
 import { ReactComponent as Filter } from "../../../assets/filter.svg";
 import { ReactComponent as Ellipsis } from "../../../assets/ellipsis.svg";
@@ -12,7 +12,7 @@ import Button from "../../../custom/button/button";
 import CustomDropdown from "../../../custom/dropdown/dropdown";
 import { Link } from "react-router-dom";
 import { AxiosError } from "axios";
-import { GetAllMaterialsCall, ProcessPaymentCall, baseUrl } from "../../../requests";
+import { GetAllLecturersCall, GetAllMaterialsCall, GetMaterialTypesCall, ProcessPaymentCall, baseUrl } from "../../../requests";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { formatDate } from "../../utils/dateUtils";
 import Spinner from "../../../custom/spinner/spinner";
@@ -20,8 +20,7 @@ import Input from "../../../custom/input/input";
 import { useAtom } from "jotai";
 import { userAtom } from "../../../store/store";
 import { errorMessage } from "../../utils/errorMessage";
-import AudioPlayer from "../../../custom/contentRenderer/contentRenderer";
-import ContentRenderer from "../../../custom/contentRenderer/contentRenderer";
+import FilterSelect from "../../../custom/filterSelect/filterSelect";
 
 const items: MenuProps["items"] = [
   {
@@ -57,10 +56,13 @@ const SearchMaterials = () => {
   const [pageSize, setPageSize] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredData, setFilteredData] = useState([]);
+  const [materialType, setMaterialType] = useState(0);
+  const [lecturer, setLecturer] = useState("");
+  const [showAllFilter, setShowAllFilter] = useState(false);
   const { notification } = App.useApp();
   const [selectedMaterial, setSelectedMaterial] = useState<MaterialsResponse | null>();
   const [isOpenBuyMaterialModal, setIsOpenBuyMaterialModal] = useState(false);
-  const [user] =  useAtom(userAtom)
+  const [user] = useAtom(userAtom);
 
   const openViewModal = (record: any) => {
     setShowModal(true);
@@ -153,6 +155,22 @@ const SearchMaterials = () => {
     },
   ];
 
+  const lecturersQuery = useQuery({
+    queryKey: ["get-lecturers"],
+    queryFn: GetAllLecturersCall,
+  });
+
+  const lecturersData = lecturersQuery?.data as any;
+  const lecturersError = lecturersQuery?.error as AxiosError;
+
+  const lecturerOptions =
+    lecturersData &&
+    lecturersData?.map((item: LecturersResponse) => (
+      <option key={item?.LecturerId} value={item?.LecturerId}>
+        {item?.FirstName} {item?.LastName}
+      </option>
+    ));
+
   const materialsQuery = useQuery({
     queryKey: ["get-materials"],
     queryFn: GetAllMaterialsCall,
@@ -160,6 +178,25 @@ const SearchMaterials = () => {
 
   const materialsData = materialsQuery?.data as any;
   const materialsError = materialsQuery?.error as AxiosError;
+
+  const materialTypesQuery = useQuery({
+    queryKey: ["get-material-types"],
+    queryFn: GetMaterialTypesCall,
+  });
+
+  const materialTypesData = materialTypesQuery?.data?.Data as any;
+  const materialTypesError = materialTypesQuery?.error as AxiosError;
+
+  const MaterialTypeOptions = materialTypesData?.map((item: MaterialTypePayload) => {
+    return materialTypesQuery.isLoading ? (
+      <Spin size="small" />
+    ) : (
+      <option key={item?.Id} value={item?.Id}>
+        {item?.Name}
+      </option>
+    );
+  });
+
   const formik = useFormik<FormikValues>({
     initialValues: {},
     onSubmit: (value: any) => {},
@@ -183,6 +220,14 @@ const SearchMaterials = () => {
         );
       });
     }
+    // Filter by materialType
+    if (materialType) {
+      filteredData = filteredData.filter((item: MaterialsResponse) => parseInt(item?.MaterialTypeId) === materialType);
+    }
+    // Filter by lecturer
+    if (lecturer) {
+      filteredData = filteredData.filter((item: MaterialsResponse) => item?.LecturerId === lecturer);
+    }
     setFilteredData(filteredData);
   };
 
@@ -193,7 +238,7 @@ const SearchMaterials = () => {
   useEffect(() => {
     // Filter data whenever anything changes
     filterData();
-  }, [searchTerm, materialsData]);
+  }, [searchTerm,materialType,lecturer, materialsData]);
 
   const processPaymentMutation = useMutation({
     mutationKey: ["process-payment"],
@@ -218,12 +263,20 @@ const SearchMaterials = () => {
       });
     } catch (error: any) {
       notification.error({
-        message: 'Error',
+        message: "Error",
         description: errorMessage(error),
-      })
+      });
     }
   };
 
+  
+  const handleSelectMaterialType = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedElection = parseInt(e.target.value);
+    setMaterialType(selectedElection);
+  };
+  const handleSelectLecturer = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setLecturer(e.target.value);
+  };
 
 
   if (materialsQuery?.isLoading) {
@@ -244,11 +297,18 @@ const SearchMaterials = () => {
         <div className={styles.inside}>
           <p>Showing 1-11 of 88</p>
           <div>
-            {!showSearch && <Search onClick={() => setShowSearch((showSearch) => !showSearch)} />}
+            {!showSearch && <span><Search onClick={() => setShowSearch((showSearch) => !showSearch)} /></span>}
             {showSearch && <SearchInput value={searchTerm} onChange={handleSearch} />}
-            <Dropdown menu={{ items }} placement="bottom" arrow={{ pointAtCenter: true }}>
-              <Filter />
-            </Dropdown>
+            {showAllFilter && 
+            <> 
+            <FilterSelect placeholder="Material Type" options={MaterialTypeOptions} value={materialType} onChange={handleSelectMaterialType}></FilterSelect>
+            <FilterSelect placeholder="Lecturer" options={lecturerOptions} value={lecturer} onChange={handleSelectLecturer}></FilterSelect>
+            </>
+           
+            }
+            {!showAllFilter && <Filter onClick={()=>setShowAllFilter((showAllFilter) => !showAllFilter )}/>}
+
+         
           </div>
         </div>
 
@@ -286,7 +346,7 @@ const SearchMaterials = () => {
                   <Field as={Input} label="Amount" name="Title" placeholder={selectedMaterial?.Amount} className={styles.input} disabled displayInput="text" />
                   <div className={styles.twoButtons}>
                     <Button text="Cancel" className={styles.cancel} onClick={closeBuyMaterialModal} />
-                    <Button text="Proceed to Buy"  onClick={handleMaterialPayment} isLoading={processPaymentMutation.isPending} disabled={processPaymentMutation?.isPending}/>
+                    <Button text="Proceed to Buy" onClick={handleMaterialPayment} isLoading={processPaymentMutation.isPending} disabled={processPaymentMutation?.isPending} />
                   </div>
                 </FormikProvider>
               </div>
