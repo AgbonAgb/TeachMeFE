@@ -93,3 +93,12 @@ export const GetMyPaidMaterialsCall = async (id: string)=>{
   return (await request.get(`/Student/Mypaidmaterial?studentId=${id}`))?.data
 }
 
+
+//ChangePassword
+export const ChangePasswordCall = async (payload: ChangePasswordPayload) => {
+	const formData = new FormData();
+    formData.append("CurrentPassword", payload?.CurrentPassword);
+    formData.append("NewPassword", payload?.NewPassword);
+    formData.append("ConfirmPassword", payload?.ConfirmPassword);
+	return (await request.post(`/Authentication/ChangePasswordAsync?memberId=${payload?.memberId}`, formData))?.data as Response;
+};
