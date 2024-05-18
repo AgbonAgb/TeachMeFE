@@ -13,6 +13,7 @@ import CustomSelect from "../../../custom/select/select";
 import Layout from "../../layout/layout";
 import { Link, useNavigate } from "react-router-dom";
 import CustomDropdown from "../../../custom/dropdown/dropdown";
+import { useQueries } from "@tanstack/react-query";
 
 const date = new Date();
 
@@ -24,6 +25,24 @@ const Payment = () => {
   const openUploadModal = (record: any) => {
     setShowModal(true);
   };
+
+
+  // const [getContentQuery] = useQueries({
+  //   queries: [
+  //     {
+  //       queryKey: ["get-all-contents-"],
+  //       queryFn: GetAllContents,
+  //       retry: 0,
+  //       refetchOnWindowFocus: false,
+  //     },
+   
+      
+  //   ],
+  // });
+
+  // const getContentError = getContentQuery?.error as AxiosError;
+  // const getContentErrorMessage = getContentError?.message;
+  // const getContentData = getContentQuery?.data?.data;
   const column = [
     {
       title: "S/N",
@@ -96,20 +115,20 @@ const Payment = () => {
         <span className={styles.balance}>&#x20A6;{text}</span>
       ),
     },
-    {
-      title: "Actions",
-      dataIndex: "actions",
-      render: (_: any, record: any) => (
-        <span style={{ display: "flex", gap: "1rem" }}>
-          <Tooltip placement="bottom" title={"View"} color="#335642">
-            <Ellipsis
-              // onClick={() => openViewModal(record)}
-              style={{ cursor: "pointer" }}
-            />
-          </Tooltip>
-        </span>
-      ),
-    },
+    // {
+    //   title: "Actions",
+    //   dataIndex: "actions",
+    //   render: (_: any, record: any) => (
+    //     <span style={{ display: "flex", gap: "1rem" }}>
+    //       <Tooltip placement="bottom" title={"View"} color="#335642">
+    //         <Ellipsis
+    //           // onClick={() => openViewModal(record)}
+    //           style={{ cursor: "pointer" }}
+    //         />
+    //       </Tooltip>
+    //     </span>
+    //   ),
+    // },
     {
       title: "Actions",
       dataIndex: "actions",

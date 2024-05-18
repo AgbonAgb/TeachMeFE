@@ -26,6 +26,8 @@ const Subscribe = () => {
   const [showSearch, setShowSearch] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [data, setData] = useState({} as any);
+  const [searchTerm, setSearchTerm] = useState("");
+
 
   const navigate = useNavigate()
 
@@ -53,7 +55,23 @@ const Subscribe = () => {
   const getContentErrorMessage = getContentError?.message;
   const getContentData = getContentQuery?.data?.data;
 
-console.log(getContentData, 'getContentQuery')
+  // const filteredData = getContentData && Array.isArray(getContentData) && getContentData.length > 0 
+  // ? getContentData.filter((item: any) =>
+  //     Object.values(item)
+  //       .join(" ")
+  //       .toLowerCase()
+  //       .includes(searchTerm?.toLowerCase())
+  //   )
+  // : [];
+
+    const filteredData = getContentData && getContentData?.filter((item: any) =>
+    Object?.values(item)
+      .join(" ")
+      .toLowerCase()
+      .includes(searchTerm?.toLowerCase())
+  );
+
+console.log(searchTerm, 'getContentQuery')
   const column = [
     {
       title: "S/N",
@@ -154,21 +172,22 @@ console.log(getContentData, 'getContentQuery')
 
       <div className={styles.body}>
         <div className={styles.inside}>
-          <p>Showing 1-11 of 88</p>
+          <p>Showing 1-11 of {filteredData?.length}</p>
           <div>
             {!showSearch && (
               <Search
+              
                 onClick={() => setShowSearch((showSearch) => !showSearch)}
               />
             )}
-            {showSearch && <SearchInput />}
+            {showSearch && <SearchInput  onChange={(e) => setSearchTerm(e.target.value)} />}
             <Filter />
           </div>
         </div>
 
         <Table
           columns={column}
-          dataSource={getContentData}
+          dataSource={filteredData}
           pagination={false}
           className={styles.row}
           rowKey={"DueYear"}

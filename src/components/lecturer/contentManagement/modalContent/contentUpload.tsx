@@ -301,7 +301,7 @@ const ContentUpload = ({data}:Props) => {
           )}
 
           <section className={styles.btnSection}>
-            <Button disabled={UploadContentMutation?.isPending} className={styles.btn} text={UploadContentMutation?.isPending ?  'Saving' : "Save"} />
+            <Button disabled={UploadContentMutation?.isPending} className={styles.btn} text={UploadContentMutation?.isPending ?  'Saving...' : "Save"} />
           </section>
         </form>
       </FormikProvider>
