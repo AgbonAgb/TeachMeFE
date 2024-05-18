@@ -178,7 +178,6 @@ console.log(searchTerm, 'getContentQuery')
 
       </div>
 
-      <a  href={filteredData[0]?.ContentUrl} target="_blank" rel="noreferrer">material</a>
       {getContentQuery?.isLoading ? (
         <Spinner />
       ) : getContentQuery?.isError ? (
