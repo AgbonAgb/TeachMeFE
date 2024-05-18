@@ -16,7 +16,6 @@
   // overflow-y: auto;
   // min-width: 20%;
 
-
   @media (max-width: 912px) {
     display: none;
     width: 70%;
@@ -25,7 +24,8 @@
 }
 
 .mainContent {
-  max-width:100%;
+
+  width:100%;
   display: flex;
   flex-direction: column;
   // padding-inline-start: 25.3rem;

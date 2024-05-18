@@ -7,11 +7,6 @@ import { ReactComponent as Avatar } from "../../assets/user.svg";
 import { ReactComponent as Logout } from "../../assets/logout.svg";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import CustomDropdown from "../../custom/dropdown/dropdown";
-import { useQuery } from "@tanstack/react-query";
-// import { useAtom, useAtomValue } from "jotai";
-import { useEffect } from "react";
-// import { studentProfile, userData } from "../../store";
-// import { getStudentDetailsByMatricNo } from "../../request";
 import Button from "../../custom/button/button";
 import { logout } from "../utils/logout";
 
@@ -21,17 +16,6 @@ const Header = ({ handleOpenSidebar }: { handleOpenSidebar: () => void }) => {
   // const [profile, setProfile] = useAtom(studentProfile);
   const location = useLocation();
 
-  // const profileData = useQuery({
-  //   queryKey: ["get-profile"],
-  //   queryFn: () => getStudentDetailsByMatricNo(user?.MatNo!),
-  // });
-
-  // useEffect(() => {
-  //   if (profileData.isSuccess) {
-  //     setProfile(profileData?.data?.Data);
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [profileData?.data, profileData.isSuccess]);
 
   return (
     <header className={styles.header}>

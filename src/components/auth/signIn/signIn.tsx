@@ -66,8 +66,7 @@ const SignIn = () => {
               description: data?.Message,
             });
             return;
-          }
-           else {
+          } else {
             setUser({
               UserType: data?.UserType,
               Message: data?.Message,
@@ -83,15 +82,13 @@ const SignIn = () => {
               description: data?.Message,
             });
           }
-         
         },
       });
     } catch (error: any) {
-      // showNotification({
-      //   message:
-      //     error?.response?.data?.Message || error?.message || " Login Failed",
-      //   type: "error",
-      // });
+      notification.error({
+        message: "Error",
+        description: error?.message,
+      });
     }
   };
 

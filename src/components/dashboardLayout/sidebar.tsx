@@ -6,7 +6,6 @@ import { ReactComponent as Search } from "../../assets/search.svg";
 import { ReactComponent as Book } from "../../assets/book.svg";
 import { ReactComponent as Chat } from "../../assets/chat.svg";
 import { ReactComponent as Key } from "../../assets/key.svg";
-
 import styles from "./styles.module.scss";
 import { logout } from "../utils/logout";
 // import { useAtomValue } from "jotai";

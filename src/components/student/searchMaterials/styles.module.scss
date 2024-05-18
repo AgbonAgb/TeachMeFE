@@ -54,3 +54,16 @@
   margin-block-start: 4rem;
   margin-inline: auto;
 }
+
+.twoButtons{
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+gap:2rem
+}
+
+.cancel{
+  background-color: white;
+  color:#094646;
+  border: 2px solid #094646;
+}
