@@ -1,0 +1,30 @@
+.select {
+  padding-block: 1.6rem;
+  padding-inline: 1rem;
+  border: 1px solid var(--color-light-green);
+  background-color: #f8f8f8;
+  color: black;
+  font-weight: 700;
+  min-width: 17rem;
+  border-radius: 0.5rem;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url(../../assets/arrow-down.svg) ;
+  background-size: 1.2rem;
+  background-position: calc(100% - 1.5rem) center; 
+  background-repeat: no-repeat;
+  margin-bottom: 0.8rem;
+  font-family: 'BRFirma-Medium', sans-serif!important;
+  width: 100%;
+  font-size: 1.2rem;
+}
+
+
+
+.select:hover, .select:focus {
+  border-color: var(--color-light-green)!important; /* Change border color on hover */
+  outline: none;
+}
+
+

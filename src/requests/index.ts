@@ -69,7 +69,7 @@ export const ProcessPaymentCall = async (data: ProcessPaymentPayload) => {
 
 //Query Payment
 export const QueryPaymentCall = async (reference: string) => {
-  return (await request.get(`/Payment/${reference}/QueryProcessedPayment`))?.data as QueryPaymentResponse;
+  return (await request.get(`/Payment/${reference}/QueryProcessedPayment`))?.data;
 };
 //Get Payment By Lecturer ID
 export const GetPaymentByLecturerId = async (UserId: string) => {
@@ -77,3 +77,17 @@ export const GetPaymentByLecturerId = async (UserId: string) => {
   const url = `/Lecturer/GetMyPayments?LectId=${encodedUserID}`;
   return await request.get(url);
 };
+
+export const GetMaterialTypesCall = async () => {
+  return( await request.get('/Lecturer/MaterialType'))?.data;
+};
+
+export const GetContentByIdCall = async (id: number) => {
+  const response = (await request.get(`/Lecturer/GetContent?contentId=${id}`, {responseType:"blob"} ))?.data 
+  return response;
+}
+
+export const GetMyPaidMaterialsCall = async (id: string)=>{
+  return (await request.get(`/Student/Mypaidmaterial?studentId=${id}`))?.data
+}
+

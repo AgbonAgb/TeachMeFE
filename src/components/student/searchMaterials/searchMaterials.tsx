@@ -1,7 +1,7 @@
 import { Field, FormikProvider, FormikValues, useFormik } from "formik";
 import styles from "./styles.module.scss";
 import SearchInput from "../../../custom/searchInput/searchInput";
-import { App, Divider, Dropdown, MenuProps, Modal, Table, Tooltip } from "antd";
+import { App, Dropdown, MenuProps, Modal, Table, Tooltip } from "antd";
 import { ReactComponent as Search } from "../../../assets/border-search.svg";
 import { ReactComponent as Filter } from "../../../assets/filter.svg";
 import { ReactComponent as Ellipsis } from "../../../assets/ellipsis.svg";
@@ -9,18 +9,19 @@ import { ReactComponent as Cancel } from "../../../assets/cancel.svg";
 import { useEffect, useState } from "react";
 import CustomSelect from "../../../custom/select/select";
 import Button from "../../../custom/button/button";
-import { data } from "../../utils/table-data";
 import CustomDropdown from "../../../custom/dropdown/dropdown";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { AxiosError } from "axios";
-import { GetAllMaterialsCall, ProcessPaymentCall, QueryPaymentCall, baseUrl } from "../../../requests";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { GetAllMaterialsCall, ProcessPaymentCall, baseUrl } from "../../../requests";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { formatDate } from "../../utils/dateUtils";
 import Spinner from "../../../custom/spinner/spinner";
 import Input from "../../../custom/input/input";
 import { useAtom } from "jotai";
 import { userAtom } from "../../../store/store";
 import { errorMessage } from "../../utils/errorMessage";
+import AudioPlayer from "../../../custom/contentRenderer/contentRenderer";
+import ContentRenderer from "../../../custom/contentRenderer/contentRenderer";
 
 const items: MenuProps["items"] = [
   {
@@ -59,9 +60,6 @@ const SearchMaterials = () => {
   const { notification } = App.useApp();
   const [selectedMaterial, setSelectedMaterial] = useState<MaterialsResponse | null>();
   const [isOpenBuyMaterialModal, setIsOpenBuyMaterialModal] = useState(false);
-  const [params] = useSearchParams();
-  const ref = params.get("ref");
-  const queryClient =useQueryClient()
   const [user] =  useAtom(userAtom)
 
   const openViewModal = (record: any) => {
@@ -125,12 +123,12 @@ const SearchMaterials = () => {
       key: "ExpirationDays",
       render: (item: any) => <p>{item ? item : "N/A"}</p>,
     },
-    {
-      title: "ContentUrl",
-      dataIndex: "ContentUrl",
-      key: "ContentUrl",
-      render: (item: any) => <p>{item ? item : "N/A"}</p>,
-    },
+    // {
+    //   title: "ContentUrl",
+    //   dataIndex: "ContentUrl",
+    //   key: "ContentUrl",
+    //   render: (item: any) => <ContentRenderer url={item.replace(/\\/g, '/')} />,
+    // },
     {
       title: "Actions",
       dataIndex: "actions",
@@ -202,12 +200,6 @@ const SearchMaterials = () => {
     mutationFn: ProcessPaymentCall,
   });
 
-  const queryTransactionQuery = useQuery({
-    queryKey: ["query-transaction"],
-    queryFn: () => QueryPaymentCall(ref!),
-    enabled: !!ref,
-  });
-
   const handleMaterialPayment = async (values: FormikValues) => {
     const payload: ProcessPaymentPayload = {
       Amount: selectedMaterial?.Amount!,
@@ -232,13 +224,6 @@ const SearchMaterials = () => {
     }
   };
 
-  useEffect(() => {
-    if (!!ref && queryTransactionQuery.isSuccess) notification.success({
-      message: "Success",
-      description: "Payment successfully completed",
-    })
-    queryClient.refetchQueries({queryKey: ['get-my-paid-materials']});
-  }, [ref, queryTransactionQuery.isSuccess]);
 
 
   if (materialsQuery?.isLoading) {
@@ -301,7 +286,7 @@ const SearchMaterials = () => {
                   <Field as={Input} label="Amount" name="Title" placeholder={selectedMaterial?.Amount} className={styles.input} disabled displayInput="text" />
                   <div className={styles.twoButtons}>
                     <Button text="Cancel" className={styles.cancel} onClick={closeBuyMaterialModal} />
-                    <Button text="Proceed to Buy"  onClick={handleMaterialPayment}/>
+                    <Button text="Proceed to Buy"  onClick={handleMaterialPayment} isLoading={processPaymentMutation.isPending} disabled={processPaymentMutation?.isPending}/>
                   </div>
                 </FormikProvider>
               </div>
