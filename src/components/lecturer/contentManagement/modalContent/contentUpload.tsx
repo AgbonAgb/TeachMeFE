@@ -155,6 +155,7 @@ const ContentUpload = ({data}:Props) => {
             description: data.Message,
           });
           queryClient.refetchQueries({ queryKey: ["get-all-contents"] });
+          navigate('/content-management')
 
         },
       });

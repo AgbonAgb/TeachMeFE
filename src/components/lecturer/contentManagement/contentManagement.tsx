@@ -19,6 +19,8 @@ import { formatDate } from "../../utils/dateUtils";
 import CustomDropdown from "../../../custom/dropdown/dropdown";
 import { GetAllContents } from "../../../requests";
 import Spinner from "../../../custom/spinner/spinner";
+import { useAtomValue } from "jotai";
+import { userAtom } from "../../../store/store";
 
 const date = new Date();
 
@@ -27,6 +29,9 @@ const Subscribe = () => {
   const [showModal, setShowModal] = useState(false);
   const [data, setData] = useState({} as any);
   const [searchTerm, setSearchTerm] = useState("");
+  const user = useAtomValue(userAtom);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
 
   const navigate = useNavigate()
@@ -37,12 +42,17 @@ const Subscribe = () => {
 
   };
 
+  const handlePaginationChange = (page: number, pageSize: number) => {
+    setCurrentPage(page);
+    setPageSize(pageSize);
+  };
+
  
   const [getContentQuery] = useQueries({
     queries: [
       {
         queryKey: ["get-all-contents-"],
-        queryFn: GetAllContents,
+        queryFn:()=> GetAllContents(user?.UserId!),
         retry: 0,
         refetchOnWindowFocus: false,
       },
@@ -76,6 +86,17 @@ console.log(searchTerm, 'getContentQuery')
       title: "Title",
       dataIndex: "Title",
       key: "Title",
+    
+    },
+    {
+      title: "ContentUrl",
+      dataIndex: "ContentUrl",
+      key: "ContentUrl",
+
+      render: (text: string) => (
+        <span >{<a  href={text} target="_blank" rel="noreferrer">material</a>}</span>
+      ),
+
     
     },
     {
@@ -154,7 +175,10 @@ console.log(searchTerm, 'getContentQuery')
         <div>
           <Button text="Upload Content" onClick={()=>{navigate('/upload-content')}} />
         </div>
+
       </div>
+
+      <a  href={filteredData[0]?.ContentUrl} target="_blank" rel="noreferrer">material</a>
       {getContentQuery?.isLoading ? (
         <Spinner />
       ) : getContentQuery?.isError ? (
@@ -179,10 +203,11 @@ console.log(searchTerm, 'getContentQuery')
         <Table
           columns={column}
           dataSource={filteredData}
-          pagination={false}
+          // pagination={false}
           className={styles.row}
-          rowKey={"DueYear"}
+          rowKey={"ContentId"}
           scroll={{ x: 400 }}
+          pagination={{ current: currentPage, pageSize: pageSize, onChange: handlePaginationChange, position: ["bottomCenter"] }}
         />
 
         <Modal

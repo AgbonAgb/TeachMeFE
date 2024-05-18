@@ -30,8 +30,10 @@ export const GetMaterialTypeCall = async () => {
   return await request.get(url);
 };
 //GetAllContents
-export const GetAllContents = async () => {
-  const url = "/Lecturer/GetAllContent";
+export const GetAllContents = async (UserId:string) => {
+  // const url = "/Lecturer/GetAllContent";
+
+const url =`/Lecturer/GetAllContentbyLecturer?LectId=${UserId}`
   return await request.get(url);
 };
 //GetLecturerProfile
