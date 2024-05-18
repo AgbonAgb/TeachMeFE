@@ -14,56 +14,59 @@ import { Modal } from "antd";
 import { ReactComponent as Cancel } from "../../../assets/cancel.svg";
 import SuccessModal from "./modalContent/successModal";
 import { useAtomValue } from "jotai";
-
-interface Payload {
-  OldPassword: string;
-  NewPassword: string;
-}
+import { ChangePasswordCall } from "../../../requests";
+import { App } from "antd";
+import { errorMessage } from "../../utils/errorMessage";
 
 const ChangePassword = () => {
   const navigate = useNavigate();
+  const { notification } = App.useApp();
   const user = useAtomValue(userAtom);
-  const [showModal, setShowModal] = useState(true);
+  const [showModal, setShowModal] = useState(false);
   const handleShowModal = ()=>{
     setShowModal(true)
   }
-  // const AccountDetailsApi = async (data: Payload) => {
-  //   return (await apiCall().post("/Authentication/Authenticate", data))?.data;
-  // };
+  const params = new URLSearchParams(window.location.href.split("?").pop());
+  const email =user?.UserId;
 
-  // const AccountDetailsMutation = useMutation({
-  //   mutationFn: AccountDetailsApi,
-  //   mutationKey: ["account-details"],
-  // });
+ 
+  const ResetPasswordMutation = useMutation({
+    mutationFn:ChangePasswordCall,
+    mutationKey: ["change-password"],
+  });
 
-  // const AccountDetailsHandler = async (
-  //   data: FormikValues,
-  //   resetForm: () => void
-  // ) => {
-  //   const loginUser: Payload = {
-  //     OldPassword: data?.OldPassword?.trim(),
-  //     NewPassword: data?.NewPassword?.trim(),
-  //   };
 
-  //   try {
-  //     await AccountDetailsMutation.mutateAsync(loginUser, {
-  //       onSuccess: (data) => {
-  //         // showNotification({
-  //         //   message: "User Log in successful",
-  //         //   type: "success",
-  //         // });
-  //         handleShowModal()
+  const ChangePasswordHandler = async (
+    values: FormikValues,
+    resetForm: () => void
+  ) => {
 
-  //       },
-  //     });
-  //   } catch (error: any) {
-  //     // showNotification({
-  //     //   message:
-  //     //     error?.response?.data?.Message || error?.message || " Login Failed",
-  //     //   type: "error",
-  //     // });
-  //   }
-  // };
+    const payload: ChangePasswordPayload = {
+    CurrentPassword: values.OldPassword,
+    NewPassword: values.NewPassword,
+    ConfirmPassword: values.ConfirmPassword,
+    memberId: user?.UserId!,
+    };
+  
+    try {
+      await ResetPasswordMutation.mutateAsync(payload, {
+        onSuccess: () => {
+          notification.success({
+            message: "Success",
+            // description: data.Message,
+          });
+          resetForm()
+         
+        },
+      });
+    } catch (error: any) {
+      notification.error({
+        message: "Error",
+        description: errorMessage(error) || "An error occurred",
+      });
+    }
+  };
+
 
   const validationRules = Yup.object().shape({
     NewPassword: Yup.string()
@@ -83,18 +86,17 @@ const ChangePassword = () => {
       ),
     ConfirmPassword: Yup.string()
       .required("Confirm password is required")
-      .oneOf([Yup.ref("OldPassword")], "Passwords must match")
+      .oneOf([Yup.ref("NewPassword")], "Passwords must match")
       .required("Confirm password is required"),
   });
   const formik = useFormik<FormikValues>({
     initialValues: {
-      BankName: "",
-      AccountNumber: "",
-      AccountName: "",
-      AccountType: "",
+      OldPassword: "",
+      NewPassword: "",
+      ConfirmPassword: "",
     },
     onSubmit: (data, { resetForm }) => {
-      // AccountDetailsHandler(data, resetForm);
+      ChangePasswordHandler(data, resetForm);
     },
     validationSchema: validationRules,
   });
