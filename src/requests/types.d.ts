@@ -122,3 +122,8 @@ interface LecturerProfilePayload {
   IdCardUrl?: File | null;
   PixUrl?: File | null;
 }
+
+interface MaterialTypePayload{
+  Id: number
+  Name: string
+}
