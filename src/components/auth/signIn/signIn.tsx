@@ -8,10 +8,11 @@ import Checkbox from "../../../custom/checkbox/checkbox";
 import { useAtom } from "jotai";
 import { userAtom } from "../../../store/store";
 import { useMutation } from "@tanstack/react-query";
-import apiCall from "../../utils/apiCall";
 import { App, Modal } from "antd";
 import SuccessModal from "../signUps/modalContent/successModal";
 import { useEffect } from "react";
+import { errorMessage } from "../../utils/errorMessage";
+import { LoginCall } from "../../../requests";
 
 interface Payload {
   Email: string;
@@ -26,9 +27,9 @@ interface LoginData {
 }
 
 const SignIn = () => {
+  const { notification } = App.useApp();
   const navigate = useNavigate();
   const [user, setUser] = useAtom(userAtom);
-  const { notification } = App.useApp();
 
   useEffect(() => {
     if (user && user?.Token && user?.UserType?.toLowerCase() === "lecturer") {
@@ -38,17 +39,15 @@ const SignIn = () => {
     }
   }, [user]);
 
-  const login = async (data: Payload) => {
-    return (await apiCall().post("/Authentication/Authenticate", data))?.data as LoginData;
-  };
+
 
   const loginMutation = useMutation({
-    mutationFn: login,
+    mutationFn: LoginCall,
     mutationKey: ["post-user"],
   });
 
   const loginHandler = async (data: FormikValues, resetForm: () => void) => {
-    const loginUser: Payload = {
+    const loginUser: LoginPayload = {
       Email: data?.Email?.trim(),
       Password: data?.Password?.trim(),
     };
@@ -87,7 +86,7 @@ const SignIn = () => {
     } catch (error: any) {
       notification.error({
         message: "Error",
-        description: error?.message,
+        description: errorMessage(error) || "An error occurred",
       });
     }
   };
@@ -132,7 +131,10 @@ const SignIn = () => {
                 </Link>
               </div>
 
-              <Button disabled={loginMutation?.isPending} text={loginMutation?.isPending ? "Loading..." : "Login"} />
+              <Button
+                disabled={loginMutation?.isPending}
+                text={loginMutation?.isPending ? "Loading..." : "Login"}
+              />
 
               <p>
                 Don’t have an account?{" "}

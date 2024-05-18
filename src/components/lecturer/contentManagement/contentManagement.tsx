@@ -13,11 +13,12 @@ import CustomSelect from "../../../custom/select/select";
 import Layout from "../../layout/layout";
 import ContentUpload from "./modalContent/contentUpload";
 import { Link, useNavigate } from "react-router-dom";
-import apiCall from "../../utils/apiCall";
 import { useQueries } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { formatDate } from "../../utils/dateUtils";
 import CustomDropdown from "../../../custom/dropdown/dropdown";
+import { GetAllContents } from "../../../requests";
+import Spinner from "../../../custom/spinner/spinner";
 
 const date = new Date();
 
@@ -25,6 +26,8 @@ const Subscribe = () => {
   const [showSearch, setShowSearch] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [data, setData] = useState({} as any);
+  const [searchTerm, setSearchTerm] = useState("");
+
 
   const navigate = useNavigate()
 
@@ -34,16 +37,12 @@ const Subscribe = () => {
 
   };
 
-  const getContents = async () => {
-    const url = "/Lecturer/GetAllContent";
-
-    return await apiCall().get(url);
-  };
+ 
   const [getContentQuery] = useQueries({
     queries: [
       {
         queryKey: ["get-all-contents-"],
-        queryFn: getContents,
+        queryFn: GetAllContents,
         retry: 0,
         refetchOnWindowFocus: false,
       },
@@ -56,7 +55,14 @@ const Subscribe = () => {
   const getContentErrorMessage = getContentError?.message;
   const getContentData = getContentQuery?.data?.data;
 
-console.log(getContentData, 'getContentQuery')
+    const filteredData = getContentData && getContentData?.filter((item: any) =>
+    Object?.values(item)
+      .join(" ")
+      .toLowerCase()
+      .includes(searchTerm?.toLowerCase())
+  );
+
+console.log(searchTerm, 'getContentQuery')
   const column = [
     {
       title: "S/N",
@@ -149,24 +155,30 @@ console.log(getContentData, 'getContentQuery')
           <Button text="Upload Content" onClick={()=>{navigate('/upload-content')}} />
         </div>
       </div>
+      {getContentQuery?.isLoading ? (
+        <Spinner />
+      ) : getContentQuery?.isError ? (
+        <h1 className="error">{getContentErrorMessage}</h1>
+      ) : (
 
       <div className={styles.body}>
         <div className={styles.inside}>
-          <p>Showing 1-11 of 88</p>
+          <p>Showing 1-11 of {filteredData?.length}</p>
           <div>
             {!showSearch && (
               <Search
+              
                 onClick={() => setShowSearch((showSearch) => !showSearch)}
               />
             )}
-            {showSearch && <SearchInput />}
+            {showSearch && <SearchInput  onChange={(e) => setSearchTerm(e.target.value)} />}
             <Filter />
           </div>
         </div>
 
         <Table
           columns={column}
-          dataSource={getContentData}
+          dataSource={filteredData}
           pagination={false}
           className={styles.row}
           rowKey={"DueYear"}
@@ -200,6 +212,7 @@ console.log(getContentData, 'getContentQuery')
           <ContentUpload data={data}/>
         </Modal>
       </div>
+      )}
     </section>
   );
 };

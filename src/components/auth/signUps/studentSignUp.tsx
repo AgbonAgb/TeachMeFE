@@ -8,7 +8,6 @@ import { RegisterStudentCall } from "../../../requests";
 import { App } from "antd";
 import { errorMessage } from "../../utils/errorMessage";
 
-
 const StudentSignUp = () => {
   const { notification } = App.useApp();
   const validationRules: Schema<RegisterStudentPayload & any> = object().shape({

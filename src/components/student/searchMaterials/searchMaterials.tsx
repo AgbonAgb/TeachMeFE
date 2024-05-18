@@ -20,6 +20,7 @@ import Spinner from "../../../custom/spinner/spinner";
 import Input from "../../../custom/input/input";
 import { useAtom } from "jotai";
 import { userAtom } from "../../../store/store";
+import { errorMessage } from "../../utils/errorMessage";
 
 const items: MenuProps["items"] = [
   {
@@ -226,7 +227,7 @@ const SearchMaterials = () => {
     } catch (error: any) {
       notification.error({
         message: 'Error',
-        description: error.message,
+        description: errorMessage(error),
       })
     }
   };

@@ -1,3 +1,9 @@
+interface Response {
+  StatusCode: number;
+  Message: string;
+  Data: any;
+}
+
 interface RegisterStudentPayload {
   UserName: string;
   FirstName: string;
@@ -11,11 +17,24 @@ interface ChangePasswordPayload {
   NewPassword: string;
   ConfirmPassword: string;
 }
-
-interface Response {
-  StatusCode: number;
+interface LecturerSignUpPayload {
+  FirstName: string;
+  LastName: string;
+  Email: string;
+  PhoneNumber: string;
+  Password: string;
+  UserName: string;
+}
+interface LoginPayload {
+  Email: string;
+  Password: string;
+}
+interface LoginData {
+  UserId: string;
+  UserType: string;
   Message: string;
-  Data: any;
+  StatusCode: number;
+  Token: string;
 }
 
 interface LecturersResponse extends Response {
@@ -53,13 +72,13 @@ interface MaterialsResponse {
   LinkName: string;
 }
 
-interface ProcessPaymentPayload{
-  Amount: number
-  Description: string
-  ReturnURL: string
-  PaymentForm: string
-  StudentId: string
-  ContentId: number
+interface ProcessPaymentPayload {
+  Amount: number;
+  Description: string;
+  ReturnURL: string;
+  PaymentForm: string;
+  StudentId: string;
+  ContentId: number;
 }
 interface QueryPaymentResponse {
   transactionStatus: string;
@@ -74,4 +93,31 @@ interface PaymentDetails {
   Charge: number;
   RedirectURL: string;
   Message?: any;
+}
+
+interface ContentUploadPayload {
+  ContentId?: string;
+  Title: string;
+  Description: string;
+  LecturerId?: string;
+  Amount: string;
+  CategoryId: string;
+  MaterialTypeId: string;
+  ExpirationDays: string;
+  PublishedDate?: string;
+  ContentFile: any;
+  LinkName: string;
+  ContentUrl?: string;
+}
+interface LecturerProfilePayload {
+  LecturerProfileId?: string;
+  LecturerId?: string;
+  LinkName: string;
+  NickName?: string;
+  Address: string;
+  PixFile: File | null;
+  IdCardFile: File | null;
+  TermsCondition: boolean;
+  IdCardUrl?: File | null;
+  PixUrl?: File | null;
 }

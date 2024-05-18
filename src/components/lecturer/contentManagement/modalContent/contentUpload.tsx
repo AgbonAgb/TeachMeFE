@@ -6,9 +6,8 @@ import Button from "../../../../custom/button/button";
 import styles from "./styles.module.scss";
 import { useNavigate } from "react-router-dom";
 import { useAtom } from "jotai";
+import { useMutation, useQueries, useQueryClient } from "@tanstack/react-query";
 import { userAtom } from "../../../../store/store";
-import { useMutation, useQueries } from "@tanstack/react-query";
-import apiCall from "../../../utils/apiCallFormData";
 import Layout from "../../../layout/layout";
 import { useState } from "react";
 import { ReactComponent as Back } from "../../../../assets/keyboard_backspace.svg";
@@ -16,29 +15,22 @@ import { AxiosError } from "axios";
 import { ReactComponent as FileUploaded } from "../../../../assets/uploadedFile.svg";
 import { ReactComponent as Close } from "../../../../assets/close (1).svg";
 import Upload from "../../../../custom/upload/upload";
+import { GetCategoryCall, GetMaterialTypeCall, UploadContentCall } from "../../../../requests";
+import { errorMessage } from "../../../utils/errorMessage";
+import { App } from "antd";
+import { useAtomValue } from "jotai";
 
-interface Payload {
-  ContentId?: string;
-  Title: string;
-  Description: string;
-  LecturerId?: string;
-  Amount: string;
-  CategoryId: string;
-  MaterialTypeId: string;
-  ExpirationDays: string;
-  PublishedDate: string;
-  ContentFile: any;
-  LinkName: string;
-  ContentUrl?: string;
-}
+
 interface Props{
-  data?:Payload
+  data?:ContentUploadPayload
 }
 
 const ContentUpload = ({data}:Props) => {
+  const { notification } = App.useApp();
   const navigate = useNavigate();
-  const [user, setUser] = useAtom(userAtom);
+  const user = useAtomValue(userAtom);
   const [materials, setMaterials] = useState<File | null>(null);
+  const queryClient = useQueryClient();
 
   console.log(data, 'modal data')
   const handleMaterialsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,28 +44,20 @@ const ContentUpload = ({data}:Props) => {
     setMaterials(null);
   };
 
-  const getMaterialType = async () => {
-    const url = "/Lecturer/MaterialType";
+ 
 
-    return await apiCall().get(url);
-  };
-
-  const getCategory = async () => {
-    const url = "/Category";
-
-    return await apiCall().get(url);
-  };
+ 
   const [getMaterialTypeQuery, getCategoryQuery] = useQueries({
     queries: [
       {
         queryKey: ["get-all-material-type"],
-        queryFn: getMaterialType,
+        queryFn: GetMaterialTypeCall,
         retry: 0,
         refetchOnWindowFocus: false,
       },
       {
         queryKey: ["get-all-category"],
-        queryFn: getCategory,
+        queryFn: GetCategoryCall,
         retry: 0,
         refetchOnWindowFocus: false,
       },
@@ -124,62 +108,80 @@ const ContentUpload = ({data}:Props) => {
     );
   console.log(getMaterialTypeQuery?.data, "dta");
 
-  const UploadContentApi = async (data: Payload) => {
-    return (await apiCall().post("/Lecturer/UploadContent", data))?.data;
-  };
 
   const UploadContentMutation = useMutation({
-    mutationFn: UploadContentApi,
+    mutationFn: UploadContentCall,
     mutationKey: ["upload-content"],
   });
 
   const UploadContentHandler = async (
     data: FormikValues,
-    resetForm: () => void
   ) => {
-    const loginUser: Payload = {
-      Title: data?.Title?.trim(),
-      Description: data?.Description?.trim(),
-      LecturerId: user?.UserId,
-      Amount: data?.Amount?.trim(),
-      CategoryId: data?.CategoryId?.trim(),
-      MaterialTypeId: data?.MaterialTypeId?.trim(),
-      ExpirationDays: data?.ExpirationDays?.trim(),
-      PublishedDate: data?.PublishDate?.trim(),
+    // const uploadContent: ContentUploadPayload = {
+    //   Title: data?.Title,
+    //   Description: data?.Description,
+    //   LecturerId: user?.UserId,
+    //   Amount: data?.Amount,
+    //   CategoryId: data?.CategoryId,
+    //   MaterialTypeId: data?.MaterialTypeId,
+    //   ExpirationDays: data?.ExpirationDays,
+    //   ContentId:data?.ContentId,
+    //   // PublishedDate: data?.PublishDate?.trim(),
+    //   ContentUrl: data?.ContentUrl,
+    //   ContentFile: materials ,
+    //   LinkName: data?.LinkName,
+    // };
 
-      ContentFile: materials,
-      LinkName: data?.LinkName?.trim(),
-      // ContentUrl: data?.Description?.trim(),
-    };
+    const payload = new FormData();
+    payload.append("Title",data.Title);
+    payload.append("Description",data.Description);
+    payload.append("LecturerId",`${user?.UserId}`);
+    payload.append("Amount", data.Amount);
+    payload.append("CategoryId", data.CategoryId);
+    payload.append("MaterialTypeId", data.MaterialTypeId);
+    payload.append("ExpirationDays", data.ExpirationDays);
+
+
+    if (materials) {
+      payload.append("ContentFile", materials);
+    }
+    payload.append("LinkName", data.LinkName);
 
     try {
-      await UploadContentMutation.mutateAsync(loginUser, {
-        onSuccess: (data) => {
-          // showNotification({
-          //   message: "User Log in successful",
-          //   type: "success",
-          // });
+      await UploadContentMutation.mutateAsync(payload, {
+        onSuccess: () => {
+          notification.success({
+            message: "Success",
+            description: data.Message,
+          });
+          queryClient.refetchQueries({ queryKey: ["get-all-contents"] });
+
         },
       });
     } catch (error: any) {
-      // showNotification({
-      //   message:
-      //     error?.response?.data?.Message || error?.message || " Login Failed",
-      //   type: "error",
-      // });
+      notification.error({
+        message: "Error",
+        description: errorMessage(error) || "An error occurred",
+      });
     }
   };
 
   const validationRules = Yup.object().shape({
-    Email: Yup.string()
-      .required("Email Address is required")
-      .email("Invalid email Address"),
-    Password: Yup.string().required("Password is required"),
-    file: Yup.mixed().required("Required"),
+   
+    Title: Yup.string().required("Title is required"),
+    Description: Yup.string().required("Description is Required"),
+    Amount: Yup.string().required("Amount is Required"),
+    CategoryId: Yup.string().required("Category is Required"),
+    MaterialTypeId: Yup.string().required("Material Type is Required"),
+    ExpirationDays: Yup.string().required("ExpirationDays is Required"),
+    materials: Yup.string().required("materials is Required"),
+    LinkName: Yup.string().required("LinkName is Required"),
+
   });
 
   const formik = useFormik<FormikValues>({
     initialValues: {
+      ContentId:data?.ContentId || '',
       Title: data?.Title  || "",
       Description: data?.Description || "",
       LecturerId:  data?.LecturerId ||"",
@@ -190,12 +192,11 @@ const ContentUpload = ({data}:Props) => {
       // PublishedDate:data?. "",
       materials: "",
       LinkName: data?.LinkName || "",
-      ContentUrl: data?.ContentUrl || '',
     },
     onSubmit: (data, { resetForm }) => {
-      UploadContentHandler(data, resetForm);
+      UploadContentHandler(data);
     },
-    // validationSchema: validationRules,
+    validationSchema: validationRules,
   });
 
   return (
@@ -265,18 +266,18 @@ const ContentUpload = ({data}:Props) => {
             displayInput="text"
             label="Expiration Length"
           />
-          <Field
+          {/* <Field
             as={Input}
             name="PublishedDate"
             placeholder="Select Date"
             displayInput="date"
             label="Publish Date"
-          />
+          /> */}
           {materials?.name === null || materials?.name === undefined ? (
             <>
               <Upload
                 // label="Valid ID Card"
-                description={<p>Valid ID Card</p>}
+                description={<p>Upload Content</p>}
                 accept="pdf"
                 //  .jpeg, .png,.pdf,
                 // .JPEG,.PDF,.PNG,.doc,.docx,.DOC,.DOCX"
@@ -301,7 +302,7 @@ const ContentUpload = ({data}:Props) => {
           )}
 
           <section className={styles.btnSection}>
-            <Button className={styles.btn} text={"Save"} />
+            <Button disabled={UploadContentMutation?.isPending} className={styles.btn} text={UploadContentMutation?.isPending ?  'Saving...' : "Save"} />
           </section>
         </form>
       </FormikProvider>

@@ -95,20 +95,20 @@ const Message = () => {
         <span className={styles.balance}>&#x20A6;{text}</span>
       ),
     },
-    {
-      title: "Actions",
-      dataIndex: "actions",
-      render: (_: any, record: any) => (
-        <span style={{ display: "flex", gap: "1rem" }}>
-          <Tooltip placement="bottom" title={"View"} color="#335642">
-            <Ellipsis
-              // onClick={() => openViewModal(record)}
-              style={{ cursor: "pointer" }}
-            />
-          </Tooltip>
-        </span>
-      ),
-    },
+    // {
+    //   title: "Actions",
+    //   dataIndex: "actions",
+    //   render: (_: any, record: any) => (
+    //     <span style={{ display: "flex", gap: "1rem" }}>
+    //       <Tooltip placement="bottom" title={"View"} color="#335642">
+    //         <Ellipsis
+    //           // onClick={() => openViewModal(record)}
+    //           style={{ cursor: "pointer" }}
+    //         />
+    //       </Tooltip>
+    //     </span>
+    //   ),
+    // },
   ];
   const formik = useFormik<FormikValues>({
     initialValues: {},
