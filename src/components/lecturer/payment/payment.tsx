@@ -72,28 +72,27 @@ const Payment = () => {
     .includes(searchTerm?.toLowerCase())
 );
   const column = [
-    {
-      title: "S/N",
-      dataIndex: "S/N",
-      key: "S/N",
-      render: (text: number) => (
-        <span>
-          {text === date?.getFullYear() ? (
-            <p>
-              {" "}
-              &#x20A6;{text} <span className={styles.current}>Current</span>
-            </p>
-          ) : (
-            <p>&#x20A6;{text}</p>
-          )}
-        </span>
-      ),
-    },
+    // {
+    //   title: "S/N",
+    //   dataIndex: "S/N",
+    //   key: "S/N",
+    //   render: (text: number) => (
+    //     <span>
+    //       {text === date?.getFullYear() ? (
+    //         <p>
+    //           {" "}
+    //           &#x20A6;{text} <span className={styles.current}>Current</span>
+    //         </p>
+    //       ) : (
+    //         <p>&#x20A6;{text}</p>
+    //       )}
+    //     </span>
+    //   ),
+    // },
     {
       title: "Content ID",
       dataIndex: "ContentId",
       key: "ContentId",
-      render: (text: string) => <span>&#x20A6;{text}</span>,
     },
     {
       title: "Customer Email",
