@@ -38,9 +38,15 @@ const Payment = () => {
   const [showSearch, setShowSearch] = useState(false);
   const user = useAtomValue(userAtom);
   const [searchTerm, setSearchTerm] = useState("");
-
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate()
+
+  const handlePaginationChange = (page: number, pageSize: number) => {
+    setCurrentPage(page);
+    setPageSize(pageSize);
+  };
 
   const openUploadModal = (record: any) => {
     setShowModal(true);
@@ -165,10 +171,10 @@ const Payment = () => {
         <Table
           columns={column}
           dataSource={filteredData}
-          pagination={false}
           className={styles.row}
           rowKey={"DueYear"}
           scroll={{ x: 400 }}
+          pagination={{ current: currentPage, pageSize: pageSize, onChange: handlePaginationChange, position: ["bottomCenter"] }}
         />
 
       </div>
