@@ -48,7 +48,7 @@ function App() {
         <Route element={<LecturerUploadContent />} path="/upload-content" />
         <Route element={<LecturerSubscriptions />} path="/my-subscription" />
         <Route element={<LecturerMessage />} path="/messages" />
-        <Route element={<LecturerChangePassword />} path="/change-password" />
+        <Route element={<LecturerChangePassword />} path="/lecturer-change-password" />
         <Route element={<LecturerPayment />} path="/my-payment" />
         <Route element={<LecturerProfile />} path="lecturer-profile" />
       </Route>

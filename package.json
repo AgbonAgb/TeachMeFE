@@ -20,6 +20,7 @@
     "jotai": "^2.8.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-howler": "^5.2.0",
     "react-loader-spinner": "^6.1.6",
     "react-router-dom": "^6.23.1",
     "react-scripts": "5.0.1",
@@ -51,5 +52,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/howler": "^2.2.11",
+    "@types/react-howler": "^5.2.3"
   }
 }

@@ -64,7 +64,7 @@ const Sidebar = () => {
           My Payments
         </NavLink>
 
-        <NavLink className={({ isActive }) => (isActive ? styles.activeLink : "")} to={"/change-password"}>
+        <NavLink className={({ isActive }) => (isActive ? styles.activeLink : "")} to={"/lecturer-change-password"}>
           <span>
             {" "}
             <Key />
@@ -87,7 +87,7 @@ const Sidebar = () => {
         </NavLink>
 
         <NavLink className={({ isActive }) => (isActive ? styles.activeLink : "")} to={""} onClick={logout} style={{marginBlockStart:'18rem'}}>
-          <span>
+          <span onClick={logout}>
             {" "}
             <Logout />
           </span>

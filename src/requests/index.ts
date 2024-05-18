@@ -63,7 +63,15 @@ export const GetAllMaterialsCall = async () => {
 };
 //Get Payment By Lecturer ID
 export const GetPaymentByLecturerId = async (UserId:string) => {
-  const encodedUserID = encodeURIComponent(UserId);
-  const url = `/Lecturer/GetMyPayments?LectId=${encodedUserID}`;
+  // const encodedUserID = encodeURIComponent(UserId);
+  const url = `/Lecturer/GetMyPayments?LectId=${UserId}`;
   return await request.get(url);
+};
+//ChangePassword
+export const ChangePasswordCall = async (payload: ChangePasswordPayload) => {
+	const formData = new FormData();
+    formData.append("CurrentPassword", payload?.CurrentPassword);
+    formData.append("NewPassword", payload?.NewPassword);
+    formData.append("ConfirmPassword", payload?.ConfirmPassword);
+	return (await request.post(`/Authentication/ChangePasswordAsync?memberId=${payload?.memberId}`, formData))?.data as Response;
 };

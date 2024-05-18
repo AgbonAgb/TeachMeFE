@@ -21,6 +21,7 @@ import { GetAllContents } from "../../../requests";
 import Spinner from "../../../custom/spinner/spinner";
 import { useAtomValue } from "jotai";
 import { userAtom } from "../../../store/store";
+import ReactHowler from 'react-howler';
 
 const date = new Date();
 
@@ -32,6 +33,14 @@ const Subscribe = () => {
   const user = useAtomValue(userAtom);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  
+
+  // const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [playing, setPlaying] = useState(false);
+
+  const togglePlay = () => {
+    setPlaying(!playing);
+  };
 
 
   const navigate = useNavigate()
@@ -169,6 +178,15 @@ console.log(searchTerm, 'getContentQuery')
   });
   return (
     <section>
+
+{filteredData[0]?.ContentUrl ? (
+        <>
+          <ReactHowler src={filteredData[0]?.ContentUrl} playing={playing} />
+          <button onClick={togglePlay}>{playing ? 'Pause' : 'Play'}</button>
+        </>
+      ) : (
+        <p>Loading audio...</p>
+      )}
       <div className={styles.header}>
         <Layout heading="Content Management" />
 

@@ -117,21 +117,7 @@ const ContentUpload = ({data}:Props) => {
   const UploadContentHandler = async (
     data: FormikValues,
   ) => {
-    // const uploadContent: ContentUploadPayload = {
-    //   Title: data?.Title,
-    //   Description: data?.Description,
-    //   LecturerId: user?.UserId,
-    //   Amount: data?.Amount,
-    //   CategoryId: data?.CategoryId,
-    //   MaterialTypeId: data?.MaterialTypeId,
-    //   ExpirationDays: data?.ExpirationDays,
-    //   ContentId:data?.ContentId,
-    //   // PublishedDate: data?.PublishDate?.trim(),
-    //   ContentUrl: data?.ContentUrl,
-    //   ContentFile: materials ,
-    //   LinkName: data?.LinkName,
-    // };
-
+    
     const payload = new FormData();
     payload.append("Title",data.Title);
     payload.append("Description",data.Description);

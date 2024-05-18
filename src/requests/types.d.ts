@@ -10,6 +10,7 @@ interface ChangePasswordPayload {
   CurrentPassword: string;
   NewPassword: string;
   ConfirmPassword: string;
+  memberId:string;
 }
 interface LecturerSignUpPayload {
   FirstName: string;
