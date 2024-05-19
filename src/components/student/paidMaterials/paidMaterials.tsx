@@ -150,9 +150,9 @@ const MyPaidMaterials = () => {
                 <Link to={""} onClick={() => openViewMaterialModal(record)}>
                   Play
                 </Link>
-                <Link to={""} onClick={() => handleDownload(record?.ContentId!)}>
+                {/* <Link to={""} onClick={() => handleDownload(record?.ContentId!)}>
                   Download
-                </Link>
+                </Link> */}
               </>
             }
           />
@@ -169,6 +169,7 @@ const MyPaidMaterials = () => {
   const myPaidMaterialsData = myPaidMaterialsQuery?.data as any;
   const myPaidMaterialsError = myPaidMaterialsQuery?.error as AxiosError;
 
+  
   const handlePaginationChange = (page: number, pageSize: number) => {
     setCurrentPage(page);
     setPageSize(pageSize);
@@ -410,8 +411,7 @@ const MyPaidMaterials = () => {
             // qrCode={qrCodeData}
             // download={handleDownload}
           >
-            {file && <audio controls src={file}></audio>}
-            {file}
+         <ContentRenderer url={selectedMaterial?.ContentUrl?.replace(/\\/g, "/")} />
             <Button text="Download" onClick={() => handleDownload(selectedMaterial?.ContentId)} isLoading={downloadMaterialMutation?.isPending} disabled={downloadMaterialMutation?.isPending}/>
           </Modal>
         )}
