@@ -20,7 +20,7 @@ import MyPaidMaterials from "./components/student/paidMaterials/paidMaterials";
 import Messages from "./components/student/messages/messages";
 import SendMessage from "./components/student/messages/sendMessage";
 import MessagesResponse from "./components/student/messages/messageResponse";
-import ChangePassword from "./components/student/changePassword/changePassword";
+import ChangePassword from "./components/lecturer/changePassword/changePassword";
 
 function App() {
   return (
@@ -43,12 +43,14 @@ function App() {
       </Route>
 
       <Route element={<LecturerDashboardLayout />}>
+      <Route element={<Overview />} path="/lecturer-overview" />
+
         <Route element={<LecturerAccountDetails />} path="/setup-bank" />
         <Route element={<LecturerContentManagement />} path="/content-management" />
         <Route element={<LecturerUploadContent />} path="/upload-content" />
         <Route element={<LecturerSubscriptions />} path="/my-subscription" />
-        <Route element={<LecturerMessage />} path="/messages" />
-        <Route element={<LecturerChangePassword />} path="/change-password" />
+        <Route element={<LecturerMessage />} path="/lecturer-messages" />
+        <Route element={<LecturerChangePassword />} path="/lecturer-change-password" />
         <Route element={<LecturerPayment />} path="/my-payment" />
         <Route element={<LecturerProfile />} path="lecturer-profile" />
       </Route>

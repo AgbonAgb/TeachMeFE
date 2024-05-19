@@ -1,11 +1,14 @@
 import { NavLink } from "react-router-dom";
 import { ReactComponent as Overview } from "../../../assets/overview.svg";
-import { ReactComponent as Subscribe } from "../../../assets/subscribe.svg";
 import { ReactComponent as Logout } from "../../../assets/logout.svg";
-import { ReactComponent as Search } from "../../../assets/search.svg";
-import { ReactComponent as Book } from "../../../assets/book.svg";
 import { ReactComponent as Chat } from "../../../assets/chat.svg";
 import { ReactComponent as Key } from "../../../assets/key.svg";
+import { ReactComponent as Category } from "../../../assets/category.svg";
+import { ReactComponent as Analysis } from "../../../assets/analytics.svg";
+import { ReactComponent as Account } from "../../../assets/account_balance.svg";
+import { ReactComponent as Teach } from "../../../assets/how_to_reg.svg";
+import { ReactComponent as Management } from "../../../assets/manage_accounts (1).svg";
+import { ReactComponent as Contact } from "../../../assets/contract_edit.svg";
 
 import styles from "./styles.module.scss";
 import { logout } from "../../utils/logout";
@@ -15,43 +18,43 @@ const Sidebar = () => {
   return (
     <>
       <nav className={styles.sidebarNav}>
-        <NavLink className={({ isActive }) => (isActive ? styles.activeLink : "")} to={"/overview"}>
+        <NavLink className={({ isActive }) => (isActive ? styles.activeLink : "")} to={"/lecturer-overview"}>
           <span>
             <Overview />
           </span>
           Overview
         </NavLink>
 
-        <NavLink className={({ isActive }) => (isActive ? styles.activeLink : "")} to={"/profile-update"}>
+        <NavLink className={({ isActive }) => (isActive ? styles.activeLink : "")} to={"/lecturer-profile"}>
           <span>
-            <Subscribe />
+            <Management />
           </span>
           Profile Update
         </NavLink>
         <NavLink className={({ isActive }) => (isActive ? styles.activeLink : "")} to={"/setup-bank"}>
           <span>
             {" "}
-            <Search />
+            <Account />
           </span>
           Setup Bank
         </NavLink>
         <NavLink className={({ isActive }) => (isActive ? styles.activeLink : "")} to={"/content-management"}>
           <span>
             {" "}
-            <Book />
+            <Contact />
           </span>
           Content Management
         </NavLink>
         <NavLink className={({ isActive }) => (isActive ? styles.activeLink : "")} to={"/my-subscription"}>
           <span>
-            <Chat />
+            <Teach />
           </span>
           My Subscription
         </NavLink>
-        <NavLink className={({ isActive }) => (isActive ? styles.activeLink : "")} to={"/messages"}>
+        <NavLink className={({ isActive }) => (isActive ? styles.activeLink : "")} to={"/lecturer-messages"}>
           <span>
             {" "}
-            <Key />
+            <Chat />
           </span>
           Messages
         </NavLink>
@@ -59,12 +62,12 @@ const Sidebar = () => {
         <NavLink className={({ isActive }) => (isActive ? styles.activeLink : "")} to={"/my-payment"}>
           <span>
             {" "}
-            <Key />
+            <Account />
           </span>
           My Payments
         </NavLink>
 
-        <NavLink className={({ isActive }) => (isActive ? styles.activeLink : "")} to={"/change-password"}>
+        <NavLink className={({ isActive }) => (isActive ? styles.activeLink : "")} to={"/lecturer-change-password"}>
           <span>
             {" "}
             <Key />
@@ -75,13 +78,13 @@ const Sidebar = () => {
         <NavLink className={({ isActive }) => (isActive ? styles.activeLink : "")} to={"/View-payment-splitting"}>
           <span>
             {" "}
-            <Key />
+            <Analysis />
           </span>
           View Payment Splitting
         </NavLink>
         <NavLink className={({ isActive }) => (isActive ? styles.activeLink : "")} to={"/setup-category"}>   
         <span>        
-            <Key />
+            <Category />
           </span>
           Setup Category
         </NavLink>
