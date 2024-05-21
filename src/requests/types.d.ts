@@ -22,7 +22,7 @@ interface LecturerSignUpPayload {
   FirstName: string;
   LastName: string;
   Email: string;
-  PhoneNumber: string;
+  Phone: string;
   Password: string;
   UserName: string;
 }
@@ -110,6 +110,13 @@ interface ContentUploadPayload {
   LinkName: string;
   ContentUrl?: string;
 }
+
+interface CategoryPayload {
+  ContentCategoryName: string;
+  LecturerId: string;
+  CategoryId?:number
+
+}
 interface LecturerProfilePayload {
   LecturerProfileId?: string;
   LecturerId?: string;
@@ -126,4 +133,9 @@ interface LecturerProfilePayload {
 interface MaterialTypePayload{
   Id: number
   Name: string
+}
+
+interface GetMaterialType{
+  Key: number
+  Value: string
 }

@@ -15,7 +15,7 @@ import { AxiosError } from "axios";
 import { ReactComponent as FileUploaded } from "../../../../assets/uploadedFile.svg";
 import { ReactComponent as Close } from "../../../../assets/close (1).svg";
 import Upload from "../../../../custom/upload/upload";
-import { GetCategoryCall, GetMaterialTypeCall, UploadContentCall } from "../../../../requests";
+import { GetCategoryByLecturerId, GetCategoryCall, GetMaterialTypeCall, UploadContentCall } from "../../../../requests";
 import { errorMessage } from "../../../utils/errorMessage";
 import { App } from "antd";
 import { useAtomValue } from "jotai";
@@ -57,7 +57,7 @@ const ContentUpload = ({data}:Props) => {
       },
       {
         queryKey: ["get-all-category"],
-        queryFn: GetCategoryCall,
+        queryFn:()=> GetCategoryByLecturerId(user?.UserId!),
         retry: 0,
         refetchOnWindowFocus: false,
       },
@@ -106,7 +106,6 @@ const ContentUpload = ({data}:Props) => {
           : ""}
       </option>
     );
-  console.log(getMaterialTypeQuery?.data, "dta");
 
 
   const UploadContentMutation = useMutation({
@@ -145,7 +144,7 @@ const ContentUpload = ({data}:Props) => {
     if (materials) {
       payload.append("ContentFile", materials);
     }
-    payload.append("LinkName", data.LinkName);
+    // payload.append("LinkName", data.LinkName);
 
     try {
       await UploadContentMutation.mutateAsync(payload, {
@@ -176,7 +175,7 @@ const ContentUpload = ({data}:Props) => {
     MaterialTypeId: Yup.string().required("Material Type is Required"),
     ExpirationDays: Yup.string().required("ExpirationDays is Required"),
     materials: Yup.string().required("materials is Required"),
-    LinkName: Yup.string().required("LinkName is Required"),
+    // LinkName: Yup.string().required("LinkName is Required"),
 
   });
 
@@ -192,7 +191,7 @@ const ContentUpload = ({data}:Props) => {
       ExpirationDays: data?.ExpirationDays || "",
       // PublishedDate:data?. "",
       materials: "",
-      LinkName: data?.LinkName || "",
+      // LinkName: data?.LinkName || "",
     },
     onSubmit: (data, { resetForm }) => {
       UploadContentHandler(data);
@@ -236,13 +235,7 @@ const ContentUpload = ({data}:Props) => {
             displayInput="text"
             label="Amount"
           />
-          <Field
-            as={Input}
-            name="LinkName"
-            placeholder="Enter LinkName"
-            displayInput="text"
-            label="LinkName"
-          />
+       
 
           <Field
             as={Input}
@@ -263,9 +256,9 @@ const ContentUpload = ({data}:Props) => {
           <Field
             as={Input}
             name="ExpirationDays"
-            placeholder="Enter Expiration Length"
+            placeholder="Enter Expiration Date Length E.g(40)"
             displayInput="text"
-            label="Expiration Length"
+            label="Expiration Date Length"
           />
           {/* <Field
             as={Input}

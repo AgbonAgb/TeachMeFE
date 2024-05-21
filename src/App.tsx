@@ -21,6 +21,7 @@ import Messages from "./components/student/messages/messages";
 import SendMessage from "./components/student/messages/sendMessage";
 import MessagesResponse from "./components/student/messages/messageResponse";
 import ChangePassword from "./components/lecturer/changePassword/changePassword";
+import LecturerCategory from "./components/lecturer/category/category";
 
 function App() {
   return (
@@ -53,6 +54,8 @@ function App() {
         <Route element={<LecturerChangePassword />} path="/lecturer-change-password" />
         <Route element={<LecturerPayment />} path="/my-payment" />
         <Route element={<LecturerProfile />} path="lecturer-profile" />
+        <Route element={<LecturerCategory />} path="lecturer-category" />
+
       </Route>
     </Routes>
   );

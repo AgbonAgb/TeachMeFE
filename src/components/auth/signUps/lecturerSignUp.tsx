@@ -39,9 +39,9 @@ const LecturerSignUp = () => {
       FirstName: data?.FirstName?.trim(),
       LastName: data?.LastName?.trim(),
       Email: data?.Email?.trim(),
-      PhoneNumber: data?.PhoneNumber?.trim(),
+      Phone: data?.PhoneNumber?.trim(),
       Password: data?.Password?.trim(),
-      UserName:data?.UserName,
+      UserName:'UserName',
     };
     // if (isChecked) {
     //   localStorage.setItem("username-cipm", formik?.values?.Email);
@@ -95,7 +95,7 @@ const LecturerSignUp = () => {
       PhoneNumber: "",
       Password: "",
       ConfirmPassword: "",
-      UserName:'',
+      // UserName:'',
     },
     onSubmit: (data, { resetForm }) => {
       lecturerSignUpHandler(data, resetForm);
@@ -121,13 +121,13 @@ const LecturerSignUp = () => {
           displayInput="text"
           label="Last Name"
         />
-         <Field
+         {/* <Field
           as={Input}
           name="User Name"
           placeholder="Enter UserName"
           displayInput="text"
           label="UserName"
-        />
+        /> */}
         <Field
           as={Input}
           name="Email"

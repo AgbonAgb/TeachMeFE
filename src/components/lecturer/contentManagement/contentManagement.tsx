@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "../../../custom/button/button";
 import styles from "./styles.module.scss";
 import SearchInput from "../../../custom/searchInput/searchInput";
@@ -6,7 +6,7 @@ import { ReactComponent as Search } from "../../../assets/border-search.svg";
 import { ReactComponent as Filter } from "../../../assets/filter.svg";
 import { ReactComponent as Ellipsis } from "../../../assets/ellipsis.svg";
 import { ReactComponent as Cancel } from "../../../assets/cancel.svg";
-import { Modal, Popover, Table, Tooltip } from "antd";
+import { Modal, Table } from "antd";
 import { data } from "../../utils/table-data";
 import { Field, FormikProvider, FormikValues, useFormik } from "formik";
 import CustomSelect from "../../../custom/select/select";
@@ -17,14 +17,14 @@ import { useQueries } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { formatDate } from "../../utils/dateUtils";
 import CustomDropdown from "../../../custom/dropdown/dropdown";
-import { GetAllContents } from "../../../requests";
+import { GetAllContents, GetCategoryByLecturerId, GetContentByCategoryId, GetMaterialTypeCall } from "../../../requests";
 import Spinner from "../../../custom/spinner/spinner";
 import { useAtomValue } from "jotai";
 import { userAtom } from "../../../store/store";
+import FilterSelect from "../../../custom/filterSelect/filterSelect";
 
-const date = new Date();
 
-const Subscribe = () => {
+const ContentManagement = () => {
   const [showSearch, setShowSearch] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [data, setData] = useState({} as any);
@@ -32,6 +32,9 @@ const Subscribe = () => {
   const user = useAtomValue(userAtom);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [showAllFilter, setShowAllFilter] = useState(false);
+  const [category, setCategory] = useState("");
+  const [allFilteredData, setAlFilteredData] = useState([]);
 
 
   const navigate = useNavigate()
@@ -48,13 +51,20 @@ const Subscribe = () => {
   };
 
  
-  const [getContentQuery] = useQueries({
+  const [getContentQuery, getContentByCategoryQuery] = useQueries({
     queries: [
       {
-        queryKey: ["get-all-contents-"],
+        queryKey: ["get-all-contents"],
         queryFn:()=> GetAllContents(user?.UserId!),
         retry: 0,
         refetchOnWindowFocus: false,
+      },
+      {
+        queryKey: ["get-all-contents-by-category",category],
+        queryFn:()=> GetContentByCategoryId(user?.UserId!,category),
+        retry: 0,
+        refetchOnWindowFocus: false,
+        // enabled:!!category
       },
    
       
@@ -65,14 +75,93 @@ const Subscribe = () => {
   const getContentErrorMessage = getContentError?.message;
   const getContentData = getContentQuery?.data?.data;
 
-    const filteredData = getContentData && getContentData?.filter((item: any) =>
-    Object?.values(item)
-      .join(" ")
-      .toLowerCase()
-      .includes(searchTerm?.toLowerCase())
+  const getContentByCategoryError = getContentByCategoryQuery?.error as AxiosError;
+  const getContentErrorByCategoryMessage = getContentByCategoryError?.message;
+  const getContentDataByCategory = getContentByCategoryQuery?.data?.data;
+
+  const filteredData = Array.isArray(getContentData) ? getContentData.filter((item: any) =>
+  Object?.values(item)
+    .join(" ")
+    .toLowerCase()
+    .includes(searchTerm?.toLowerCase())
+) : [];
+
+const filteredDataByCategory = Array.isArray(getContentDataByCategory) ? getContentDataByCategory.filter((item: any) =>
+Object?.values(item)
+  .join(" ")
+  .toLowerCase()
+  .includes(searchTerm?.toLowerCase())
+) : [];
+
+
+ 
+const [getMaterialTypeQuery, getCategoryQuery] = useQueries({
+  queries: [
+    {
+      queryKey: ["get-all-material-type"],
+      queryFn: GetMaterialTypeCall,
+      retry: 0,
+      refetchOnWindowFocus: false,
+    },
+    {
+      queryKey: ["get-all-category"],
+      queryFn:()=> GetCategoryByLecturerId(user?.UserId!),
+      retry: 0,
+      refetchOnWindowFocus: false,
+    },
+  ],
+});
+
+const getMaterialError = getMaterialTypeQuery?.error as AxiosError;
+const getMaterialErrorMessage = getMaterialError?.message;
+
+const getCategoryError = getCategoryQuery?.error as AxiosError;
+const getCategoryErrorMessage = getCategoryError?.message;
+
+const getMaterialData = getMaterialTypeQuery?.data?.data?.Data;
+const getCategoryData = getCategoryQuery?.data?.data?.Data;
+
+const materialOptions =
+  getMaterialData && getMaterialData?.length > 0 ? (
+    getMaterialData?.map((item: any, index: number) => (
+      <option value={item?.Id} key={index + 1}>
+        {item?.Name}
+      </option>
+    ))
+  ) : (
+    <option disabled>
+      {getMaterialTypeQuery?.isLoading
+        ? "loading...."
+        : getMaterialTypeQuery?.isError
+        ? getMaterialErrorMessage
+        : ""}
+    </option>
   );
 
-console.log(searchTerm, 'getContentQuery')
+const categoryOptions =
+  getCategoryData && getCategoryData?.length > 0 ? (
+    getCategoryData?.map((item: any, index: number) => (
+      <option value={item?.CategoryId} key={index + 1}>
+        {item?.ContentCategoryName}
+      </option>
+    ))
+  ) : (
+    <option disabled>
+      {getCategoryQuery?.isLoading
+        ? "loading...."
+        : getCategoryQuery?.isError
+        ? getCategoryErrorMessage
+        : ""}
+    </option>
+  );
+
+  const handleSelectCategory = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setCategory(e.target.value);
+  };
+
+ 
+  const AllResults = category ? filteredDataByCategory : filteredData
+
   const column = [
     {
       title: "S/N",
@@ -94,6 +183,7 @@ console.log(searchTerm, 'getContentQuery')
       key: "ContentUrl",
 
       render: (text: string) => (
+
         <span >{<a  href={text} target="_blank" rel="noreferrer">material</a>}</span>
       ),
 
@@ -186,7 +276,7 @@ console.log(searchTerm, 'getContentQuery')
 
       <div className={styles.body}>
         <div className={styles.inside}>
-          <p>Showing 1-11 of {filteredData?.length}</p>
+          <p>Showing 1-11 of {AllResults?.length}</p>
           <div>
             {!showSearch && (
               <Search
@@ -195,13 +285,20 @@ console.log(searchTerm, 'getContentQuery')
               />
             )}
             {showSearch && <SearchInput  onChange={(e) => setSearchTerm(e.target.value)} />}
-            <Filter />
+            {showAllFilter && 
+            <> 
+            <FilterSelect placeholder="Category" options={categoryOptions} value={category} onChange={handleSelectCategory}></FilterSelect>
+            </>
+           
+            }
+            {!showAllFilter && <Filter onClick={()=>setShowAllFilter((showAllFilter) => !showAllFilter )}/>}
+
           </div>
         </div>
 
         <Table
           columns={column}
-          dataSource={filteredData}
+          dataSource={category ? filteredDataByCategory : filteredData}
           // pagination={false}
           className={styles.row}
           rowKey={"ContentId"}
@@ -217,28 +314,22 @@ console.log(searchTerm, 'getContentQuery')
           closeIcon={<Cancel />}
           className="modal"
         >
-          {/* <PublishModal handleCloseModal={!showModal} /> */}
-          {/* <div className={styles.modalContent}>
-            <h1>Subscribe to a Lecturer</h1>
-            <div className={styles.form}>
-              <FormikProvider value={formik}>
-                <Field
-                  as={CustomSelect}
-                  label="Lecturer Name"
-                  name="lecturerName"
-                  placeholder="Select Lecturer"
-                  className={styles.input}
-                />
-                <Button text="Subscribe" className={styles.button} />
-              </FormikProvider>
-            </div>
-          </div> */}
-          <ContentUpload data={data}/>
+          <ContentUpload  />
         </Modal>
+        {/* <Modal
+          open={showModal}
+          footer=""
+          onCancel={() => setShowModal(false)}
+          centered
+          closeIcon={<Cancel />}
+          className="modal"
+        >
+          <ContentUpload categoryOptions={categoryOptions} materialOptions={materialOptions} data={data} />
+        </Modal> */}
       </div>
       )}
     </section>
   );
 };
 
-export default Subscribe;
+export default ContentManagement;

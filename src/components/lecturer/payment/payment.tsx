@@ -57,8 +57,8 @@ const Payment = () => {
     queries: [
       {
         queryKey: ["get-all-contents-"],
-        // queryFn: ()=> GetPaymentByLecturerId(user?.UserId!),
-        queryFn: ()=> GetPaymentByLecturerId('b98c3bd8-fb73-49aa-823a-1eb7bff8c13c'),
+        queryFn: ()=> GetPaymentByLecturerId(user?.UserId!),
+        // queryFn: ()=> GetPaymentByLecturerId('b98c3bd8-fb73-49aa-823a-1eb7bff8c13c'),
         retry: 0,
         refetchOnWindowFocus: false,
       },
@@ -110,6 +110,17 @@ const Payment = () => {
       title: "Customer Name",
       dataIndex: "CustomerName",
       key: "CustomerName",
+    
+    },
+    
+
+    {
+      title: "Amount Paid",
+      dataIndex: "Amount",
+      key: "Amount",
+      render: (text: string) => (
+        <span className={styles.balance}>&#x20A6;{text}</span>
+      ),
     
     },
     {
