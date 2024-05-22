@@ -111,19 +111,13 @@ const MyPaidMaterials = () => {
       title: "Amount",
       dataIndex: "Amount",
       key: "Amount",
-      render: (item: any) => <p>{item ? item : "N/A"}</p>,
+      render: (text: string) => <span>&#x20A6;{text}</span>,
     },
     {
       title: "Link Name",
       dataIndex: "LinkName",
       key: "LinkName",
       render: (item: any) => <p>{item ? <span style={{ textTransform: "capitalize" }}>{item}</span> : "N/A"}</p>,
-    },
-    {
-      title: "LecturerId",
-      dataIndex: "LecturerId",
-      key: "LecturerId",
-      render: (item: any) => <p>{item ? item : "N/A"}</p>,
     },
     {
       title: "Expiration Days",
@@ -137,28 +131,28 @@ const MyPaidMaterials = () => {
       key: "ContentUrl",
       render: (item: any) => <ContentRenderer url={item.replace(/\\/g, "/")} />,
     },
-    {
-      title: "Actions",
-      dataIndex: "actions",
-      render: (_: any, record: any) => (
-        <span style={{ display: "flex", gap: "1rem" }}>
-          <CustomDropdown
-            placement="bottom"
-            dropdownButton={<Ellipsis style={{ cursor: "pointer" }} />}
-            dropdownContent={
-              <>
-                <Link to={""} onClick={() => openViewMaterialModal(record)}>
-                  Play
-                </Link>
-                {/* <Link to={""} onClick={() => handleDownload(record?.ContentId!)}>
-                  Download
-                </Link> */}
-              </>
-            }
-          />
-        </span>
-      ),
-    },
+    // {
+    //   title: "Actions",
+    //   dataIndex: "actions",
+    //   render: (_: any, record: any) => (
+    //     <span style={{ display: "flex", gap: "1rem" }}>
+    //       <CustomDropdown
+    //         placement="bottom"
+    //         dropdownButton={<Ellipsis style={{ cursor: "pointer" }} />}
+    //         dropdownContent={
+    //           <>
+    //             <Link to={""} onClick={() => openViewMaterialModal(record)}>
+    //               Play
+    //             </Link>
+    //             {/* <Link to={""} onClick={() => handleDownload(record?.ContentId!)}>
+    //               Download
+    //             </Link> */}
+    //           </>
+    //         }
+    //       />
+    //     </span>
+    //   ),
+    // },
   ];
 
   const myPaidMaterialsQuery = useQuery({
@@ -224,11 +218,11 @@ const MyPaidMaterials = () => {
     }
     // Filter by materialType
     if (materialType) {
-      filteredData = filteredData.filter((item: MaterialsResponse) => parseInt(item?.MaterialTypeId) === materialType);
+      filteredData = filteredData?.filter((item: MaterialsResponse) => parseInt(item?.MaterialTypeId) === materialType);
     }
     // Filter by lecturer
     if (lecturer) {
-      filteredData = filteredData.filter((item: MaterialsResponse) => item?.LecturerId === lecturer);
+      filteredData = filteredData?.filter((item: MaterialsResponse) => item?.LecturerId === lecturer);
     }
 
     setFilteredData(filteredData);
@@ -347,7 +341,7 @@ const MyPaidMaterials = () => {
     setLecturer(e.target.value);
   };
 
-  if (myPaidMaterialsQuery?.isLoading) {
+  if (myPaidMaterialsQuery?.isLoading || queryTransactionQuery?.isLoading) {
     return <Spinner />;
   }
 

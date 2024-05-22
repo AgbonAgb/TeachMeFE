@@ -137,11 +137,11 @@ const Messages = () => {
     }
     // Filter by materialType
     if (materialType) {
-      filteredData = filteredData.filter((item: LecturersResponse) => parseInt(item?.UserType) === materialType);
+      filteredData = filteredData?.filter((item: LecturersResponse) => parseInt(item?.UserType) === materialType);
     }
     // Filter by lecturer
     if (lecturer) {
-      filteredData = filteredData.filter((item: LecturersResponse) => item?.LecturerId === lecturer);
+      filteredData = filteredData?.filter((item: LecturersResponse) => item?.LecturerId === lecturer);
     }
     setFilteredData(filteredData);
   };

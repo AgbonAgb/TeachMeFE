@@ -55,15 +55,49 @@
   margin-inline: auto;
 }
 
-.twoButtons{
+.twoButtons {
   display: flex;
   justify-content: space-between;
   align-items: start;
-gap:2rem
+  gap: 2rem;
 }
 
-.cancel{
+.cancel {
   background-color: white;
-  color:#094646;
+  color: #094646;
   border: 2px solid #094646;
+}
+
+.selects {
+  display: flex;
+  gap: 5rem;
+  width: 100%;
+  margin-top: 4rem;
+  justify-content: space-between;
+  @media (max-width: 480px) {
+    flex-wrap: wrap;
+  }
+}
+.input {
+  max-width: 100%;
+  width: 100%;
+}
+
+.emptyState{
+  background-color: #EDF5F5;
+  width: 100%;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding-block: 18.3rem;
+  border: 0.5px solid  #BCD3D3;
+  margin-top: 2rem;
+  border-radius: 1.2rem;
+}
+.emptyState p{
+  color: #094646;
+  font-size: 1.6rem;
+  font-weight: bold;
 }

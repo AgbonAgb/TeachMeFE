@@ -1,19 +1,28 @@
 import { Field, FormikProvider, FormikValues, useFormik } from "formik";
 import styles from "./styles.module.scss";
 import SearchInput from "../../../custom/searchInput/searchInput";
-import { App, Dropdown, MenuProps, Modal, Spin, Table, Tooltip } from "antd";
+import { App, Modal, Spin, Table, Tooltip } from "antd";
 import { ReactComponent as Search } from "../../../assets/border-search.svg";
 import { ReactComponent as Filter } from "../../../assets/filter.svg";
 import { ReactComponent as Ellipsis } from "../../../assets/ellipsis.svg";
 import { ReactComponent as Cancel } from "../../../assets/cancel.svg";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import CustomSelect from "../../../custom/select/select";
 import Button from "../../../custom/button/button";
 import CustomDropdown from "../../../custom/dropdown/dropdown";
 import { Link } from "react-router-dom";
 import { AxiosError } from "axios";
-import { GetAllLecturersCall, GetAllMaterialsCall, GetMaterialTypesCall, ProcessPaymentCall, baseUrl } from "../../../requests";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+  GetAllLecturersCall,
+  GetAllMaterialsCall,
+  GetCategoryByLecturerIdCall,
+  GetMaterialTypesCall,
+  GetMySubscribedLecturersCall,
+  GetOnlySubscribedLecturersMaterialsCall,
+  ProcessPaymentCall,
+  baseUrl,
+} from "../../../requests";
+import { useMutation, useQueries } from "@tanstack/react-query";
 import { formatDate } from "../../utils/dateUtils";
 import Spinner from "../../../custom/spinner/spinner";
 import Input from "../../../custom/input/input";
@@ -22,36 +31,8 @@ import { userAtom } from "../../../store/store";
 import { errorMessage } from "../../utils/errorMessage";
 import FilterSelect from "../../../custom/filterSelect/filterSelect";
 
-const items: MenuProps["items"] = [
-  {
-    key: "1",
-    label: (
-      <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
-        By Lecturer
-      </a>
-    ),
-  },
-  {
-    key: "2",
-    label: (
-      <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
-        By Category
-      </a>
-    ),
-  },
-  {
-    key: "3",
-    label: (
-      <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
-        By Material Type
-      </a>
-    ),
-  },
-];
-
 const SearchMaterials = () => {
   const [showSearch, setShowSearch] = useState(false);
-  const [showModal, setShowModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
@@ -63,10 +44,10 @@ const SearchMaterials = () => {
   const [selectedMaterial, setSelectedMaterial] = useState<MaterialsResponse | null>();
   const [isOpenBuyMaterialModal, setIsOpenBuyMaterialModal] = useState(false);
   const [user] = useAtom(userAtom);
+  const [lecturerId, setLecturerId] = useState("");
+  const [category, setCategory] = useState(0);
+  const userId = user?.UserId;
 
-  const openViewModal = (record: any) => {
-    setShowModal(true);
-  };
   const openBuyMaterialModal = (item: any) => {
     setSelectedMaterial(item);
     setIsOpenBuyMaterialModal(true);
@@ -105,19 +86,13 @@ const SearchMaterials = () => {
       title: "Amount",
       dataIndex: "Amount",
       key: "Amount",
-      render: (item: any) => <p>{item ? item : "N/A"}</p>,
+      render: (text: string) => <span>&#x20A6;{text}</span>,
     },
     {
       title: "Link Name",
       dataIndex: "LinkName",
       key: "LinkName",
       render: (item: any) => <p>{item ? <span style={{ textTransform: "capitalize" }}>{item}</span> : "N/A"}</p>,
-    },
-    {
-      title: "LecturerId",
-      dataIndex: "LecturerId",
-      key: "LecturerId",
-      render: (item: any) => <p>{item ? item : "N/A"}</p>,
     },
     {
       title: "Expiration Days",
@@ -144,7 +119,7 @@ const SearchMaterials = () => {
                 <Link to={"#"} onClick={() => openBuyMaterialModal(record)}>
                   Buy
                 </Link>
-                <Link to={""} onClick={() => openViewModal(record)}>
+                <Link to={""} onClick={() => {}}>
                   Add to Cart
                 </Link>
               </>
@@ -155,13 +130,45 @@ const SearchMaterials = () => {
     },
   ];
 
-  const lecturersQuery = useQuery({
-    queryKey: ["get-lecturers"],
-    queryFn: GetAllLecturersCall,
+  const queries = useQueries({
+    queries: [
+      {
+        queryKey: ["get-lecturers"],
+        queryFn: GetAllLecturersCall,
+      },
+      { queryKey: ["get-subscribed-lecturers-materials", lecturerId, category], queryFn: ()=>GetOnlySubscribedLecturersMaterialsCall(lecturerId, category) , enabled: !!lecturerId && !!category},
+      {
+        queryKey: ["get-material-types"],
+        queryFn: GetMaterialTypesCall,
+      },
+      {
+        queryKey: ["get-my-subscribed-lecturers"],
+        queryFn: () => GetMySubscribedLecturersCall(userId!),
+      },
+      { queryKey: ["get-category-by-lecturerId", lecturerId], queryFn: () => GetCategoryByLecturerIdCall(lecturerId), enabled: !!lecturerId },
+    ],
   });
+
+  const lecturersQuery = queries[0];
+  const materialsQuery = queries[1];
+  const materialTypesQuery = queries[2];
+  const mySubscribedLecturersQuery = queries[3];
+  const myLecturersCategoryQuery = queries[4];
 
   const lecturersData = lecturersQuery?.data as any;
   const lecturersError = lecturersQuery?.error as AxiosError;
+
+  const materialsData = materialsQuery?.data as any;
+  const materialsError = materialsQuery?.error as AxiosError;
+
+  const materialTypesData = materialTypesQuery?.data?.Data as any;
+  const materialTypesError = materialTypesQuery?.error as AxiosError;
+
+  const mySubscribedLecturersData = mySubscribedLecturersQuery?.data as any;
+  const mySubscribedLecturersError = mySubscribedLecturersQuery?.error as AxiosError;
+
+  const lecturersCategoryData = myLecturersCategoryQuery?.data as any;
+  const lecturersCategoryError = myLecturersCategoryQuery?.error as AxiosError;
 
   const lecturerOptions =
     lecturersData &&
@@ -171,28 +178,32 @@ const SearchMaterials = () => {
       </option>
     ));
 
-  const materialsQuery = useQuery({
-    queryKey: ["get-materials"],
-    queryFn: GetAllMaterialsCall,
-  });
-
-  const materialsData = materialsQuery?.data as any;
-  const materialsError = materialsQuery?.error as AxiosError;
-
-  const materialTypesQuery = useQuery({
-    queryKey: ["get-material-types"],
-    queryFn: GetMaterialTypesCall,
-  });
-
-  const materialTypesData = materialTypesQuery?.data?.Data as any;
-  const materialTypesError = materialTypesQuery?.error as AxiosError;
-
   const MaterialTypeOptions = materialTypesData?.map((item: MaterialTypePayload) => {
     return materialTypesQuery.isLoading ? (
       <Spin size="small" />
     ) : (
       <option key={item?.Id} value={item?.Id}>
         {item?.Name}
+      </option>
+    );
+  });
+
+  const MySubscribedLecturerOptions = mySubscribedLecturersData?.map((item: MySubscribedLecturersResponse) => {
+    return mySubscribedLecturersQuery.isLoading ? (
+      <Spin size="small" />
+    ) : (
+      <option key={item?.LecturerId} value={item?.LecturerId}>
+        {item?.LinkName}
+      </option>
+    );
+  });
+
+  const myLecturersCategoryOptions = lecturersCategoryData?.map((item: CategoryResponse) => {
+    return myLecturersCategoryQuery.isLoading ? (
+      <Spin size="small" />
+    ) : (
+      <option key={item?.CategoryId} value={item?.CategoryId}>
+        {item?.ContentCategoryName}
       </option>
     );
   });
@@ -222,11 +233,11 @@ const SearchMaterials = () => {
     }
     // Filter by materialType
     if (materialType) {
-      filteredData = filteredData.filter((item: MaterialsResponse) => parseInt(item?.MaterialTypeId) === materialType);
+      filteredData = filteredData?.filter((item: MaterialsResponse) => parseInt(item?.MaterialTypeId) === materialType);
     }
     // Filter by lecturer
     if (lecturer) {
-      filteredData = filteredData.filter((item: MaterialsResponse) => item?.LecturerId === lecturer);
+      filteredData = filteredData?.filter((item: MaterialsResponse) => item?.LecturerId === lecturer);
     }
     setFilteredData(filteredData);
   };
@@ -238,7 +249,7 @@ const SearchMaterials = () => {
   useEffect(() => {
     // Filter data whenever anything changes
     filterData();
-  }, [searchTerm,materialType,lecturer, materialsData]);
+  }, [searchTerm, materialType, lecturer, materialsData]);
 
   const processPaymentMutation = useMutation({
     mutationKey: ["process-payment"],
@@ -269,7 +280,6 @@ const SearchMaterials = () => {
     }
   };
 
-  
   const handleSelectMaterialType = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedElection = parseInt(e.target.value);
     setMaterialType(selectedElection);
@@ -278,8 +288,7 @@ const SearchMaterials = () => {
     setLecturer(e.target.value);
   };
 
-
-  if (materialsQuery?.isLoading) {
+  if (materialsQuery?.isLoading || mySubscribedLecturersQuery?.isLoading) {
     return <Spinner />;
   }
 
@@ -293,46 +302,67 @@ const SearchMaterials = () => {
         <h1>Search Materials</h1>
       </div>
 
+      <div>
+        <FormikProvider value={formik}>
+          <div className={styles.selects}>
+            <Field
+              as={CustomSelect}
+              label="Lecturer Link Name"
+              name="lecturerId"
+              placeholder="Select Lecturer Link Name"
+              className={styles.input}
+              onChange={(e: ChangeEvent<HTMLSelectElement>) => setLecturerId(e.target.value)}
+            >
+              {MySubscribedLecturerOptions}{" "}
+            </Field>
+            <Field
+              as={CustomSelect}
+              label="Category"
+              name="category"
+              placeholder="Select Category"
+              className={styles.input}
+              onChange={(e: ChangeEvent<HTMLSelectElement>) => setCategory(parseInt(e.target.value))}
+            >
+              {" "}
+              {myLecturersCategoryOptions}
+            </Field>
+          </div>
+        </FormikProvider>
+      </div>
       <div className={styles.body}>
         <div className={styles.inside}>
           <p>Showing 1-11 of 88</p>
           <div>
-            {!showSearch && <span><Search onClick={() => setShowSearch((showSearch) => !showSearch)} /></span>}
+            {!showSearch && (
+              <span>
+                <Search onClick={() => setShowSearch((showSearch) => !showSearch)} />
+              </span>
+            )}
             {showSearch && <SearchInput value={searchTerm} onChange={handleSearch} />}
-            {showAllFilter && 
-            <> 
-            <FilterSelect placeholder="Material Type" options={MaterialTypeOptions} value={materialType} onChange={handleSelectMaterialType}></FilterSelect>
-            <FilterSelect placeholder="Lecturer" options={lecturerOptions} value={lecturer} onChange={handleSelectLecturer}></FilterSelect>
-            </>
-           
-            }
-            {!showAllFilter && <Filter onClick={()=>setShowAllFilter((showAllFilter) => !showAllFilter )}/>}
-
-         
+            {showAllFilter && (
+              <>
+                <FilterSelect placeholder="Material Type" options={MaterialTypeOptions} value={materialType} onChange={handleSelectMaterialType}></FilterSelect>
+                <FilterSelect placeholder="Lecturer" options={lecturerOptions} value={lecturer} onChange={handleSelectLecturer}></FilterSelect>
+              </>
+            )}
+            {!showAllFilter && <Filter onClick={() => setShowAllFilter((showAllFilter) => !showAllFilter)} />}
           </div>
         </div>
 
-        <Table
-          columns={materialsColumn}
-          dataSource={filteredData}
-          pagination={{ current: currentPage, pageSize: pageSize, onChange: handlePaginationChange, position: ["bottomCenter"] }}
-          className={styles.row}
-          rowKey={"ContentId"}
-          scroll={{ x: 400 }}
-        />
-
-        <Modal open={showModal} footer="" onCancel={() => setShowModal(false)} centered closeIcon={<Cancel />} className="modal">
-          {/* <PublishModal handleCloseModal={!showModal} /> */}
-          <div className={styles.modalContent}>
-            <h1>Subscribe to a Lecturer</h1>
-            <div className={styles.form}>
-              <FormikProvider value={formik}>
-                <Field as={CustomSelect} label="Lecturer Name" name="lecturerName" placeholder="Select Lecturer" className={styles.input} />
-                <Button text="Subscribe" className={styles.button} />
-              </FormikProvider>
-            </div>
+        {lecturerId && category && filteredData ? (
+          <Table
+            columns={materialsColumn}
+            dataSource={filteredData}
+            pagination={{ current: currentPage, pageSize: pageSize, onChange: handlePaginationChange, position: ["bottomCenter"] }}
+            className={styles.row}
+            rowKey={"ContentId"}
+            scroll={{ x: 400 }}
+          />
+        ) : (
+          <div className={styles.emptyState}>
+            <p>Select a Lecturer/ Category to view search results.</p>
           </div>
-        </Modal>
+        )}
 
         {selectedMaterial && isOpenBuyMaterialModal && (
           <Modal open={isOpenBuyMaterialModal} onCancel={closeBuyMaterialModal} className="modal" centered closeIcon={<Cancel />} footer="">
