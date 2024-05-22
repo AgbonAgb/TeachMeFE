@@ -110,10 +110,12 @@ const Category = () => {
       ),
     },
   ];
-  const formik = useFormik<FormikValues>({
-    initialValues: {},
-    onSubmit: (value: any) => {},
-  });
+
+  const startIndex = (currentPage - 1) * pageSize + 1;
+  const endIndex = Math.min(currentPage * pageSize, filteredData.length);
+  
+
+ 
   return (
     <section>
       <div className={styles.header}>
@@ -134,7 +136,8 @@ const Category = () => {
       ) : (
         <div className={styles.body}>
           <div className={styles.inside}>
-            <p>Showing 1-11 of {filteredData?.length}</p>
+            <p>Showing {startIndex}-{endIndex} of {filteredData?.length}</p>
+
             <div>
               {!showSearch && (
                 <Search

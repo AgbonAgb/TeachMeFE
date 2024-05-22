@@ -17,12 +17,16 @@ import { useQueries } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { formatDate } from "../../utils/dateUtils";
 import CustomDropdown from "../../../custom/dropdown/dropdown";
-import { GetAllContents, GetCategoryByLecturerId, GetContentByCategoryId, GetMaterialTypeCall } from "../../../requests";
+import {
+  GetAllContents,
+  GetCategoryByLecturerId,
+  GetContentByCategoryId,
+  GetMaterialTypeCall,
+} from "../../../requests";
 import Spinner from "../../../custom/spinner/spinner";
 import { useAtomValue } from "jotai";
 import { userAtom } from "../../../store/store";
 import FilterSelect from "../../../custom/filterSelect/filterSelect";
-
 
 const ContentManagement = () => {
   const [showSearch, setShowSearch] = useState(false);
@@ -34,15 +38,12 @@ const ContentManagement = () => {
   const [pageSize, setPageSize] = useState(10);
   const [showAllFilter, setShowAllFilter] = useState(false);
   const [category, setCategory] = useState("");
-  const [allFilteredData, setAlFilteredData] = useState([]);
 
-
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const openViewModal = (record: any) => {
     setShowModal(true);
     setData(record);
-
   };
 
   const handlePaginationChange = (page: number, pageSize: number) => {
@@ -50,24 +51,21 @@ const ContentManagement = () => {
     setPageSize(pageSize);
   };
 
- 
   const [getContentQuery, getContentByCategoryQuery] = useQueries({
     queries: [
       {
         queryKey: ["get-all-contents"],
-        queryFn:()=> GetAllContents(user?.UserId!),
+        queryFn: () => GetAllContents(user?.UserId!),
         retry: 0,
         refetchOnWindowFocus: false,
       },
       {
-        queryKey: ["get-all-contents-by-category",category],
-        queryFn:()=> GetContentByCategoryId(user?.UserId!,category),
+        queryKey: ["get-all-contents-by-category", category],
+        queryFn: () => GetContentByCategoryId(user?.UserId!, category),
         retry: 0,
         refetchOnWindowFocus: false,
         // enabled:!!category
       },
-   
-      
     ],
   });
 
@@ -75,107 +73,108 @@ const ContentManagement = () => {
   const getContentErrorMessage = getContentError?.message;
   const getContentData = getContentQuery?.data?.data;
 
-  const getContentByCategoryError = getContentByCategoryQuery?.error as AxiosError;
+  const getContentByCategoryError =
+    getContentByCategoryQuery?.error as AxiosError;
   const getContentErrorByCategoryMessage = getContentByCategoryError?.message;
   const getContentDataByCategory = getContentByCategoryQuery?.data?.data;
 
-  const filteredData = Array.isArray(getContentData) ? getContentData.filter((item: any) =>
-  Object?.values(item)
-    .join(" ")
-    .toLowerCase()
-    .includes(searchTerm?.toLowerCase())
-) : [];
+  const filteredData = Array.isArray(getContentData)
+    ? getContentData.filter((item: any) =>
+        Object?.values(item)
+          .join(" ")
+          .toLowerCase()
+          .includes(searchTerm?.toLowerCase())
+      )
+    : [];
 
-const filteredDataByCategory = Array.isArray(getContentDataByCategory) ? getContentDataByCategory.filter((item: any) =>
-Object?.values(item)
-  .join(" ")
-  .toLowerCase()
-  .includes(searchTerm?.toLowerCase())
-) : [];
+  const filteredDataByCategory = Array.isArray(getContentDataByCategory)
+    ? getContentDataByCategory.filter((item: any) =>
+        Object?.values(item)
+          .join(" ")
+          .toLowerCase()
+          .includes(searchTerm?.toLowerCase())
+      )
+    : [];
 
+  const [getMaterialTypeQuery, getCategoryQuery] = useQueries({
+    queries: [
+      {
+        queryKey: ["get-all-material-type"],
+        queryFn: GetMaterialTypeCall,
+        retry: 0,
+        refetchOnWindowFocus: false,
+      },
+      {
+        queryKey: ["get-all-category"],
+        queryFn: () => GetCategoryByLecturerId(user?.UserId!),
+        retry: 0,
+        refetchOnWindowFocus: false,
+      },
+    ],
+  });
 
- 
-const [getMaterialTypeQuery, getCategoryQuery] = useQueries({
-  queries: [
-    {
-      queryKey: ["get-all-material-type"],
-      queryFn: GetMaterialTypeCall,
-      retry: 0,
-      refetchOnWindowFocus: false,
-    },
-    {
-      queryKey: ["get-all-category"],
-      queryFn:()=> GetCategoryByLecturerId(user?.UserId!),
-      retry: 0,
-      refetchOnWindowFocus: false,
-    },
-  ],
-});
+  const getMaterialError = getMaterialTypeQuery?.error as AxiosError;
+  const getMaterialErrorMessage = getMaterialError?.message;
 
-const getMaterialError = getMaterialTypeQuery?.error as AxiosError;
-const getMaterialErrorMessage = getMaterialError?.message;
+  const getCategoryError = getCategoryQuery?.error as AxiosError;
+  const getCategoryErrorMessage = getCategoryError?.message;
 
-const getCategoryError = getCategoryQuery?.error as AxiosError;
-const getCategoryErrorMessage = getCategoryError?.message;
+  const getMaterialData = getMaterialTypeQuery?.data?.data?.Data;
+  const getCategoryData = getCategoryQuery?.data?.data?.Data;
 
-const getMaterialData = getMaterialTypeQuery?.data?.data?.Data;
-const getCategoryData = getCategoryQuery?.data?.data?.Data;
-
-const materialOptions =
-  getMaterialData && getMaterialData?.length > 0 ? (
-    getMaterialData?.map((item: any, index: number) => (
-      <option value={item?.Id} key={index + 1}>
-        {item?.Name}
+  const materialOptions =
+    getMaterialData && getMaterialData?.length > 0 ? (
+      getMaterialData?.map((item: any, index: number) => (
+        <option value={item?.Id} key={index + 1}>
+          {item?.Name}
+        </option>
+      ))
+    ) : (
+      <option disabled>
+        {getMaterialTypeQuery?.isLoading
+          ? "loading...."
+          : getMaterialTypeQuery?.isError
+          ? getMaterialErrorMessage
+          : ""}
       </option>
-    ))
-  ) : (
-    <option disabled>
-      {getMaterialTypeQuery?.isLoading
-        ? "loading...."
-        : getMaterialTypeQuery?.isError
-        ? getMaterialErrorMessage
-        : ""}
-    </option>
-  );
+    );
 
-const categoryOptions =
-  getCategoryData && getCategoryData?.length > 0 ? (
-    getCategoryData?.map((item: any, index: number) => (
-      <option value={item?.CategoryId} key={index + 1}>
-        {item?.ContentCategoryName}
+  const categoryOptions =
+    getCategoryData && getCategoryData?.length > 0 ? (
+      getCategoryData?.map((item: any, index: number) => (
+        <option value={item?.CategoryId} key={index + 1}>
+          {item?.ContentCategoryName}
+        </option>
+      ))
+    ) : (
+      <option disabled>
+        {getCategoryQuery?.isLoading
+          ? "loading...."
+          : getCategoryQuery?.isError
+          ? getCategoryErrorMessage
+          : ""}
       </option>
-    ))
-  ) : (
-    <option disabled>
-      {getCategoryQuery?.isLoading
-        ? "loading...."
-        : getCategoryQuery?.isError
-        ? getCategoryErrorMessage
-        : ""}
-    </option>
-  );
+    );
 
   const handleSelectCategory = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setCategory(e.target.value);
   };
 
- 
-  const AllResults = category ? filteredDataByCategory : filteredData
+  const AllResults = category ? filteredDataByCategory : filteredData;
+  const startIndex = (currentPage - 1) * pageSize + 1;
+  const endIndex = Math.min(currentPage * pageSize, AllResults.length);
 
   const column = [
     {
       title: "S/N",
       dataIndex: "ContentId",
       key: "ContentId",
-      
-      
     },
-   
+
     {
       title: "Title",
       dataIndex: "Title",
       key: "Title",
-    
     },
     {
       title: "ContentUrl",
@@ -183,23 +182,24 @@ const categoryOptions =
       key: "ContentUrl",
 
       render: (text: string) => (
-
-        <span >{<a  href={text} target="_blank" rel="noreferrer">material</a>}</span>
+        <span>
+          {
+            <a href={text} target="_blank" rel="noreferrer">
+              material
+            </a>
+          }
+        </span>
       ),
-
-    
     },
     {
       title: "Category",
       dataIndex: "CategoryId",
       key: "CategoryId",
-      
     },
     {
       title: "Description",
       dataIndex: "Description",
       key: "Description",
-     
     },
     {
       title: "Amount",
@@ -208,28 +208,23 @@ const categoryOptions =
       render: (text: string) => (
         <span className={styles.balance}>&#x20A6;{text}</span>
       ),
-     
     },
     {
       title: "Material Type",
       dataIndex: "MaterialTypeId",
       key: "MaterialTypeId",
-      // 
+      //
     },
     {
       title: "Expiry Days",
       dataIndex: "ExpirationDays",
       key: "ExpirationDays",
-      
     },
     {
       title: "Publish Date",
       dataIndex: "PublishedDate",
       key: "PublishedDate",
-      render: (text: string) => (
-        <span >{formatDate(text)}</span>
-      ),
-    
+      render: (text: string) => <span>{formatDate(text)}</span>,
     },
     {
       title: "Actions",
@@ -241,7 +236,9 @@ const categoryOptions =
             dropdownButton={<Ellipsis style={{ cursor: "pointer" }} />}
             dropdownContent={
               <>
-                <Link to={""}  onClick={() => openViewModal(record)}>Edit</Link>
+                <Link to={""} onClick={() => openViewModal(record)}>
+                  Edit
+                </Link>
                 <Link to={"#"} onClick={() => openViewModal(record)}>
                   Delete
                 </Link>
@@ -252,20 +249,25 @@ const categoryOptions =
       ),
     },
   ];
-  console.log(data, 'data')
+  console.log(data, "data");
   const formik = useFormik<FormikValues>({
     initialValues: {},
     onSubmit: (value: any) => {},
   });
+
   return (
     <section>
       <div className={styles.header}>
         <Layout heading="Content Management" />
 
         <div>
-          <Button text="Upload Content" onClick={()=>{navigate('/upload-content')}} />
+          <Button
+            text="Upload Content"
+            onClick={() => {
+              navigate("/upload-content");
+            }}
+          />
         </div>
-
       </div>
 
       {getContentQuery?.isLoading ? (
@@ -273,50 +275,69 @@ const categoryOptions =
       ) : getContentQuery?.isError ? (
         <h1 className="error">{getContentErrorMessage}</h1>
       ) : (
-
-      <div className={styles.body}>
-        <div className={styles.inside}>
-          <p>Showing 1-11 of {AllResults?.length}</p>
-          <div>
-            {!showSearch && (
-              <Search
-              
-                onClick={() => setShowSearch((showSearch) => !showSearch)}
-              />
+        <div className={styles.body}>
+          <div className={styles.inside}>
+            {AllResults && AllResults?.length > 0 && (
+              <p>
+                Showing {startIndex}-{endIndex} of {AllResults?.length}
+              </p>
             )}
-            {showSearch && <SearchInput  onChange={(e) => setSearchTerm(e.target.value)} />}
-            {showAllFilter && 
-            <> 
-            <FilterSelect placeholder="Category" options={categoryOptions} value={category} onChange={handleSelectCategory}></FilterSelect>
-            </>
-           
-            }
-            {!showAllFilter && <Filter onClick={()=>setShowAllFilter((showAllFilter) => !showAllFilter )}/>}
 
+            <div>
+              {!showSearch && (
+                <Search
+                  onClick={() => setShowSearch((showSearch) => !showSearch)}
+                />
+              )}
+              {showSearch && (
+                <SearchInput onChange={(e) => setSearchTerm(e.target.value)} />
+              )}
+              {showAllFilter && (
+                <>
+                  <FilterSelect
+                    placeholder="Category"
+                    options={categoryOptions}
+                    value={category}
+                    onChange={handleSelectCategory}
+                  ></FilterSelect>
+                </>
+              )}
+              {!showAllFilter && (
+                <Filter
+                  onClick={() =>
+                    setShowAllFilter((showAllFilter) => !showAllFilter)
+                  }
+                />
+              )}
+            </div>
           </div>
-        </div>
 
-        <Table
-          columns={column}
-          dataSource={category ? filteredDataByCategory : filteredData}
-          // pagination={false}
-          className={styles.row}
-          rowKey={"ContentId"}
-          scroll={{ x: 400 }}
-          pagination={{ current: currentPage, pageSize: pageSize, onChange: handlePaginationChange, position: ["bottomCenter"] }}
-        />
+          <Table
+            columns={column}
+            dataSource={category ? filteredDataByCategory : filteredData}
+            // pagination={false}
+            className={styles.row}
+            rowKey={"ContentId"}
+            scroll={{ x: 400 }}
+            pagination={{
+              current: currentPage,
+              pageSize: pageSize,
+              onChange: handlePaginationChange,
+              position: ["bottomCenter"],
+            }}
+          />
 
-        <Modal
-          open={showModal}
-          footer=""
-          onCancel={() => setShowModal(false)}
-          centered
-          closeIcon={<Cancel />}
-          className="modal"
-        >
-          <ContentUpload  />
-        </Modal>
-        {/* <Modal
+          <Modal
+            open={showModal}
+            footer=""
+            onCancel={() => setShowModal(false)}
+            centered
+            closeIcon={<Cancel />}
+            className="modal"
+          >
+            <ContentUpload />
+          </Modal>
+          {/* <Modal
           open={showModal}
           footer=""
           onCancel={() => setShowModal(false)}
@@ -326,7 +347,7 @@ const categoryOptions =
         >
           <ContentUpload categoryOptions={categoryOptions} materialOptions={materialOptions} data={data} />
         </Modal> */}
-      </div>
+        </div>
       )}
     </section>
   );

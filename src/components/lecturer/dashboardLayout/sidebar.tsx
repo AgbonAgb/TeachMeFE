@@ -38,13 +38,7 @@ const Sidebar = () => {
           </span>
           Setup Bank
         </NavLink>
-        <NavLink className={({ isActive }) => (isActive ? styles.activeLink : "")} to={"/lecturer-category"}>
-          <span>
-            {" "}
-            <Account />
-          </span>
-          SetUp Category
-        </NavLink>
+       
         <NavLink className={({ isActive }) => (isActive ? styles.activeLink : "")} to={"/content-management"}>
           <span>
             {" "}
@@ -89,11 +83,13 @@ const Sidebar = () => {
           </span>
           View Payment Splitting
         </NavLink>
-        <NavLink className={({ isActive }) => (isActive ? styles.activeLink : "")} to={"/setup-category"}>   
-        <span>        
+ 
+        <NavLink className={({ isActive }) => (isActive ? styles.activeLink : "")} to={"/lecturer-category"}>
+          <span>
+            {" "}
             <Category />
           </span>
-          Setup Category
+          SetUp Category
         </NavLink>
 
         <NavLink className={({ isActive }) => (isActive ? styles.activeLink : "")} to={""} onClick={logout} style={{marginBlockStart:'18rem'}}>

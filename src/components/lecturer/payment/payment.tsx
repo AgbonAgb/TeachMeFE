@@ -153,10 +153,7 @@ const Payment = () => {
     //   ),
     // },
   ];
-  const formik = useFormik<FormikValues>({
-    initialValues: {},
-    onSubmit: (value: any) => {},
-  });
+ 
   return (
     <section>
       <div className={styles.header}>
@@ -167,7 +164,7 @@ const Payment = () => {
 
       <div className={styles.body}>
         <div className={styles.inside}>
-          <p>Showing 1-11 of {filteredData?.length}</p>
+          {/* <p>Showing 1-11 of {filteredData?.length}</p> */}
           <div>
             {!showSearch && (
               <Search
