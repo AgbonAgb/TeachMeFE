@@ -153,7 +153,7 @@ const LecturerProfile = () => {
     onSubmit: (data, { resetForm }) => {
       UpdateProfileHandler(data);
     },
-    // validationSchema: validationRules,
+    validationSchema: validationRules,
   });
   console.log(LecturerData?.LinkName, "LecturerData?.LinkName");
   return (

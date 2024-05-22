@@ -1,3 +1,4 @@
+import Category from "../components/lecturer/category/category";
 import request from "./request";
 export const baseUrl = process.env.NODE_ENV === "development" ? "http://localhost:3000" || "http://localhost:3001" : "http://174.142.93.40:9082";
 
@@ -38,10 +39,7 @@ const url =`/Lecturer/GetAllContentbyLecturer?LectId=${UserId}`
 };
 //GetLecturerProfile
 export const GetLecturerProfile = async (UserId: string) => {
-  const encodedUserID = encodeURIComponent(UserId);
-
-  const url = `/Lecturer/GetLecturer?Id=${encodedUserID}`;
-
+  const url = `/Lecturer/GetLecturer?Id=${UserId}`;
   return await request.get(url);
 };
 //UpdateLecturer
@@ -73,10 +71,10 @@ export const ProcessPaymentCall = async (data: ProcessPaymentPayload) => {
 export const QueryPaymentCall = async (reference: string) => {
   return (await request.get(`/Payment/${reference}/QueryProcessedPayment`))?.data;
 };
+
 //Get Payment By Lecturer ID
 export const GetPaymentByLecturerId = async (UserId: string) => {
-  const encodedUserID = encodeURIComponent(UserId);
-  const url = `/Lecturer/GetMyPayments?LectId=${encodedUserID}`;
+  const url = `/Lecturer/GetMyPayments?LectId=${UserId}`;
   return await request.get(url);
 };
 
@@ -114,3 +112,20 @@ export const GetCategoryByLecturerIdCall = async (lecturerId: string) => {
 export const GetOnlySubscribedLecturersMaterialsCall= async (lecturerId: string, categoryId: number) => {
   return (await request.get(`/Lecturer/GetCategoryContent?LecturerID=${lecturerId}&Categoryid=${categoryId}`))?.data as MySubscribedLecturersMaterialsResponse;
 }
+//get Category By Lecturer Id
+export const GetCategoryByLecturerId = async (UserId: string) => {
+  const url = `/Category/lecturer/${UserId}`;
+  return await request.get(url);
+};
+//Create Category
+export const CreateCategoryCall = async (payload: CategoryPayload) => {
+  const url ='/Category';
+  return await request.post(url,payload);
+};
+
+//get content by category id and lecture id
+export const GetContentByCategoryId = async (UserId: string, categoryId:string) => {
+  const url = `/Lecturer/GetCategoryContent?LecturerID=${UserId}&Categoryid=${categoryId}
+  `;
+  return await request.get(url);
+};

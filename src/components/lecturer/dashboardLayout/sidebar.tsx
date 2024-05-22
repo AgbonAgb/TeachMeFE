@@ -38,6 +38,13 @@ const Sidebar = () => {
           </span>
           Setup Bank
         </NavLink>
+        <NavLink className={({ isActive }) => (isActive ? styles.activeLink : "")} to={"/lecturer-category"}>
+          <span>
+            {" "}
+            <Account />
+          </span>
+          SetUp Category
+        </NavLink>
         <NavLink className={({ isActive }) => (isActive ? styles.activeLink : "")} to={"/content-management"}>
           <span>
             {" "}
