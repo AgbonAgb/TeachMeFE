@@ -35,7 +35,7 @@ const SignIn = () => {
     if (user && user?.Token && user?.UserType?.toLowerCase() === "lecturer") {
       navigate("/lecturer-profile");
     } else if (user && user?.Token && user?.UserType?.toLowerCase() === "student") {
-      navigate("/overview");
+      navigate("/subscribe");
     }
   }, [user]);
 

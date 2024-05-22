@@ -14,7 +14,10 @@ const ContentRenderer = ({ url }: Props) => {
     setIsOpenPdfModal(false);
   };
   const renderContent = () => {
+    const pdfUrl = url
+    const viewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(pdfUrl)}&embedded=true`;
     const fileExtension = url && url?.split('.')?.pop()?.toLowerCase();
+    
 
     if (fileExtension === 'mp3' || fileExtension === 'wav' || fileExtension === 'ogg') {
       return (
@@ -35,6 +38,12 @@ const ContentRenderer = ({ url }: Props) => {
             footer=''
             > 
              <embed src={url} type="application/pdf" width="100%" height="500px" />
+             {/* <iframe
+        src={url}
+        style={{ width: '100%', height: '500px' }}
+        title='material-pdf'
+        frameBorder="0"
+      /> */}
 
             </Modal>
       

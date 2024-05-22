@@ -16,7 +16,7 @@ interface ChangePasswordPayload {
   CurrentPassword: string;
   NewPassword: string;
   ConfirmPassword: string;
-  memberId:string;
+  memberId: string;
 }
 interface LecturerSignUpPayload {
   FirstName: string;
@@ -123,7 +123,33 @@ interface LecturerProfilePayload {
   PixUrl?: File | null;
 }
 
-interface MaterialTypePayload{
-  Id: number
-  Name: string
+interface MaterialTypePayload {
+  Id: number;
+  Name: string;
+}
+
+interface MySubscribedLecturersResponse {
+  LinkName: string;
+  LecturerId: string;
+}
+
+interface CategoryResponse {
+  CategoryId: number;
+  ContentCategoryName: string;
+  LecturerId: string;
+}
+
+interface MySubscribedLecturersMaterialsResponse {
+  ContentId: number;
+  Title: string;
+  Description: string;
+  LecturerId: string;
+  Amount: number;
+  CategoryId: number;
+  MaterialTypeId: string;
+  ExpirationDays: number;
+  PublishedDate: string;
+  ContentFile: any;
+  ContentUrl: string;
+  LinkName: string;
 }

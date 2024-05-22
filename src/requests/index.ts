@@ -102,3 +102,15 @@ export const ChangePasswordCall = async (payload: ChangePasswordPayload) => {
     formData.append("ConfirmPassword", payload?.ConfirmPassword);
 	return (await request.post(`/Authentication/ChangePasswordAsync?memberId=${payload?.memberId}`, formData))?.data as Response;
 };
+
+export const GetMySubscribedLecturersCall = async (studentId: string) => {
+  return (await request.get(`/Student/MypSubscribedLecturer?studentId=${studentId}`))?.data as MySubscribedLecturersResponse;
+}
+
+export const GetCategoryByLecturerIdCall = async (lecturerId: string) => {
+  return (await request.get(`/Lecturer/LecturerContentCategory?LecturerID=${lecturerId}`))?.data as CategoryResponse;
+}
+
+export const GetOnlySubscribedLecturersMaterialsCall= async (lecturerId: string, categoryId: number) => {
+  return (await request.get(`/Lecturer/GetCategoryContent?LecturerID=${lecturerId}&Categoryid=${categoryId}`))?.data as MySubscribedLecturersMaterialsResponse;
+}

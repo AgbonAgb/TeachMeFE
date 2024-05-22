@@ -5,7 +5,7 @@ import { ReactComponent as Search } from "../../../assets/border-search.svg";
 import { ReactComponent as Filter } from "../../../assets/filter.svg";
 import { ReactComponent as Ellipsis } from "../../../assets/ellipsis.svg";
 import { ReactComponent as Cancel } from "../../../assets/cancel.svg";
-import { App, Button, Dropdown, MenuProps, Modal, Table, Tooltip } from "antd";
+import { App, Button, Dropdown, MenuProps, Modal, Table, Tooltip, Image } from "antd";
 import { Field, FormikProvider, FormikValues, useFormik } from "formik";
 import SearchInput from "../../../custom/searchInput/searchInput";
 import CustomSelect from "../../../custom/select/select";
@@ -60,6 +60,15 @@ const Subscribe = () => {
     },
 
     {
+      title: "Picture",
+      dataIndex: "PixUrl",
+      key: "PixUrl",
+      render: (item: any) => (
+        item ? <Image src={item} alt="Picture" className={styles.image}/> : <p>N/A</p>
+      ),
+    },
+
+    {
       title: "First Name",
       dataIndex: "FirstName",
       key: "FirstName",
@@ -89,27 +98,24 @@ const Subscribe = () => {
       key: "Address",
       render: (item: any) => <p>{item ? item : "N/A"}</p>,
     },
+   
     {
-      title: "PixUrl",
-      dataIndex: "PixUrl",
-      key: "PixUrl",
-      render: (item: any) => <p>{item ? item : "N/A"}</p>,
-    },
-    {
-      title: "IdCardUrl",
+      title: "ID Card",
       dataIndex: "IdCardUrl",
       key: "IdCardUrl",
-      render: (item: any) => <p>{item ? item : "N/A"}</p>,
-    },
-    {
-      title: "Actions",
-      dataIndex: "actions",
-      render: (_: any, record: any) => (
-        <Tooltip title="View">
-          <Ellipsis  style={{ cursor: "pointer" }} />
-        </Tooltip>
+      render: (item: any) => (
+        item ? <Image src={item} alt="ID card" className={styles.image}/> : <p>N/A</p>
       ),
     },
+    // {
+    //   title: "Actions",
+    //   dataIndex: "actions",
+    //   render: (_: any, record: any) => (
+    //     <Tooltip title="View">
+    //       <Ellipsis  style={{ cursor: "pointer" }} />
+    //     </Tooltip>
+    //   ),
+    // },
   ];
 
   const lecturersQuery = useQuery({
@@ -242,7 +248,7 @@ const Subscribe = () => {
                   <Field as={CustomSelect} label="Lecturer Name" name="LecturerId" placeholder="Select Lecturer" className={styles.input}>
                     {lecturerOptions}
                   </Field>
-                  <CustomButton text="Subscribe" className={styles.button} type="submit" />
+                  <CustomButton text="Subscribe" className={styles.button} type="submit" disabled={subscribeToLecturerMutation?.isPending} isLoading={subscribeToLecturerMutation.isPending}/>
                 </form>
               </FormikProvider>
             </div>
