@@ -22,6 +22,7 @@ import SendMessage from "./components/student/messages/sendMessage";
 import MessagesResponse from "./components/student/messages/messageResponse";
 import ChangePassword from "./components/lecturer/changePassword/changePassword";
 import LecturerCategory from "./components/lecturer/category/category";
+import ProtectedRoute from "./components/utils/protectedRoute";
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
       </Route>
       <Route element={<SignIn />} path="sign-in" />
 
+      <Route element={<ProtectedRoute/>}>
       <Route element={<DashboardLayout />}>
         <Route element={<Overview />} path="/overview" />
         <Route element={<Subscribe />} path="/subscribe" />
@@ -43,6 +45,9 @@ function App() {
         <Route element={<ChangePassword />} path="/change-password" />
       </Route>
 
+      </Route>
+
+      <Route element={<ProtectedRoute/>}>
       <Route element={<LecturerDashboardLayout />}>
       <Route element={<Overview />} path="/lecturer-overview" />
 
@@ -57,6 +62,10 @@ function App() {
         <Route element={<LecturerCategory />} path="lecturer-category" />
 
       </Route>
+      </Route>
+
+
+  
     </Routes>
   );
 }
