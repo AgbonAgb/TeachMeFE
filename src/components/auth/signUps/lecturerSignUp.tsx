@@ -142,6 +142,7 @@ const LecturerSignUp = () => {
           displayInput="text"
           label="Phone Number"
         />
+        
         <Field
           as={Input}
           name="Password"
