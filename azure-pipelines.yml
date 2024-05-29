@@ -48,6 +48,6 @@ steps:
 - task: PublishBuildArtifacts@1
   inputs:
     pathtoPublish: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
-    artifactName: 'TeachmeFeF'
+    artifactName: 'TeachmeFeF2'
     publishLocation: 'Container'
   displayName: 'Publish artifact'
