@@ -33,8 +33,14 @@ const StudentSignUp = () => {
     Password: string()
       .required("Password is required")
       .min(9)
-      .matches(/(?=.*[a-z])/, "Password must contain at least one lowercase letter")
-      .matches(/(?=.*[A-Z])/, "Password must contain at least one uppercase letter")
+      .matches(
+        /(?=.*[a-z])/,
+        "Password must contain at least one lowercase letter"
+      )
+      .matches(
+        /(?=.*[A-Z])/,
+        "Password must contain at least one uppercase letter"
+      )
       .matches(/(?=.*\d)/, "Password must contain at least one number"),
     ConfirmPassword: string()
       .required("required")
@@ -46,7 +52,10 @@ const StudentSignUp = () => {
     mutationKey: ["register-student"],
   });
 
-  const registerStudentHandler = async (values: FormikValues, resetForm: () => void) => {
+  const registerStudentHandler = async (
+    values: FormikValues,
+    resetForm: () => void
+  ) => {
     const payload: RegisterStudentPayload = {
       UserName: values.FirstName + values.LastName,
       FirstName: values.FirstName,
@@ -59,7 +68,7 @@ const StudentSignUp = () => {
       const data = await registerStudentMutation.mutateAsync(payload);
       notification.success({
         message: "Success",
-        description: data.Message || 'Sign up successful',
+        description: data.Message || "Sign up successful",
       });
       resetForm();
       handleShowModal();
@@ -89,14 +98,56 @@ const StudentSignUp = () => {
     <main>
       <FormikProvider value={formik}>
         <form onSubmit={formik.handleSubmit}>
-          <Field as={Input} name="FirstName" placeholder="Enter First Name" displayInput="text" label="First Name" />
-          <Field as={Input} name="LastName" placeholder="Enter Last Name" displayInput="text" label="Last Name" />
+          <Field
+            as={Input}
+            name="FirstName"
+            placeholder="Enter First Name"
+            displayInput="text"
+            label="First Name"
+          />
+          <Field
+            as={Input}
+            name="LastName"
+            placeholder="Enter Last Name"
+            displayInput="text"
+            label="Last Name"
+          />
           {/* <Field as={Input} name="UserName" placeholder="Enter Username" displayInput="text" label="Username" /> */}
-          <Field as={Input} name="Email" placeholder="Enter Email Address" displayInput="text" type="email" label="Email Address" />
-          <Field as={Input} name="Phone" placeholder="Enter Phone Number" displayInput="text" label="Phone Number" />
-          <Field as={Input} name="Password" placeholder="Enter Password" displayInput="password" label="Password" />
-          <Field as={Input} name="ConfirmPassword" placeholder="Enter Confirm Password" displayInput="password" label="Confirm Password" />
-          <Button text={"Create Account"} className={styles.button} disabled={registerStudentMutation.isPending} isLoading={registerStudentMutation.isPending} />
+          <Field
+            as={Input}
+            name="Email"
+            placeholder="Enter Email Address"
+            displayInput="text"
+            type="email"
+            label="Email Address"
+          />
+          <Field
+            as={Input}
+            name="Phone"
+            placeholder="Enter Phone Number"
+            displayInput="text"
+            label="Phone Number"
+          />
+          <Field
+            as={Input}
+            name="Password"
+            placeholder="Enter Password"
+            displayInput="password"
+            label="Password"
+          />
+          <Field
+            as={Input}
+            name="ConfirmPassword"
+            placeholder="Enter Confirm Password"
+            displayInput="password"
+            label="Confirm Password"
+          />
+          <Button
+            text={"Create Account"}
+            className={styles.button}
+            disabled={registerStudentMutation.isPending}
+            isLoading={registerStudentMutation.isPending}
+          />
         </form>
       </FormikProvider>
       <Modal
@@ -108,7 +159,7 @@ const StudentSignUp = () => {
         className="modal"
         // width={'25%'}
       >
-        <SuccessModal />
+        <SuccessModal userEmail={formik?.values?.Email} />
       </Modal>
     </main>
   );
