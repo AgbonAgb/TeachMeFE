@@ -2,6 +2,8 @@ import Category from "../components/lecturer/category/category";
 import request from "./request";
 export const baseUrl = process.env.NODE_ENV === "development" ? "http://localhost:3000" || "http://localhost:3001" : "http://10.12.200.15:1447";
 
+// "build": "react-scripts build",
+
 //Register Student
 export const RegisterStudentCall = async (data: RegisterStudentPayload) => {
   return (await request.post("/Authentication/RegisterStudent", data))?.data;
