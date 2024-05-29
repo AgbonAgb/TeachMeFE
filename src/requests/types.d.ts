@@ -5,7 +5,7 @@ interface Response {
 }
 
 interface RegisterStudentPayload {
-  UserName: string;
+  UserName?: string;
   FirstName: string;
   LastName: string;
   Email: string;

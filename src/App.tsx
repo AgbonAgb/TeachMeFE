@@ -30,7 +30,7 @@ function App() {
         <Route element={<ErrorPage />} path="*" />
         <Route element={<SignUp />} path="/" />
       </Route>
-      <Route element={<SignIn />} path="sign-in" />
+      <Route element={<SignIn />} path="/sign-in" />
 
       <Route element={<DashboardLayout />}>
         <Route element={<Overview />} path="/overview" />
