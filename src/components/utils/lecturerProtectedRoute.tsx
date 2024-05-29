@@ -2,11 +2,11 @@ import { useAtom } from "jotai"
 import { Navigate, Outlet } from "react-router-dom";
 import { userAtom } from "../../store/store";
 
-const ProtectedRoute = () => {
+const LecturerProtectedRoute = () => {
     const [user] = useAtom(userAtom);
 
 
-    if (user?.Token  && user?.UserType?.toLowerCase() === "student") {
+    if (user?.Token && user?.UserType?.toLowerCase() === "lecturer") {
         return <Outlet />;
     }
 
@@ -15,5 +15,5 @@ const ProtectedRoute = () => {
 
 }
  
-export default ProtectedRoute;
+export default LecturerProtectedRoute;
 

@@ -12,15 +12,18 @@ import { LecturerSignUpCall } from "../../../requests";
 import { App } from "antd";
 import { errorMessage } from "../../utils/errorMessage";
 
-
 const LecturerSignUp = () => {
   const { notification } = App.useApp();
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
-  const handleShowModal = ()=>{
-    setShowModal(true)
-  }
+  const handleShowModal = () => {
+    setShowModal(true);
+  };
 
+  const redirect = ()=>{
+    setShowModal(false)
+    navigate('/sign-in')
+  }
   // const lecturerSignUpApi = async (data: Payload) => {
   //   return (await apiCall().post("/Authentication/RegisterLecturer", data))
   //     ?.data;
@@ -41,7 +44,7 @@ const LecturerSignUp = () => {
       Email: data?.Email?.trim(),
       Phone: data?.PhoneNumber?.trim(),
       Password: data?.Password?.trim(),
-      UserName:'UserName',
+      UserName: "UserName",
     };
     // if (isChecked) {
     //   localStorage.setItem("username-cipm", formik?.values?.Email);
@@ -55,7 +58,7 @@ const LecturerSignUp = () => {
             message: "Success",
             description: data.Message,
           });
-          handleShowModal()
+          handleShowModal();
         },
       });
     } catch (error: any) {
@@ -65,23 +68,22 @@ const LecturerSignUp = () => {
       });
     }
   };
-  
 
   const validationRules = Yup.object().shape({
     Email: Yup.string()
       .required("Email Address is required")
       .email("Invalid email Address"),
     Password: Yup.string()
-    .required("Password is required")
-    .max(20, "Password must have a maximum length of 20 characters")
-    .matches(
-      /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}/,
-      "The password must contain a mix of uppercase letters, lowercase letters, and numbers."
-    ),
+      .required("Password is required")
+      .max(20, "Password must have a maximum length of 20 characters")
+      .matches(
+        /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}/,
+        "The password must contain a mix of uppercase letters, lowercase letters, and numbers."
+      ),
     ConfirmPassword: Yup.string()
-    .required("Confirm password is required")
-    .oneOf([Yup.ref("Password")], "Passwords must match")
-    .required("Confirm password is required"),
+      .required("Confirm password is required")
+      .oneOf([Yup.ref("Password")], "Passwords must match")
+      .required("Confirm password is required"),
     FirstName: Yup.string().required("First Name is required"),
     LastName: Yup.string().required("Last Name is required"),
     PhoneNumber: Yup.string().required("Phone Number is required"),
@@ -106,85 +108,85 @@ const LecturerSignUp = () => {
   return (
     <main>
       <FormikProvider value={formik}>
-      <form onSubmit={formik.handleSubmit}>
-        <Field
-          as={Input}
-          name="FirstName"
-          placeholder="Enter First Name"
-          displayInput="text"
-          label="First Name"
-        />
-        <Field
-          as={Input}
-          name="LastName"
-          placeholder="Enter Last Name"
-          displayInput="text"
-          label="Last Name"
-        />
-         {/* <Field
+        <form onSubmit={formik.handleSubmit}>
+          <Field
+            as={Input}
+            name="FirstName"
+            placeholder="Enter First Name"
+            displayInput="text"
+            label="First Name"
+          />
+          <Field
+            as={Input}
+            name="LastName"
+            placeholder="Enter Last Name"
+            displayInput="text"
+            label="Last Name"
+          />
+          {/* <Field
           as={Input}
           name="User Name"
           placeholder="Enter UserName"
           displayInput="text"
           label="UserName"
         /> */}
-        <Field
-          as={Input}
-          name="Email"
-          placeholder=" Enter Email"
-          displayInput="text"
-          label="Email"
-        />
-        <Field
-          as={Input}
-          name="PhoneNumber"
-          placeholder="Enter Phone Number"
-          displayInput="text"
-          label="Phone Number"
-        />
-        
-        <Field
-          as={Input}
-          name="Password"
-          placeholder=" Create Password"
-          displayInput="password"
-          label="Password"
-        />
-         <Field
-          as={Input}
-          name="ConfirmPassword"
-          placeholder=" Confirm your Password"
-          displayInput="password"
-          label="Confirm Password"
-        />
-        <Button disabled={lecturerSignUpMutation?.isPending} text={lecturerSignUpMutation?.isPending ? "Creating..." : "Create Account"} />
-      </form>
+          <Field
+            as={Input}
+            name="Email"
+            placeholder=" Enter Email"
+            displayInput="text"
+            label="Email"
+          />
+          <Field
+            as={Input}
+            name="PhoneNumber"
+            placeholder="Enter Phone Number"
+            displayInput="text"
+            label="Phone Number"
+          />
 
-      {/* <p>
+          <Field
+            as={Input}
+            name="Password"
+            placeholder=" Create Password"
+            displayInput="password"
+            label="Password"
+          />
+          <Field
+            as={Input}
+            name="ConfirmPassword"
+            placeholder=" Confirm your Password"
+            displayInput="password"
+            label="Confirm Password"
+          />
+          <Button
+            disabled={lecturerSignUpMutation?.isPending}
+            text={
+              lecturerSignUpMutation?.isPending
+                ? "Creating..."
+                : "Create Account"
+            }
+          />
+        </form>
+
+        {/* <p>
       Already have an account? 
         <span onClick={()=>{navigate('/sign-in')}} style={{ fontWeight: "700" }}>Sign Up</span>{" "}
       </p> */}
 
-<Modal
-    open={showModal}
-    footer=""
-    onCancel={() => setShowModal(false)}
-    centered
-    closeIcon={<Cancel />}
-    className="modal"
-    // width={'25%'}
-
-
-  >
-    <SuccessModal/>
-  
-  
-  </Modal>
-    </FormikProvider>
-
-
+        <Modal
+          open={showModal}
+          footer=""
+          onCancel={redirect}
+          centered
+          closeIcon={<Cancel  />}
+          className="modal"
+          // width={'25%'}
+        >
+          <SuccessModal  userEmail={formik?.values?.Email}/>
+        </Modal>
+      </FormikProvider>
     </main>
-    
   );
 };
 
