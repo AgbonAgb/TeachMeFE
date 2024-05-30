@@ -16,6 +16,7 @@
 
   &:disabled{
     background-color:#e8eaed;
+    color: black!important;
   }
 }
 
@@ -25,6 +26,11 @@
 input:focus-visible {
   background-color: white;
   border-color: #6f6a6b;
+  &:disabled{
+    background-color:#e8eaed;
+    color: black!important;
+    border-color: #CECED2;
+  }
 }
 
 .input:focus {
@@ -32,8 +38,15 @@ input:focus-visible {
   background-color: white;
 }
 
-input::placeholder {
+.input::placeholder {
   color: #9f9f9f;
+  &:disabled{
+    color: black!important;
+  }
+}
+
+.input:disabled::placeholder{
+  color: black!important;
 }
 input:valid {
   background-color: #fff;
