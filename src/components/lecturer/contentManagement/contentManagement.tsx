@@ -12,6 +12,8 @@ import { Field, FormikProvider, FormikValues, useFormik } from "formik";
 import CustomSelect from "../../../custom/select/select";
 import Layout from "../../layout/layout";
 import ContentUpload from "./modalContent/contentUpload";
+import EditContentUpload from "./modalContent/editContentUpload";
+
 import { Link, useNavigate } from "react-router-dom";
 import { useQueries } from "@tanstack/react-query";
 import { AxiosError } from "axios";
@@ -335,7 +337,7 @@ const ContentManagement = () => {
             closeIcon={<Cancel />}
             className="modal"
           >
-            <ContentUpload />
+            <EditContentUpload  data={data}/>
           </Modal>
           {/* <Modal
           open={showModal}
