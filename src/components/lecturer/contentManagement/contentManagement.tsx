@@ -42,6 +42,9 @@ const ContentManagement = () => {
   const [category, setCategory] = useState("");
 
   const navigate = useNavigate();
+  const handleClose =()=>{
+    setShowModal(false)
+  }
 
   const openViewModal = (record: any) => {
     setShowModal(true);
@@ -351,7 +354,7 @@ const ContentManagement = () => {
             closeIcon={<Cancel />}
             className="modal"
           >
-            <EditContentUpload  getData={data}/>
+            <EditContentUpload handleClose={handleClose}  getData={data}/>
           </Modal>
           {/* <Modal
           open={showModal}

@@ -22,10 +22,11 @@ import { useAtomValue } from "jotai";
 
 
 interface Props{
-  getData?:ContentUploadPayload
+  getData?:ContentUploadPayload,
+  handleClose : ()=>void
 }
 
-const EditContentUpload = ({getData}:Props) => {
+const EditContentUpload = ({handleClose, getData}:Props) => {
   const { notification } = App.useApp();
   const navigate = useNavigate();
   const user = useAtomValue(userAtom);
@@ -142,7 +143,7 @@ const EditContentUpload = ({getData}:Props) => {
             description: data.Message,
           });
           queryClient.refetchQueries({ queryKey: ["get-all-contents"] });
-          navigate('/content-management')
+          handleClose()
 
         },
       });
@@ -195,7 +196,7 @@ const EditContentUpload = ({getData}:Props) => {
             navigate("/content-management");
           }}
         />
-        <Layout heading="Content Upload" />
+        <Layout heading=" Edit Content Upload" />
 
         <form className={styles.form} onSubmit={formik.handleSubmit}>
           <Field
