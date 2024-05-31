@@ -12,103 +12,91 @@ import { Field, FormikProvider, FormikValues, useFormik } from "formik";
 import CustomSelect from "../../../custom/select/select";
 import Layout from "../../layout/layout";
 import { useNavigate } from "react-router-dom";
-
+import { useQueries } from "@tanstack/react-query";
+import { GetAllStudentSubscriberByLecturer } from "../../../requests";
+import { useAtomValue } from "jotai";
+import { userAtom } from "../../../store/store";
+import { AxiosError } from "axios";
+import { formatDate } from "../../utils/dateUtils";
 const date = new Date();
 
 const Subscriptions = () => {
   const [showSearch, setShowSearch] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const user = useAtomValue(userAtom);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [showAllFilter, setShowAllFilter] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const openUploadModal = (record: any) => {
-    setShowModal(true);
+  const handlePaginationChange = (page: number, pageSize: number) => {
+    setCurrentPage(page);
+    setPageSize(pageSize);
   };
+
+  const [getLecturerSubscriberQuery] = useQueries({
+    queries: [
+      {
+        queryKey: ["get-all-student-subscriber-by-lecture"],
+        queryFn: () => GetAllStudentSubscriberByLecturer(user?.UserId!),
+        retry: 0,
+        refetchOnWindowFocus: false,
+      },
+    ],
+  });
+
+  const getLecturerSubscriberError =
+    getLecturerSubscriberQuery?.error as AxiosError;
+  const getLecturerSubscriberErrorMessage = getLecturerSubscriberError?.message;
+  const getLecturerSubscriberData = getLecturerSubscriberQuery?.data?.data;
+
+  const filteredData = Array.isArray(getLecturerSubscriberData)
+    ? getLecturerSubscriberData.filter((item: any) =>
+        Object?.values(item)
+          .join(" ")
+          .toLowerCase()
+          .includes(searchTerm?.toLowerCase())
+      )
+    : [];
+
+    const startIndex = (currentPage - 1) * pageSize + 1;
+  const endIndex = Math.min(currentPage * pageSize, filteredData && filteredData.length);
+
+
   const column = [
     {
       title: "S/N",
-      dataIndex: "S/N",
-      key: "S/N",
-      render: (text: number) => (
-        <span>
-          {text === date?.getFullYear() ? (
-            <p>
-              {" "}
-              &#x20A6;{text} <span className={styles.current}>Current</span>
-            </p>
-          ) : (
-            <p>&#x20A6;{text}</p>
-          )}
-        </span>
+      dataIndex: "index",
+      key: "index",
+      render: (text: any, record: any, index: number) => (
+        <span>{(currentPage - 1) * pageSize + index + 1}</span>
       ),
     },
     {
-      title: "Content ID",
-      dataIndex: "ContentId",
-      key: "ContentId",
-      render: (text: string) => <span>&#x20A6;{text}</span>,
+      title: "Email",
+      dataIndex: "Email",
+      key: "Email",
     },
     {
-      title: "Title",
-      dataIndex: "Title",
-      key: "Title",
-      render: (text: string) => (
-        <span className={styles.balance}>&#x20A6;{text}</span>
-      ),
+      title: "Phone No.",
+      dataIndex: "Phone",
+      key: "Phone",
+      render: (text: string) => <span>{text || "N/A"}</span>,
     },
     {
-      title: "Category",
-      dataIndex: "Category",
-      key: "Category",
-      render: (text: string) => (
-        <span className={styles.balance}>&#x20A6;{text}</span>
-      ),
+      title: "Student Name",
+      dataIndex: "StudenName",
+      key: "StudenName",
+      render: (text: string) => <span>{text || "N/A"}</span>,
     },
     {
-      title: "Description",
-      dataIndex: "Description",
-      key: "Description",
-      render: (text: string) => (
-        <span className={styles.balance}>&#x20A6;{text}</span>
-      ),
+      title: "Date",
+      dataIndex: "TransDate",
+      key: "TransDate",
+      render: (text: string) => <span>{formatDate(text)}</span>,
     },
-    {
-      title: "Material Type",
-      dataIndex: "MaterialType",
-      key: "MaterialType",
-      render: (text: string) => (
-        <span className={styles.balance}>&#x20A6;{text}</span>
-      ),
-    },
-    {
-      title: "Expiry Days",
-      dataIndex: "ExpiryDays",
-      key: "ExpiryDays",
-      render: (text: string) => (
-        <span className={styles.balance}>&#x20A6;{text}</span>
-      ),
-    },
-    {
-      title: "Publish Date",
-      dataIndex: "PublishDate",
-      key: "PublishDate",
-      render: (text: string) => (
-        <span className={styles.balance}>&#x20A6;{text}</span>
-      ),
-    },
-    // {
-    //   title: "Actions",
-    //   dataIndex: "actions",
-    //   render: (_: any, record: any) => (
-    //     <span style={{ display: "flex", gap: "1rem" }}>
-    //       <Tooltip placement="bottom" title={"View"} color="#335642">
-    //         <Ellipsis
-    //           // onClick={() => openViewModal(record)}
-    //           style={{ cursor: "pointer" }}
-    //         />
-    //       </Tooltip>
-    //     </span>
-    //   ),
-    // },
+
   ];
   const formik = useFormik<FormikValues>({
     initialValues: {},
@@ -118,33 +106,49 @@ const Subscriptions = () => {
     <section>
       <div className={styles.header}>
         <Layout heading="My Subscriptions" />
-
-       
       </div>
 
       <div className={styles.body}>
         <div className={styles.inside}>
-          <p>Showing 1-11 of 88</p>
+          {filteredData && filteredData?.length > 0 ? 
+              <p>
+                Showing {startIndex}-{endIndex} of {filteredData?.length}
+              </p> :
+              <p>Showing 0</p>
+            }
+
           <div>
             {!showSearch && (
               <Search
                 onClick={() => setShowSearch((showSearch) => !showSearch)}
               />
             )}
-            {showSearch && <SearchInput />}
-            <Filter />
+            {showSearch && (
+              <SearchInput onChange={(e) => setSearchTerm(e.target.value)} />
+            )}{" "}
+            {!showAllFilter && (
+              <Filter
+                onClick={() =>
+                  setShowAllFilter((showAllFilter) => !showAllFilter)
+                }
+              />
+            )}{" "}
           </div>
         </div>
 
         <Table
           columns={column}
-          dataSource={data}
-          pagination={false}
+          dataSource={filteredData}
           className={styles.row}
           rowKey={"DueYear"}
           scroll={{ x: 400 }}
+          pagination={{
+            current: currentPage,
+            pageSize: pageSize,
+            onChange: handlePaginationChange,
+            position: ["bottomCenter"],
+          }}
         />
-
       </div>
     </section>
   );
