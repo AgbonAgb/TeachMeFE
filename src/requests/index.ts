@@ -17,8 +17,13 @@ export const LecturerSignUpCall = async (data: LecturerSignUpPayload) => {
 export const LoginCall = async (data: LoginPayload) => {
   return (await request.post("/Authentication/Authenticate", data))?.data as LoginData;
 };
+//upload content
 export const UploadContentCall = async (data: FormData) => {
   return (await request.post("/Lecturer/UploadContent", data))?.data;
+};
+//Edit content
+export const EditUploadContentCall = async (data: FormData) => {
+  return (await request.post("/Lecturer/EditContent", data))?.data;
 };
 //GetAllCategory
 export const GetCategoryCall = async () => {

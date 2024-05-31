@@ -15,24 +15,23 @@ import { AxiosError } from "axios";
 import { ReactComponent as FileUploaded } from "../../../../assets/uploadedFile.svg";
 import { ReactComponent as Close } from "../../../../assets/close (1).svg";
 import Upload from "../../../../custom/upload/upload";
-import { GetCategoryByLecturerId, GetCategoryCall, GetMaterialTypeCall, UploadContentCall } from "../../../../requests";
+import { EditUploadContentCall, GetCategoryByLecturerId, GetCategoryCall, GetMaterialTypeCall, UploadContentCall } from "../../../../requests";
 import { errorMessage } from "../../../utils/errorMessage";
 import { App } from "antd";
 import { useAtomValue } from "jotai";
 
 
 interface Props{
-  data?:ContentUploadPayload
+  getData?:ContentUploadPayload
 }
 
-const EditContentUpload = ({data}:Props) => {
+const EditContentUpload = ({getData}:Props) => {
   const { notification } = App.useApp();
   const navigate = useNavigate();
   const user = useAtomValue(userAtom);
   const [materials, setMaterials] = useState<File | null>(null);
   const queryClient = useQueryClient();
 
-  console.log(data, 'modal data')
   const handleMaterialsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files;
     if (file) {
@@ -109,29 +108,17 @@ const EditContentUpload = ({data}:Props) => {
 
 
   const UploadContentMutation = useMutation({
-    mutationFn: UploadContentCall,
-    mutationKey: ["upload-content"],
+    mutationFn: EditUploadContentCall,
+    mutationKey: ["edit-content"],
   });
 
   const UploadContentHandler = async (
     data: FormikValues,
   ) => {
-    // const uploadContent: ContentUploadPayload = {
-    //   Title: data?.Title,
-    //   Description: data?.Description,
-    //   LecturerId: user?.UserId,
-    //   Amount: data?.Amount,
-    //   CategoryId: data?.CategoryId,
-    //   MaterialTypeId: data?.MaterialTypeId,
-    //   ExpirationDays: data?.ExpirationDays,
-    //   ContentId:data?.ContentId,
-    //   // PublishedDate: data?.PublishDate?.trim(),
-    //   ContentUrl: data?.ContentUrl,
-    //   ContentFile: materials ,
-    //   LinkName: data?.LinkName,
-    // };
 
     const payload = new FormData();
+    const contentId =getData?.ContentId
+    payload.append("ContentId",`${contentId}` );
     payload.append("Title",data.Title);
     payload.append("Description",data.Description);
     payload.append("LecturerId",`${user?.UserId}`);
@@ -139,6 +126,7 @@ const EditContentUpload = ({data}:Props) => {
     payload.append("CategoryId", data.CategoryId);
     payload.append("MaterialTypeId", data.MaterialTypeId);
     payload.append("ExpirationDays", data.ExpirationDays);
+    payload.append("ContentUrl", `${getData?.ContentUrl}`);
 
 
     if (materials) {
@@ -174,21 +162,21 @@ const EditContentUpload = ({data}:Props) => {
     CategoryId: Yup.string().required("Category is Required"),
     MaterialTypeId: Yup.string().required("Material Type is Required"),
     ExpirationDays: Yup.string().required("ExpirationDays is Required"),
-    materials: Yup.string().required("materials is Required"),
+    // materials: Yup.string().required("materials is Required"),
     // LinkName: Yup.string().required("LinkName is Required"),
 
   });
 
   const formik = useFormik<FormikValues>({
     initialValues: {
-      ContentId:data?.ContentId || '',
-      Title: data?.Title  || "",
-      Description: data?.Description || "",
-      LecturerId:  data?.LecturerId ||"",
-      Amount: data?.Amount || "",
-      CategoryId:data?.CategoryId || "",
-      MaterialTypeId: data?.MaterialTypeId || "",
-      ExpirationDays: data?.ExpirationDays || "",
+      ContentId:getData?.ContentId || '',
+      Title: getData?.Title  || "",
+      Description: getData?.Description || "",
+      LecturerId:  getData?.LecturerId ||"",
+      Amount: getData?.Amount || "",
+      CategoryId:getData?.CategoryId || "",
+      MaterialTypeId: getData?.MaterialTypeId || "",
+      ExpirationDays: getData?.ExpirationDays || "",
       // PublishedDate:data?. "",
       materials: "",
       // LinkName: data?.LinkName || "",
@@ -296,7 +284,7 @@ const EditContentUpload = ({data}:Props) => {
           )}
 
           <section className={styles.btnSection}>
-            <Button disabled={true} className={styles.btn} text={UploadContentMutation?.isPending ?  'Updating...' : "Update"} />
+            <Button disabled={UploadContentMutation?.isPending} className={styles.btn} text={UploadContentMutation?.isPending ?  'Updating...' : "Update"} />
           </section>
         </form>
       </FormikProvider>

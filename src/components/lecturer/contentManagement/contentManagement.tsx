@@ -351,7 +351,7 @@ const ContentManagement = () => {
             closeIcon={<Cancel />}
             className="modal"
           >
-            <EditContentUpload  data={data}/>
+            <EditContentUpload  getData={data}/>
           </Modal>
           {/* <Modal
           open={showModal}
