@@ -18,6 +18,7 @@ import { useAtomValue } from "jotai";
 import { userAtom } from "../../../store/store";
 import { AxiosError } from "axios";
 import { formatDate } from "../../utils/dateUtils";
+import Spinner from "../../../custom/spinner/spinner";
 const date = new Date();
 
 const Subscriptions = () => {
@@ -107,6 +108,11 @@ const Subscriptions = () => {
       <div className={styles.header}>
         <Layout heading="My Subscriptions" />
       </div>
+      {getLecturerSubscriberQuery?.isLoading ? (
+        <Spinner />
+      ) : getLecturerSubscriberQuery?.isError ? (
+        <h1 className="error">{getLecturerSubscriberErrorMessage}</h1>
+      ) : (
 
       <div className={styles.body}>
         <div className={styles.inside}>
@@ -150,6 +156,7 @@ const Subscriptions = () => {
           }}
         />
       </div>
+      )}
     </section>
   );
 };

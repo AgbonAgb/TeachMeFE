@@ -15,23 +15,29 @@ import { AxiosError } from "axios";
 import { ReactComponent as FileUploaded } from "../../../../assets/uploadedFile.svg";
 import { ReactComponent as Close } from "../../../../assets/close (1).svg";
 import Upload from "../../../../custom/upload/upload";
-import { EditUploadContentCall, GetCategoryByLecturerId, GetCategoryCall, GetMaterialTypeCall, UploadContentCall } from "../../../../requests";
+import {
+  EditUploadContentCall,
+  GetCategoryByLecturerId,
+  GetCategoryCall,
+  GetMaterialTypeCall,
+  UploadContentCall,
+} from "../../../../requests";
 import { errorMessage } from "../../../utils/errorMessage";
 import { App } from "antd";
 import { useAtomValue } from "jotai";
 
-
-interface Props{
-  getData?:ContentUploadPayload,
-  handleClose : ()=>void
+interface Props {
+  getData?: ContentUploadPayload;
+  handleClose: () => void;
 }
 
-const EditContentUpload = ({handleClose, getData}:Props) => {
+const EditContentUpload = ({ handleClose, getData }: Props) => {
   const { notification } = App.useApp();
   const navigate = useNavigate();
   const user = useAtomValue(userAtom);
   const [materials, setMaterials] = useState<File | null>(null);
   const queryClient = useQueryClient();
+  const [showMaterial, setShowMaterial] = useState(true)
 
   const handleMaterialsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files;
@@ -42,11 +48,9 @@ const EditContentUpload = ({handleClose, getData}:Props) => {
   };
   const cancelIdMaterial = () => {
     setMaterials(null);
+    setShowMaterial(false)
   };
 
- 
-
- 
   const [getMaterialTypeQuery, getCategoryQuery] = useQueries({
     queries: [
       {
@@ -57,7 +61,7 @@ const EditContentUpload = ({handleClose, getData}:Props) => {
       },
       {
         queryKey: ["get-all-category"],
-        queryFn:()=> GetCategoryByLecturerId(user?.UserId!),
+        queryFn: () => GetCategoryByLecturerId(user?.UserId!),
         retry: 0,
         refetchOnWindowFocus: false,
       },
@@ -107,28 +111,23 @@ const EditContentUpload = ({handleClose, getData}:Props) => {
       </option>
     );
 
-
   const UploadContentMutation = useMutation({
     mutationFn: EditUploadContentCall,
     mutationKey: ["edit-content"],
   });
 
-  const UploadContentHandler = async (
-    data: FormikValues,
-  ) => {
-
+  const UploadContentHandler = async (data: FormikValues) => {
     const payload = new FormData();
-    const contentId =getData?.ContentId
-    payload.append("ContentId",`${contentId}` );
-    payload.append("Title",data.Title);
-    payload.append("Description",data.Description);
-    payload.append("LecturerId",`${user?.UserId}`);
+    const contentId = getData?.ContentId;
+    payload.append("ContentId", `${contentId}`);
+    payload.append("Title", data.Title);
+    payload.append("Description", data.Description);
+    payload.append("LecturerId", `${user?.UserId}`);
     payload.append("Amount", data.Amount);
     payload.append("CategoryId", data.CategoryId);
     payload.append("MaterialTypeId", data.MaterialTypeId);
     payload.append("ExpirationDays", data.ExpirationDays);
     payload.append("ContentUrl", `${getData?.ContentUrl}`);
-
 
     if (materials) {
       payload.append("ContentFile", materials);
@@ -143,8 +142,7 @@ const EditContentUpload = ({handleClose, getData}:Props) => {
             description: data.Message,
           });
           queryClient.refetchQueries({ queryKey: ["get-all-contents"] });
-          handleClose()
-
+          handleClose();
         },
       });
     } catch (error: any) {
@@ -156,7 +154,6 @@ const EditContentUpload = ({handleClose, getData}:Props) => {
   };
 
   const validationRules = Yup.object().shape({
-   
     Title: Yup.string().required("Title is required"),
     Description: Yup.string().required("Description is Required"),
     Amount: Yup.string().required("Amount is Required"),
@@ -165,17 +162,16 @@ const EditContentUpload = ({handleClose, getData}:Props) => {
     ExpirationDays: Yup.string().required("ExpirationDays is Required"),
     // materials: Yup.string().required("materials is Required"),
     // LinkName: Yup.string().required("LinkName is Required"),
-
   });
 
   const formik = useFormik<FormikValues>({
     initialValues: {
-      ContentId:getData?.ContentId || '',
-      Title: getData?.Title  || "",
+      ContentId: getData?.ContentId || "",
+      Title: getData?.Title || "",
       Description: getData?.Description || "",
-      LecturerId:  getData?.LecturerId ||"",
+      LecturerId: getData?.LecturerId || "",
       Amount: getData?.Amount || "",
-      CategoryId:getData?.CategoryId || "",
+      CategoryId: getData?.CategoryId || "",
       MaterialTypeId: getData?.MaterialTypeId || "",
       ExpirationDays: getData?.ExpirationDays || "",
       // PublishedDate:data?. "",
@@ -188,6 +184,7 @@ const EditContentUpload = ({handleClose, getData}:Props) => {
     validationSchema: validationRules,
   });
 
+  console.log(materials?.name, 'materials?.name')
   return (
     <main className={styles.main}>
       <FormikProvider value={formik}>
@@ -224,7 +221,6 @@ const EditContentUpload = ({handleClose, getData}:Props) => {
             displayInput="text"
             label="Amount"
           />
-       
 
           <Field
             as={Input}
@@ -256,7 +252,7 @@ const EditContentUpload = ({handleClose, getData}:Props) => {
             displayInput="date"
             label="Publish Date"
           /> */}
-          {materials?.name === null || materials?.name === undefined ? (
+          {(materials?.name === null || materials?.name === undefined) &&  showMaterial === false  && 
             <>
               <Upload
                 // label="Valid ID Card"
@@ -273,19 +269,52 @@ const EditContentUpload = ({handleClose, getData}:Props) => {
                 <div className="error">{`${formik.errors.materials.toString()}`}</div>
               ) : null}
             </>
-          ) : (
+}
+           
             <div className={styles.uploaded}>
+             
+              {materials?.name !== undefined && 
+               
+        
+               
+             <>
               <FileUploaded />
+              <span>{materials?.name}</span>
+              {materials && (
+                <span>{(materials?.size / 1024).toFixed(2)}KB</span>
+              )}
+               <Close className={styles.pointer} onClick={cancelIdMaterial} />
+
+             </>
+             
+            }          
+            </div>
+          
+          {
+            showMaterial === true &&
+            <div className={styles.uploaded}>
+          
+
+              
+            <a href={getData?.ContentUrl} target="_blank" rel="noreferrer">
+            <FileUploaded style={{marginInline: '2rem'}} />
+              material
+            </a>
+          
               <span>{materials?.name}</span>
               {materials && (
                 <span>{(materials?.size / 1024).toFixed(2)}MB</span>
               )}
               <Close className={styles.pointer} onClick={cancelIdMaterial} />
             </div>
-          )}
+          }
 
           <section className={styles.btnSection}>
-            <Button disabled={UploadContentMutation?.isPending} className={styles.btn} text={UploadContentMutation?.isPending ?  'Updating...' : "Update"} />
+            <Button
+              disabled={UploadContentMutation?.isPending}
+              className={styles.btn}
+              text={UploadContentMutation?.isPending ? "Updating..." : "Update"}
+            />
           </section>
         </form>
       </FormikProvider>

@@ -19,6 +19,7 @@ import { GetPaymentByLecturerId } from "../../../requests";
 import { userAtom } from "../../../store/store";
 import { useAtomValue } from "jotai";
 import { formatDate } from "../../utils/dateUtils";
+import Spinner from "../../../custom/spinner/spinner";
 
 interface PaymentData {
   Amount: string;
@@ -53,7 +54,7 @@ const Payment = () => {
   };
 
 
-  const [getContentQuery] = useQueries({
+  const [getPaymentQuery] = useQueries({
     queries: [
       {
         queryKey: ["get-all-contents-"],
@@ -67,9 +68,9 @@ const Payment = () => {
     ],
   });
 
-  const getPaymentError = getContentQuery?.error as AxiosError;
+  const getPaymentError = getPaymentQuery?.error as AxiosError;
   const getPaymentErrorMessage = getPaymentError?.message;
-  const getPaymentData= getContentQuery?.data?.data;
+  const getPaymentData= getPaymentQuery?.data?.data;
 
   const filteredData = getPaymentData && getPaymentData?.filter((item: PaymentData) =>
   Object?.values(item)
@@ -140,9 +141,15 @@ const endIndex = Math.min(currentPage * pageSize, filteredData && filteredData.l
 
        
       </div>
+      {getPaymentQuery?.isLoading ? (
+        <Spinner />
+      ) : getPaymentQuery?.isError ? (
+        <h1 className="error">{getPaymentErrorMessage}</h1>
+      ) : (
 
       <div className={styles.body}>
         <div className={styles.inside}>
+          
         {filteredData && filteredData?.length > 0 ? 
               <p>
                 Showing {startIndex}-{endIndex} of {filteredData?.length}
@@ -159,6 +166,8 @@ const endIndex = Math.min(currentPage * pageSize, filteredData && filteredData.l
           </div>
         </div>
 
+      
+
         <Table
           columns={column}
           dataSource={filteredData}
@@ -167,8 +176,11 @@ const endIndex = Math.min(currentPage * pageSize, filteredData && filteredData.l
           scroll={{ x: 400 }}
           pagination={{ current: currentPage, pageSize: pageSize, onChange: handlePaginationChange, position: ["bottomCenter"] }}
         />
+     
 
       </div>
+      )}
+      
     </section>
   );
 };
