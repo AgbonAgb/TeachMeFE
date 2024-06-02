@@ -44,6 +44,8 @@ const LecturerProfile = () => {
     }
   };
 
+  console.log(passportPhoto, 'passportPhoto')
+
   const handleIdCardChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files;
     if (file) {
@@ -72,7 +74,6 @@ const LecturerProfile = () => {
   const LecturerDataError = error as AxiosError;
   const LecturerDataErrorMessage = LecturerDataError?.message;
 
-  console.log(LecturerData, "prppr");
 
   const UpdateProfileMutation = useMutation({
     mutationFn: LecturerProfileUpdateCall,
@@ -124,7 +125,6 @@ const LecturerProfile = () => {
     }
   };
 
-  console.log(passportPhoto?.size, "passss");
 
   const validationRules = Yup.object().shape({
     LinkName: Yup.string().required("Link Name is required"),
@@ -155,7 +155,6 @@ const LecturerProfile = () => {
     },
     validationSchema: validationRules,
   });
-  console.log(LecturerData?.LinkName, "LecturerData?.LinkName");
   return (
     <main>
       <FormikProvider value={formik}>
