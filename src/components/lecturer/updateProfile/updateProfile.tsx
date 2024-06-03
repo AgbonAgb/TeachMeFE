@@ -187,8 +187,8 @@ const LecturerProfile = () => {
               <Upload
                 // label="Upload Passport Picture"
                 description={<p>Upload Passport Picture</p>}
-                accept="img"
-                allowedFormats={["(jpg, img, png)"]}
+                accept="jpg,png"
+                allowedFormats={["(jpg,png)"]}
                 // allowedFormats={[".docx)"]}
                 // allowedFormats={["max:10mb (docx, pdf)"]}
 
@@ -215,8 +215,8 @@ const LecturerProfile = () => {
               <Upload
                 // label="Valid ID Card"
                 description={<p>Valid ID Card</p>}
-                accept="pdf"
-                allowedFormats={["(jpg, img, png)"]}
+                accept="jpg,png"
+                allowedFormats={["(jpg,png)"]}
                 onChange={handleIdCardChange}
                 fileName={idCard?.name}
               />

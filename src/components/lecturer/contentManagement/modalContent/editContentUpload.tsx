@@ -159,7 +159,7 @@ const EditContentUpload = ({ handleClose, getData }: Props) => {
     Amount: Yup.string().required("Amount is Required"),
     CategoryId: Yup.string().required("Category is Required"),
     MaterialTypeId: Yup.string().required("Material Type is Required"),
-    ExpirationDays: Yup.string().required("ExpirationDays is Required"),
+    ExpirationDays: Yup.number().typeError("Only numbers are allowed").required("ExpirationDays is Required"),
     // materials: Yup.string().required("materials is Required"),
     // LinkName: Yup.string().required("LinkName is Required"),
   });
@@ -257,11 +257,11 @@ const EditContentUpload = ({ handleClose, getData }: Props) => {
               <Upload
                 // label="Valid ID Card"
                 description={<p>Upload Content</p>}
-                accept="pdf"
+                accept="pdf,mp3,wav,ogg"
                 //  .jpeg, .png,.pdf,
                 // .JPEG,.PDF,.PNG,.doc,.docx,.DOC,.DOCX"
                 // accept="img,pdf"
-                allowedFormats={["max:10mb (docx, pdf)"]}
+                allowedFormats={[" (pdf, mp3, wav, ogg)"]}
                 onChange={handleMaterialsChange}
                 fileName={materials?.name}
               />
