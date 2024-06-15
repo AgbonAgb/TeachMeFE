@@ -17,8 +17,13 @@ export const LecturerSignUpCall = async (data: LecturerSignUpPayload) => {
 export const LoginCall = async (data: LoginPayload) => {
   return (await request.post("/Authentication/Authenticate", data))?.data as LoginData;
 };
+//upload content
 export const UploadContentCall = async (data: FormData) => {
   return (await request.post("/Lecturer/UploadContent", data))?.data;
+};
+//Edit content
+export const EditUploadContentCall = async (data: FormData) => {
+  return (await request.post("/Lecturer/EditContent", data))?.data;
 };
 //GetAllCategory
 export const GetCategoryCall = async () => {
@@ -34,11 +39,15 @@ export const GetMaterialTypeCall = async () => {
 };
 //GetAllContents
 export const GetAllContents = async (UserId:string) => {
-  // const url = "/Lecturer/GetAllContent";
-
 const url =`/Lecturer/GetAllContentbyLecturer?LectId=${UserId}`
   return await request.get(url);
 };
+
+//GetAllStudentSubscriberByLecturer
+export const GetAllStudentSubscriberByLecturer = async (UserId:string) => {
+  const url =`/Lecturer/MySubscribedStudents?LecturerID=${UserId}`
+    return await request.get(url);
+  };
 //GetLecturerProfile
 export const GetLecturerProfile = async (UserId: string) => {
   const url = `/Lecturer/GetLecturer?Id=${UserId}`;

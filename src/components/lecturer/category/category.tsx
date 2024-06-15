@@ -119,7 +119,7 @@ const Category = () => {
   return (
     <section>
       <div className={styles.header}>
-        <Layout heading="Content Management" />
+        <Layout heading="Category Setup" />
 
         <div>
           <Button

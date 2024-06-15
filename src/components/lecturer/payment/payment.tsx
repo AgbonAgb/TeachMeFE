@@ -19,6 +19,7 @@ import { GetPaymentByLecturerId } from "../../../requests";
 import { userAtom } from "../../../store/store";
 import { useAtomValue } from "jotai";
 import { formatDate } from "../../utils/dateUtils";
+import Spinner from "../../../custom/spinner/spinner";
 
 interface PaymentData {
   Amount: string;
@@ -53,7 +54,7 @@ const Payment = () => {
   };
 
 
-  const [getContentQuery] = useQueries({
+  const [getPaymentQuery] = useQueries({
     queries: [
       {
         queryKey: ["get-all-contents-"],
@@ -67,9 +68,9 @@ const Payment = () => {
     ],
   });
 
-  const getPaymentError = getContentQuery?.error as AxiosError;
+  const getPaymentError = getPaymentQuery?.error as AxiosError;
   const getPaymentErrorMessage = getPaymentError?.message;
-  const getPaymentData= getContentQuery?.data?.data;
+  const getPaymentData= getPaymentQuery?.data?.data;
 
   const filteredData = getPaymentData && getPaymentData?.filter((item: PaymentData) =>
   Object?.values(item)
@@ -77,28 +78,27 @@ const Payment = () => {
     .toLowerCase()
     .includes(searchTerm?.toLowerCase())
 );
+
+const startIndex = (currentPage - 1) * pageSize + 1;
+const endIndex = Math.min(currentPage * pageSize, filteredData && filteredData.length);
+
+
   const column = [
-    // {
-    //   title: "S/N",
-    //   dataIndex: "S/N",
-    //   key: "S/N",
-    //   render: (text: number) => (
-    //     <span>
-    //       {text === date?.getFullYear() ? (
-    //         <p>
-    //           {" "}
-    //           &#x20A6;{text} <span className={styles.current}>Current</span>
-    //         </p>
-    //       ) : (
-    //         <p>&#x20A6;{text}</p>
-    //       )}
-    //     </span>
-    //   ),
-    // },
     {
-      title: "Content ID",
-      dataIndex: "ContentId",
-      key: "ContentId",
+      title: "S/N",
+      dataIndex: "index",
+      key: "index",
+      render: (text: any, record: any, index: number) => <span>{(currentPage - 1) * pageSize + index + 1}</span>,
+    },
+    {
+      title: "Content Name",
+      dataIndex: "ContentName",
+      key: "ContentName",
+    },
+    {
+      title: "Category Name",
+      dataIndex: "Categoryame",
+      key: "Categoryame",
     },
     {
       title: "Customer Email",
@@ -132,26 +132,6 @@ const Payment = () => {
       ),
     },
 
-    // {
-    //   title: "Actions",
-    //   dataIndex: "actions",
-    //   render: (_: any, record: any) => (
-    //     <span style={{ display: "flex", gap: "1rem" }}>
-    //       <CustomDropdown
-    //         placement="bottom"
-    //         dropdownButton={<Ellipsis style={{ cursor: "pointer" }} />}
-    //         dropdownContent={
-    //           <>
-    //             <Link to={""}>Play</Link>
-    //             <Link to={""} onClick={() => openUploadModal(record)}>
-    //             Download
-    //             </Link>
-    //           </>
-    //         }
-    //       />
-    //     </span>
-    //   ),
-    // },
   ];
  
   return (
@@ -161,11 +141,21 @@ const Payment = () => {
 
        
       </div>
+      {getPaymentQuery?.isLoading ? (
+        <Spinner />
+      ) : getPaymentQuery?.isError ? (
+        <h1 className="error">{getPaymentErrorMessage}</h1>
+      ) : (
 
       <div className={styles.body}>
         <div className={styles.inside}>
-          {/* <p>Showing 1-11 of {filteredData?.length}</p> */}
-          <div>
+          
+        {filteredData && filteredData?.length > 0 ? 
+              <p>
+                Showing {startIndex}-{endIndex} of {filteredData?.length}
+              </p> :
+              <p>Showing 0</p>
+            }          <div>
             {!showSearch && (
               <Search
                 onClick={() => setShowSearch((showSearch) => !showSearch)}
@@ -176,6 +166,8 @@ const Payment = () => {
           </div>
         </div>
 
+      
+
         <Table
           columns={column}
           dataSource={filteredData}
@@ -184,8 +176,11 @@ const Payment = () => {
           scroll={{ x: 400 }}
           pagination={{ current: currentPage, pageSize: pageSize, onChange: handlePaginationChange, position: ["bottomCenter"] }}
         />
+     
 
       </div>
+      )}
+      
     </section>
   );
 };

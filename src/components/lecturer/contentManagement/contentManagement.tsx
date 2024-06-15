@@ -12,6 +12,8 @@ import { Field, FormikProvider, FormikValues, useFormik } from "formik";
 import CustomSelect from "../../../custom/select/select";
 import Layout from "../../layout/layout";
 import ContentUpload from "./modalContent/contentUpload";
+import EditContentUpload from "./modalContent/editContentUpload";
+
 import { Link, useNavigate } from "react-router-dom";
 import { useQueries } from "@tanstack/react-query";
 import { AxiosError } from "axios";
@@ -40,6 +42,9 @@ const ContentManagement = () => {
   const [category, setCategory] = useState("");
 
   const navigate = useNavigate();
+  const handleClose =()=>{
+    setShowModal(false)
+  }
 
   const openViewModal = (record: any) => {
     setShowModal(true);
@@ -51,7 +56,7 @@ const ContentManagement = () => {
     setPageSize(pageSize);
   };
 
-  const [getContentQuery, getContentByCategoryQuery] = useQueries({
+  const [getContentQuery, getContentByCategoryQuery,getMaterialTypeQuery, getCategoryQuery] = useQueries({
     queries: [
       {
         queryKey: ["get-all-contents"],
@@ -65,6 +70,18 @@ const ContentManagement = () => {
         retry: 0,
         refetchOnWindowFocus: false,
         // enabled:!!category
+      },
+      {
+        queryKey: ["get-all-material-type"],
+        queryFn: GetMaterialTypeCall,
+        retry: 0,
+        refetchOnWindowFocus: false,
+      },
+      {
+        queryKey: ["get-all-category"],
+        queryFn: () => GetCategoryByLecturerId(user?.UserId!),
+        retry: 0,
+        refetchOnWindowFocus: false,
       },
     ],
   });
@@ -96,22 +113,22 @@ const ContentManagement = () => {
       )
     : [];
 
-  const [getMaterialTypeQuery, getCategoryQuery] = useQueries({
-    queries: [
-      {
-        queryKey: ["get-all-material-type"],
-        queryFn: GetMaterialTypeCall,
-        retry: 0,
-        refetchOnWindowFocus: false,
-      },
-      {
-        queryKey: ["get-all-category"],
-        queryFn: () => GetCategoryByLecturerId(user?.UserId!),
-        retry: 0,
-        refetchOnWindowFocus: false,
-      },
-    ],
-  });
+  // const [getMaterialTypeQuery, getCategoryQuery] = useQueries({
+  //   queries: [
+  //     {
+  //       queryKey: ["get-all-material-type"],
+  //       queryFn: GetMaterialTypeCall,
+  //       retry: 0,
+  //       refetchOnWindowFocus: false,
+  //     },
+  //     {
+  //       queryKey: ["get-all-category"],
+  //       queryFn: () => GetCategoryByLecturerId(user?.UserId!),
+  //       retry: 0,
+  //       refetchOnWindowFocus: false,
+  //     },
+  //   ],
+  // });
 
   const getMaterialError = getMaterialTypeQuery?.error as AxiosError;
   const getMaterialErrorMessage = getMaterialError?.message;
@@ -162,13 +179,14 @@ const ContentManagement = () => {
 
   const AllResults = category ? filteredDataByCategory : filteredData;
   const startIndex = (currentPage - 1) * pageSize + 1;
-  const endIndex = Math.min(currentPage * pageSize, AllResults.length);
+  const endIndex = Math.min(currentPage * pageSize,AllResults &&  AllResults.length);
 
   const column = [
     {
       title: "S/N",
-      dataIndex: "ContentId",
-      key: "ContentId",
+      dataIndex: "index",
+      key: "index",
+      render: (text: any, record: any, index: number) => <span>{(currentPage - 1) * pageSize + index + 1}</span>,
     },
 
     {
@@ -277,11 +295,12 @@ const ContentManagement = () => {
       ) : (
         <div className={styles.body}>
           <div className={styles.inside}>
-            {AllResults && AllResults?.length > 0 && (
+            {AllResults && AllResults?.length > 0 ? 
               <p>
                 Showing {startIndex}-{endIndex} of {AllResults?.length}
-              </p>
-            )}
+              </p> :
+              <p>Showing 0</p>
+            }
 
             <div>
               {!showSearch && (
@@ -335,7 +354,7 @@ const ContentManagement = () => {
             closeIcon={<Cancel />}
             className="modal"
           >
-            <ContentUpload />
+            <EditContentUpload handleClose={handleClose}  getData={data}/>
           </Modal>
           {/* <Modal
           open={showModal}

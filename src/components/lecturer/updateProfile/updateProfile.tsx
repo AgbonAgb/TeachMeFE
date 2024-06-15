@@ -44,6 +44,8 @@ const LecturerProfile = () => {
     }
   };
 
+  console.log(passportPhoto, 'passportPhoto')
+
   const handleIdCardChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files;
     if (file) {
@@ -72,7 +74,6 @@ const LecturerProfile = () => {
   const LecturerDataError = error as AxiosError;
   const LecturerDataErrorMessage = LecturerDataError?.message;
 
-  console.log(LecturerData, "prppr");
 
   const UpdateProfileMutation = useMutation({
     mutationFn: LecturerProfileUpdateCall,
@@ -124,7 +125,6 @@ const LecturerProfile = () => {
     }
   };
 
-  console.log(passportPhoto?.size, "passss");
 
   const validationRules = Yup.object().shape({
     LinkName: Yup.string().required("Link Name is required"),
@@ -155,7 +155,6 @@ const LecturerProfile = () => {
     },
     validationSchema: validationRules,
   });
-  console.log(LecturerData?.LinkName, "LecturerData?.LinkName");
   return (
     <main>
       <FormikProvider value={formik}>
@@ -188,8 +187,8 @@ const LecturerProfile = () => {
               <Upload
                 // label="Upload Passport Picture"
                 description={<p>Upload Passport Picture</p>}
-                accept="img"
-                allowedFormats={["(jpg, img, png)"]}
+                accept="jpg,png"
+                allowedFormats={["(jpg,png)"]}
                 // allowedFormats={[".docx)"]}
                 // allowedFormats={["max:10mb (docx, pdf)"]}
 
@@ -216,8 +215,8 @@ const LecturerProfile = () => {
               <Upload
                 // label="Valid ID Card"
                 description={<p>Valid ID Card</p>}
-                accept="pdf"
-                allowedFormats={["(jpg, img, png)"]}
+                accept="jpg,png"
+                allowedFormats={["(jpg,png)"]}
                 onChange={handleIdCardChange}
                 fileName={idCard?.name}
               />
