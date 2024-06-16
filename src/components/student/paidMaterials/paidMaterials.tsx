@@ -102,6 +102,12 @@ const MyPaidMaterials = () => {
       render: (item: any) => <p>{item ? item : "N/A"}</p>,
     },
     {
+      title: "Material Type",
+      dataIndex: "MaterialTypeName",
+      key: "MaterialTypeName",
+      render: (item: any) => <p>{item ? item : "N/A"}</p>,
+    },
+    {
       title: "Published Date",
       dataIndex: "PublishedDate",
       key: "PublishedDate",
@@ -125,6 +131,7 @@ const MyPaidMaterials = () => {
       key: "ExpirationDays",
       render: (item: any) => <p>{item ? item : "N/A"}</p>,
     },
+  
     {
       title: "ContentUrl",
       dataIndex: "ContentUrl",
