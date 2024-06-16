@@ -211,8 +211,8 @@ const ContentManagement = () => {
     },
     {
       title: "Category",
-      dataIndex: "CategoryId",
-      key: "CategoryId",
+      dataIndex: "CategoryName",
+      key: "CategoryName",
     },
     {
       title: "Description",
@@ -229,8 +229,8 @@ const ContentManagement = () => {
     },
     {
       title: "Material Type",
-      dataIndex: "MaterialTypeId",
-      key: "MaterialTypeId",
+      dataIndex: "MaterialTypeName",
+      key: "MaterialTypeName",
       //
     },
     {
