@@ -7,6 +7,14 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { App as AntdApp } from "antd";
 import { BrowserRouter } from "react-router-dom";
 import { Theme } from "./theme/theme";
+import { pdfjs } from "react-pdf";
+import 'react-pdf/dist/Page/AnnotationLayer.css';
+import 'react-pdf/dist/Page/TextLayer.css';
+
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+  'pdfjs-dist/build/pdf.worker.min.mjs',
+  import.meta.url,
+).toString();
 
 const queryClient = new QueryClient({
   defaultOptions: {

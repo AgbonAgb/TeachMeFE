@@ -1,0 +1,39 @@
+.pdfContainer{
+    @media print{
+        display: none !important;
+    }
+}
+
+.audio_player audio {
+    width: 100%;
+  }
+  
+  /* Custom styles to hide the download button */
+  .audio_player audio::-webkit-media-controls-enclosure {
+    overflow: hidden;
+  }
+  
+  .audio_player audio::-webkit-media-controls-panel {
+    width: calc(100% - 50px); /* Adjust to fit the rest of the controls */
+  }
+  
+  .audio_player audio::-webkit-media-controls-timeline,
+  .audio_player audio::-webkit-media-controls-current-time-display,
+  .audio_player audio::-webkit-media-controls-time-remaining-display,
+  .audio_player audio::-webkit-media-controls-volume-control-container,
+  .audio_player audio::-webkit-media-controls-mute-button,
+  .audio_player audio::-webkit-media-controls-fullscreen-button {
+    display: block; /* Keep necessary controls */
+  }
+  
+  .audio_player audio::-webkit-media-controls-overlay-play-button,
+  .audio_player audio::-webkit-media-controls-rewind-button,
+  .audio_player audio::-webkit-media-controls-return-to-realtime-button,
+  .audio_player audio::-webkit-media-controls-toggle-closed-captions-button,
+  .audio_player audio::-webkit-media-controls-toggle-closed-captions-icon,
+  .audio_player audio::-webkit-media-controls-playback-rate-button,
+  .audio_player audio::-webkit-media-controls-pip-toggle-button,
+  .audio_player audio::-webkit-media-controls-download-button {
+    display: none; /* Hide unwanted controls */
+  }
+  
