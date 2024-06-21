@@ -1,4 +1,5 @@
 .pdfContainer{
+  width: 100%;
     @media print{
         display: none !important;
     }

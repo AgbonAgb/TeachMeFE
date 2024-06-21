@@ -69,7 +69,9 @@ import Button from "../button/button";
 import styles from "./main.module.scss";
 
 // Set the worker source
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
+// pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
+
+pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
 interface Props {
   url: string;
@@ -142,7 +144,7 @@ const ContentRenderer: React.FC<Props> = ({ url }) => {
       return (
         <>
           <Button text="View Pdf" onClick={openPdfModal} />
-          <Modal open={isOpenPdfModal} onCancel={closePdfModal} footer={null} width="80%" style={{ top: 20 }}>
+          <Modal open={isOpenPdfModal} onCancel={closePdfModal} footer={null} width="60%">
             <Document file={url} onLoadSuccess={onDocumentLoadSuccess} onContextMenu={(e) => e.preventDefault()} className={styles.pdfContainer}>
               <Page pageNumber={pageNumber} />
             </Document>
