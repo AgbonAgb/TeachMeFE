@@ -16,6 +16,7 @@ const SignUp: React.FC = () => {
 
   return (
     <>
+    
       <div className={styles.header}>
         <h1 className={styles.welcome}>Welcome</h1>
      { value === "lecturer" ? <p>Log in to your account</p> :  <p>Create your account</p>}
