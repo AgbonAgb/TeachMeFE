@@ -145,11 +145,11 @@ const ContentRenderer: React.FC<Props> = ({ url }) => {
         <>
           <Button text="View Pdf" onClick={openPdfModal} />
           <Modal open={isOpenPdfModal} onCancel={closePdfModal} footer={null} width="60%">
-            <Document file={url} onLoadSuccess={onDocumentLoadSuccess} onContextMenu={(e) => e.preventDefault()} className={styles.pdfContainer} onLoadError={(error) => console.error('Error while loading PDF:', error)}>
+            {/* <Document file={url} onLoadSuccess={onDocumentLoadSuccess} onContextMenu={(e) => e.preventDefault()} className={styles.pdfContainer} onLoadError={(error) => console.error('Error while loading PDF:', error)}>
               <Page pageNumber={pageNumber} />
-            </Document>
+            </Document> */}
 
-            {/* <embed src={url} type="application/pdf" width="100%" height="500px" /> */}
+            <embed src={url} type="application/pdf" width="100%" height="500px" />
           </Modal>
         </>
       );
