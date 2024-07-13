@@ -134,6 +134,7 @@ const SignIn = () => {
               <Button
                 disabled={loginMutation?.isPending}
                 text={loginMutation?.isPending ? "Loading..." : "Login"}
+                type='submit'
               />
 
               <p>
